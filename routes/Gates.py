@@ -12,12 +12,7 @@ Status_Enum = ('Open', 'Closed', 'Maintenance')
 
 @Gates_bp.route('/')
 def Display_Gate():
-    sql = 'select g.Gate_ID, g.Gate_Number, g.Gate_Status, g.Terminal_ID, \
-           t.Terminal_Name, t.Terminal_Number, a.Airport_Name \
-           from Gate g \
-           left join Terminal t on g.Terminal_ID = t.Terminal_ID \
-           left join Airport a on t.Airport_ID = a.Airport_ID \
-           order by g.Gate_ID'
+    sql = 'select * from Gate_Details'
     Gate_Data = fetch_all(sql)
     Terminal_Data = fetch_all('select Terminal_ID, Terminal_Name, Terminal_Number from Terminal')
     return render_template('Gate.html', Gate_Data=Gate_Data, Terminal_Data=Terminal_Data, Status_Enum=Status_Enum)

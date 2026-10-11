@@ -10,11 +10,7 @@ Aircrafts_bp=Blueprint(
 
 @Aircrafts_bp.route('/')
 def Display_Aircraft():
-    sql='Select Aircraft_ID,Tail_Number,Model,Capacity,a.Airline_ID,Name as Airline_Name\
-        from Aircraft a\
-        join Airline al on\
-        a.Airline_ID=al.Airline_ID\
-        order by(Aircraft_ID)'
+    sql='SELECT *from Aircraft_Details;'
     Aircraft_Data=fetch_all(sql)
     Airline_Data=fetch_all('select Name,Airline_ID from Airline')
     return render_template('Aircraft.html',Aircraft_Data=Aircraft_Data,Airline_Data=Airline_Data)
@@ -59,10 +55,7 @@ def Update_Aircraft(id):
         
     else:
 
-        sql='select a.Aircraft_ID,a.Tail_Number,a.Model,Capacity,al.Name as Airline_Name,a.Airline_ID\
-            from Aircraft a join Airline al \
-                on a.Airline_ID=al.Airline_ID\
-                    where a.Aircraft_ID=%s'
+        sql='CALL Aircraft_To_Edit(%s)'
         params=(id,)
         Aircraft_To_Edit=fetch_one(sql,params)    
         Airline_Data=fetch_all('select Name,Airline_ID from Airline')

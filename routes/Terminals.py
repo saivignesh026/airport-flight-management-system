@@ -12,10 +12,7 @@ Status_Enum = ('Operational', 'Under Construction', 'Closed')
 
 @Terminals_bp.route('/')
 def Display_Terminal():
-    sql = 'select Terminal_ID, Terminal_Number, Terminal_Name, Terminal_Status, a.Airport_ID, a.Airport_Name \
-           from Terminal t \
-           join Airport a on t.Airport_ID = a.Airport_ID \
-           order by Terminal_ID'
+    sql = 'SELECT * from Terminal_Details'
     Terminal_Data = fetch_all(sql)
     Airport_Data = fetch_all('select Airport_Name, Airport_ID from Airport')
     return render_template('Terminal.html', Terminal_Data=Terminal_Data, Airport_Data=Airport_Data, Status_Enum=Status_Enum)
@@ -58,10 +55,7 @@ def Update_Terminal(id):
         return redirect(url_for('Terminals.Display_Terminal'))
 
     else:
-        sql = 'select t.Terminal_ID, t.Terminal_Number, t.Terminal_Name, t.Terminal_Status, t.Airport_ID, a.Airport_Name \
-               from Terminal t \
-               join Airport a on t.Airport_ID = a.Airport_ID \
-               where t.Terminal_ID = %s'
+        sql = 'CALL Terminal_To_Edit(%s)'
         params = (id,)
         Terminal_To_Edit = fetch_one(sql, params)
         Airport_Data = fetch_all('select Airport_Name, Airport_ID from Airport')
