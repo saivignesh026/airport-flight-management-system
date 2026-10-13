@@ -1,4 +1,36 @@
 document.addEventListener("DOMContentLoaded", function () {
+    // --- Dark/Light Mode Logic ---
+    const themeToggle = document.getElementById('theme-toggle');
+    const iconMoon = document.querySelector('.icon-moon');
+    const iconSun = document.querySelector('.icon-sun');
+
+    // Check local storage for saved theme
+    if (localStorage.getItem('theme') === 'dark') {
+        document.body.classList.add('dark-mode');
+        if (iconMoon && iconSun) {
+            iconMoon.style.display = 'none';
+            iconSun.style.display = 'inline-block';
+        }
+    }
+
+    // Toggle Theme on click
+    if (themeToggle) {
+        themeToggle.addEventListener('click', () => {
+            document.body.classList.toggle('dark-mode');
+            
+            if (document.body.classList.contains('dark-mode')) {
+                localStorage.setItem('theme', 'dark');
+                iconMoon.style.display = 'none';
+                iconSun.style.display = 'inline-block';
+            } else {
+                localStorage.setItem('theme', 'light');
+                iconMoon.style.display = 'inline-block';
+                iconSun.style.display = 'none';
+            }
+        });
+    }
+
+    // --- Navigation Logic ---
     const navbar = document.querySelector(".navbar");
     const navLinksContainer = document.querySelector(".nav-links");
     const currentPath = window.location.pathname.toLowerCase();
@@ -21,10 +53,8 @@ document.addEventListener("DOMContentLoaded", function () {
         const dropdownLinks = document.querySelectorAll(".dropdown-content a");
         dropdownLinks.forEach((link) => {
             const linkHref = link.getAttribute("href").toLowerCase();
-            // Match exact path or sub-routes (e.g. /Aircraft/update/1 matches /Aircraft)
             if (currentPath === linkHref || (linkHref !== "/" && currentPath.startsWith(linkHref))) {
                 link.classList.add("active");
-                // Highlight the parent dropdown button
                 const parentDropdownBtn = link.closest('.dropdown').querySelector('.dropbtn');
                 if (parentDropdownBtn) {
                     parentDropdownBtn.classList.add('active');

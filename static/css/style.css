@@ -14,7 +14,7 @@ body { margin: 0; padding: 0; }
 }
 
 .nav-container {
-    max-width: 1050px;
+    max-width: 1400px;
     margin: 0 auto;
     padding: 0 20px;
     display: flex;
@@ -55,7 +55,6 @@ body { margin: 0; padding: 0; }
     height: 100%;
 }
 
-/* Nav Items & Animated Underline */
 .nav-item {
     color: #ecf0f1;
     font-size: 0.95rem;
@@ -93,7 +92,6 @@ body { margin: 0; padding: 0; }
     transform-origin: bottom left;
 }
 
-/* Dropdown Container */
 .dropdown {
     position: relative;
     display: flex;
@@ -111,13 +109,12 @@ body { margin: 0; padding: 0; }
     transform: rotate(180deg);
 }
 
-/* Dropdown Content with Smooth Fade/Slide Animation */
 .dropdown-content {
     visibility: hidden;
     opacity: 0;
     transform: translateY(15px);
     position: absolute;
-    top: 60px; /* Positions right below the navbar */
+    top: 60px;
     left: 0;
     background-color: #ffffff;
     min-width: 180px;
@@ -148,16 +145,14 @@ body { margin: 0; padding: 0; }
 .dropdown-content a:hover {
     background-color: #f1f5f9;
     color: #3498db;
-    padding-left: 25px; /* Slide-in effect on hover */
+    padding-left: 25px;
 }
 
-/* Scroll Elevation */
 .navbar-scrolled {
     box-shadow: 0 4px 18px rgba(0, 0, 0, 0.25);
     background-color: #1a252f;
 }
 
-/* Mobile Hamburger Layout Adjustments */
 @media (max-width: 768px) {
     .nav-links {
         display: none;
@@ -197,36 +192,56 @@ body { margin: 0; padding: 0; }
 }
 
 /* ======================================================
-   Base Page Styling
+   Base Page Styling 
 ====================================================== */
-* {
-    box-sizing: border-box;
-}
-
 body {
     font-family: 'Segoe UI', -apple-system, BlinkMacSystemFont, Tahoma, Geneva, Verdana, sans-serif;
-    background-color: #f1f5f9;
+    background-color: #f8fafc;
+    background-image: radial-gradient(#cbd5e1 1px, transparent 1px);
+    background-size: 24px 24px;
     color: #334155;
-    max-width: 1000px;
-    margin: 40px auto;
-    padding: 0 20px 60px 20px;
+    margin: 0; 
+    padding: 0;
     line-height: 1.5;
 }
 
-h1, h2 {
-    color: #1e293b;
-    font-weight: 700;
-    letter-spacing: -0.02em;
-    border-bottom: 3px solid #3498db;
-    padding-bottom: 12px;
-    margin-top: 45px;
-    margin-bottom: 24px;
+.main-container {
+    max-width: 1400px; 
+    width: 95%;
+    margin: 30px auto;
+    padding: 0 20px 60px 20px;
+}
+
+/* ======================================================
+   Side-by-Side Dashboard Layout
+====================================================== */
+.dashboard-wrapper {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 30px;
+    align-items: start;
+    margin-top: 15px;
+}
+
+@media (min-width: 1024px) {
+    .dashboard-wrapper {
+        grid-template-columns: 2.5fr 1fr; 
+    }
+}
+
+.dashboard-wrapper h2 {
+    margin-top: 0;
+    margin-bottom: 20px;
+}
+
+.dashboard-wrapper form {
+    max-width: 100%;
+    margin-top: 0;
 }
 
 /* ======================================================
    Table Container & Table Styling
 ====================================================== */
-/* Container wrapper ensures border-radius and shadows clip cleanly */
 .table-container {
     background-color: #ffffff;
     border-radius: 10px;
@@ -271,7 +286,6 @@ tbody tr:hover {
     background-color: #f8fafc;
 }
 
-/* Action Links (Edit) */
 td a {
     color: #2980b9;
     font-weight: 600;
@@ -288,7 +302,6 @@ td a:hover {
     color: #ffffff;
 }
 
-/* Inline delete forms */
 td form {
     margin: 0;
     padding: 0;
@@ -320,6 +333,7 @@ label {
 
 input[type="text"], 
 input[type="number"], 
+input[type="date"],
 select {
     padding: 9px 12px;
     width: 280px;
@@ -332,9 +346,7 @@ select {
     margin-bottom: 14px;
 }
 
-input[type="text"]:focus, 
-input[type="number"]:focus, 
-select:focus {
+input:focus, select:focus {
     outline: none;
     border-color: #3498db;
     box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.2);
@@ -426,14 +438,36 @@ button {
     cursor: not-allowed;
 }
 
-/* Scroll Elevation */
-.navbar-scrolled {
-    box-shadow: 0 4px 18px rgba(0, 0, 0, 0.25);
-    background-color: #243342;
-    transition: all 0.25s ease-in-out;
+/* ======================================================
+   Table Search Bar Styling
+====================================================== */
+.table-search-container {
+    padding: 12px 18px;
+    background-color: #f8fafc;
+    border-bottom: 1px solid #e2e8f0;
+    display: flex;
+    justify-content: flex-end; 
 }
 
-/* Mobile Hamburger Button (Hidden on Desktop) */
+.table-search-input {
+    padding: 8px 30px 8px 14px;
+    width: 250px;
+    border: 1px solid #cbd5e1;
+    border-radius: 20px;
+    font-size: 13px;
+    color: #1e293b;
+    background-color: #ffffff;
+    transition: all 0.2s ease-in-out;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='14' height='14' viewBox='0 0 24 24' fill='none' stroke='%2394a3b8' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Ccircle cx='11' cy='11' r='8'%3E%3C/circle%3E%3Cline x1='21' y1='21' x2='16.65' y2='16.65'%3E%3C/line%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: calc(100% - 10px) center; 
+}
+
+.table-search-input:focus {
+    width: 280px; 
+}
+
+/* Mobile Hamburger Button */
 .nav-toggle-btn {
     display: none;
     background: transparent;
@@ -452,52 +486,16 @@ button {
     transition: all 0.2s ease;
 }
 
-/* Mobile Layout */
 @media (max-width: 768px) {
-    .nav-toggle-btn {
-        display: flex;
-    }
-
-    .nav-links {
-        display: none;
-        flex-direction: column;
-        position: absolute;
-        top: 60px;
-        left: 0;
-        width: 100%;
-        background-color: #2c3e50;
-        padding: 15px 20px;
-        box-sizing: border-box;
-        border-bottom: 2px solid #3498db;
-        box-shadow: 0 8px 16px rgba(0, 0, 0, 0.15);
-    }
-
-    .nav-links.nav-open {
-        display: flex;
-    }
-
-    .nav-links a {
-        width: 100%;
-        padding: 10px 12px;
-    }
+    .nav-toggle-btn { display: flex; }
 }
 
-/* Sticky footer layout */
+/* Footer Styling */
 .site-wrapper {
     display: flex;
     flex-direction: column;
     min-height: 100vh;
 }
-
-.main-container {
-    flex: 1 0 auto;
-    max-width: 1000px;
-    width: 100%;
-    margin: 30px auto;
-    padding: 0 20px 40px 20px;
-}
-
-/* Footer Styling */
 .app-footer {
     flex-shrink: 0;
     background-color: #1e293b;
@@ -507,40 +505,116 @@ button {
     padding: 16px 20px;
     font-size: 0.85rem;
 }
-
-.footer-container p {
-    margin: 0;
-}
-
+.footer-container p { margin: 0; }
 
 /* ======================================================
-   Table Search Bar Styling
+   Theme Toggle Button Styling
 ====================================================== */
-.table-search-container {
-    padding: 12px 18px;
-    background-color: #f8fafc;
-    border-bottom: 1px solid #e2e8f0;
+.theme-btn {
+    background: none;
+    border: none;
+    font-size: 1.25rem;
+    cursor: pointer;
+    padding: 6px;
+    margin-left: 10px;
+    border-radius: 50%;
+    transition: background-color 0.2s, transform 0.2s;
     display: flex;
-    justify-content: flex-end; /* Aligns search bar to the right */
+    align-items: center;
+    justify-content: center;
 }
 
-.table-search-input {
-    padding: 8px 30px 8px 14px;
-    width: 250px;
-    border: 1px solid #cbd5e1;
-    border-radius: 20px; /* Pill shape */
-    font-size: 13px;
-    color: #1e293b;
-    background-color: #ffffff;
-    transition: all 0.2s ease-in-out;
-    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='14' height='14' viewBox='0 0 24 24' fill='none' stroke='%2394a3b8' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Ccircle cx='11' cy='11' r='8'%3E%3C/circle%3E%3Cline x1='21' y1='21' x2='16.65' y2='16.65'%3E%3C/line%3E%3C/svg%3E");
-    background-repeat: no-repeat;
-    background-position: calc(100% - 10px) center; /* Positions magnifying glass icon */
+.theme-btn:hover {
+    background-color: rgba(255, 255, 255, 0.15);
+    transform: scale(1.1);
 }
 
-.table-search-input:focus {
-    outline: none;
-    border-color: #3498db;
-    box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.2);
-    width: 280px; /* Expands slightly when focused */
+/* ======================================================
+   Dark Mode Overrides
+====================================================== */
+body.dark-mode {
+    background-color: #0f172a;
+    background-image: radial-gradient(#334155 1px, transparent 1px);
+    color: #cbd5e1;
+}
+
+body.dark-mode h1, 
+body.dark-mode h2,
+body.dark-mode label,
+body.dark-mode .page-info {
+    color: #f8fafc;
+}
+
+body.dark-mode .navbar {
+    background-color: #0b1120;
+    border-bottom: 3px solid #2980b9;
+}
+
+body.dark-mode .table-container,
+body.dark-mode form:not(td form),
+body.dark-mode .form-container,
+body.dark-mode .pagination-controls,
+body.dark-mode .table-search-container,
+body.dark-mode .dropdown-content {
+    background-color: #1e293b;
+    border-color: #334155;
+    box-shadow: 0 4px 14px rgba(0, 0, 0, 0.4);
+}
+
+body.dark-mode th {
+    background: linear-gradient(135deg, #1e3a5f, #2980b9);
+    color: #f1f5f9;
+}
+
+body.dark-mode td {
+    border-bottom-color: #334155;
+}
+
+body.dark-mode tbody tr:hover {
+    background-color: #334155;
+}
+
+body.dark-mode input[type="text"], 
+body.dark-mode input[type="number"], 
+body.dark-mode input[type="date"], 
+body.dark-mode select,
+body.dark-mode .table-search-input {
+    background-color: #0f172a;
+    color: #f1f5f9;
+    border-color: #475569;
+}
+
+body.dark-mode input:focus,
+body.dark-mode select:focus {
+    background-color: #1e293b;
+}
+
+body.dark-mode .page-btn {
+    background-color: #0f172a;
+    color: #cbd5e1;
+    border-color: #475569;
+}
+
+body.dark-mode .page-btn:hover:not(:disabled) {
+    background-color: #334155;
+    border-color: #64748b;
+}
+
+body.dark-mode .dropdown-content a {
+    color: #cbd5e1;
+}
+
+body.dark-mode .dropdown-content a:hover {
+    background-color: #334155;
+    color: #3498db;
+}
+
+body.dark-mode td a {
+    background-color: #0f172a;
+    border: 1px solid #3498db;
+}
+
+body.dark-mode td a:hover {
+    background-color: #3498db;
+    color: #ffffff;
 }

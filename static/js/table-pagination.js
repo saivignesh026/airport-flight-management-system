@@ -7,7 +7,7 @@ document.addEventListener("DOMContentLoaded", function () {
             return tr.querySelector("td") !== null;
         });
 
-        let filteredRows = [...allRows]; // Initially, all rows are visible
+        let filteredRows = [...allRows]; 
         let currentPage = 1;
 
         // Wrap the table in .table-container if not already wrapped
@@ -35,7 +35,6 @@ document.addEventListener("DOMContentLoaded", function () {
         function renderTable() {
             const totalPages = Math.ceil(filteredRows.length / ROWS_PER_PAGE) || 1;
             
-            // Ensure current page doesn't exceed total pages after a search
             if (currentPage > totalPages) currentPage = totalPages;
 
             const start = (currentPage - 1) * ROWS_PER_PAGE;
@@ -44,7 +43,7 @@ document.addEventListener("DOMContentLoaded", function () {
             // Hide ALL rows first
             allRows.forEach(row => row.style.display = "none");
 
-            // Show ONLY the filtered rows for the current page
+            // Show ONLY the filtered rows
             filteredRows.slice(start, end).forEach(row => row.style.display = "");
 
             // Update Pagination UI
@@ -56,7 +55,6 @@ document.addEventListener("DOMContentLoaded", function () {
                 </div>
             `;
 
-            // Attach event listeners to new buttons
             nav.querySelector(".btn-prev").addEventListener("click", () => {
                 if (currentPage > 1) { currentPage--; renderTable(); }
             });
@@ -64,7 +62,6 @@ document.addEventListener("DOMContentLoaded", function () {
                 if (currentPage < totalPages) { currentPage++; renderTable(); }
             });
 
-            // Hide pagination completely if there's no need for it
             if (allRows.length <= ROWS_PER_PAGE && filteredRows.length === allRows.length) {
                 nav.style.display = 'none';
             } else {
@@ -78,15 +75,14 @@ document.addEventListener("DOMContentLoaded", function () {
             const query = e.target.value.toLowerCase();
             
             filteredRows = allRows.filter(row => {
-                // Check if any text inside the row matches the search query
                 return row.textContent.toLowerCase().includes(query);
             });
             
-            currentPage = 1; // Always reset to page 1 when searching
+            currentPage = 1; 
             renderTable();
         });
 
-        // Initialize Table
+        // Initialize
         renderTable();
     });
 });
