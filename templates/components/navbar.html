@@ -1,7 +1,7 @@
 <header class="navbar">
     <div class="nav-container">
         <!-- Brand / Logo returns to Home -->
-        <a href="{{ url_for('Home') }}" class="nav-brand-link">
+        <a href="{{ url_for('Home') }}" class="nav-brand-link" style="text-decoration: none;">
             <div class="nav-brand">
                 <span class="brand-icon">✈</span>
                 <span class="brand-title">AFMS Portal</span>
@@ -10,16 +10,30 @@
 
         <!-- Navigation Links -->
         <nav class="nav-links">
-            <a href="{{ url_for('Home') }}" class="{{ 'active' if request.endpoint == 'Home' }}">Home</a>
-            <a href="{{ url_for('Airlines.Display_Airline') }}" class="{{ 'active' if request.blueprint == 'Airlines' }}">Airlines</a>
-            <a href="{{ url_for('Airports.Display_Airport') }}" class="{{ 'active' if request.blueprint == 'Airports' }}">Airports</a>
-            <a href="{{ url_for('Aircrafts.Display_Aircraft') }}" class="{{ 'active' if request.blueprint == 'Aircrafts' }}">Aircrafts</a>
-            <a href="{{ url_for('Runways.Display_Runway') }}" class="{{ 'active' if request.blueprint == 'Runways' }}">Runways</a>
-            <a href="{{ url_for('Terminals.Display_Terminal') }}" class="{{ 'active' if request.blueprint == 'Terminals' }}">Terminals</a>
-            <a href="{{ url_for('Gates.Display_Gate') }}" class="{{ 'active' if request.blueprint == 'Gates' }}">Gates</a>
-            <a href="{{ url_for('Departments.Display_Department') }}">Departments</a>
-            <a href="{{ url_for('Roles.Display_Role') }}">Roles</a>
-            <a href="{{ url_for('Employees.Display_Employee') }}">Employees</a>
+            <a href="{{ url_for('Home') }}" class="nav-item {{ 'active' if request.endpoint == 'Home' }}">Home</a>
+            
+            <!-- Operations Dropdown -->
+            <div class="dropdown">
+                <button class="dropbtn nav-item">Flight Ops <span class="chevron">▾</span></button>
+                <div class="dropdown-content">
+                    <a href="{{ url_for('Airlines.Display_Airline') }}">Airlines</a>
+                    <a href="{{ url_for('Airports.Display_Airport') }}">Airports</a>
+                    <a href="{{ url_for('Aircrafts.Display_Aircraft') }}">Aircrafts</a>
+                    <a href="{{ url_for('Runways.Display_Runway') }}">Runways</a>
+                    <a href="{{ url_for('Terminals.Display_Terminal') }}">Terminals</a>
+                    <a href="{{ url_for('Gates.Display_Gate') }}">Gates</a>
+                </div>
+            </div>
+
+            <!-- HR & Admin Dropdown -->
+            <div class="dropdown">
+                <button class="dropbtn nav-item">HR & Admin <span class="chevron">▾</span></button>
+                <div class="dropdown-content">
+                    <a href="{{ url_for('Departments.Display_Department') }}">Departments</a>
+                    <a href="{{ url_for('Roles.Display_Role') }}">Roles</a>
+                    <a href="{{ url_for('Employees.Display_Employee') }}">Employees</a>
+                </div>
+            </div>
         </nav>
     </div>
 </header>

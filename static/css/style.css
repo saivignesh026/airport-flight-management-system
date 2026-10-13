@@ -1,10 +1,7 @@
 /* ======================================================
-   Header & Navbar Styling
+   Header & Navbar Styling (Animated & Dropdowns)
 ====================================================== */
-body {
-    margin: 0;
-    padding: 0;
-}
+body { margin: 0; padding: 0; }
 
 .navbar {
     background-color: #2c3e50;
@@ -13,6 +10,7 @@ body {
     position: sticky;
     top: 0;
     z-index: 1000;
+    transition: all 0.3s ease-in-out;
 }
 
 .nav-container {
@@ -22,57 +20,181 @@ body {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    height: 60px;
+    height: 65px;
 }
 
 .nav-brand {
     display: flex;
     align-items: center;
-    gap: 8px;
+    gap: 10px;
     color: #ffffff;
-    font-size: 1.15rem;
+    font-size: 1.25rem;
     font-weight: 700;
     letter-spacing: 0.5px;
+    transition: transform 0.2s ease;
+}
+
+.nav-brand:hover {
+    transform: scale(1.02);
 }
 
 .brand-icon {
-    font-size: 1.3rem;
+    font-size: 1.4rem;
     color: #3498db;
+    transition: transform 0.4s ease;
+}
+
+.nav-brand:hover .brand-icon {
+    transform: rotate(-15deg) translateY(-2px);
 }
 
 .nav-links {
     display: flex;
     align-items: center;
-    gap: 6px;
+    gap: 15px;
+    height: 100%;
 }
 
-.nav-links a {
+/* Nav Items & Animated Underline */
+.nav-item {
     color: #ecf0f1;
+    font-size: 0.95rem;
+    font-weight: 500;
+    padding: 8px 12px;
+    text-decoration: none;
+    background: none;
+    border: none;
+    cursor: pointer;
+    font-family: inherit;
+    position: relative;
+    transition: color 0.2s ease;
+}
+
+.nav-item::after {
+    content: '';
+    position: absolute;
+    width: 100%;
+    transform: scaleX(0);
+    height: 3px;
+    bottom: 0;
+    left: 0;
+    background-color: #3498db;
+    transform-origin: bottom right;
+    transition: transform 0.3s cubic-bezier(0.86, 0, 0.07, 1);
+    border-radius: 2px;
+}
+
+.nav-item:hover, .nav-item.active {
+    color: #3498db;
+}
+
+.nav-item:hover::after, .nav-item.active::after {
+    transform: scaleX(1);
+    transform-origin: bottom left;
+}
+
+/* Dropdown Container */
+.dropdown {
+    position: relative;
+    display: flex;
+    align-items: center;
+    height: 100%;
+}
+
+.chevron {
+    font-size: 0.8rem;
+    margin-left: 4px;
+    transition: transform 0.3s ease;
+}
+
+.dropdown:hover .chevron {
+    transform: rotate(180deg);
+}
+
+/* Dropdown Content with Smooth Fade/Slide Animation */
+.dropdown-content {
+    visibility: hidden;
+    opacity: 0;
+    transform: translateY(15px);
+    position: absolute;
+    top: 60px; /* Positions right below the navbar */
+    left: 0;
+    background-color: #ffffff;
+    min-width: 180px;
+    box-shadow: 0 10px 25px rgba(0,0,0,0.15);
+    border-radius: 8px;
+    border-top: 3px solid #3498db;
+    padding: 10px 0;
+    transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    z-index: 1001;
+}
+
+.dropdown:hover .dropdown-content {
+    visibility: visible;
+    opacity: 1;
+    transform: translateY(0);
+}
+
+.dropdown-content a {
+    color: #2c3e50;
+    padding: 10px 20px;
+    text-decoration: none;
+    display: block;
     font-size: 0.9rem;
     font-weight: 500;
-    padding: 8px 14px;
-    border-radius: 6px;
-    text-decoration: none;
     transition: all 0.2s ease;
 }
 
-.nav-links a:hover {
-    background-color: rgba(52, 152, 219, 0.25);
-    color: #ffffff;
+.dropdown-content a:hover {
+    background-color: #f1f5f9;
+    color: #3498db;
+    padding-left: 25px; /* Slide-in effect on hover */
 }
 
-.nav-links a.active {
-    background-color: #3498db;
-    color: #ffffff;
+/* Scroll Elevation */
+.navbar-scrolled {
+    box-shadow: 0 4px 18px rgba(0, 0, 0, 0.25);
+    background-color: #1a252f;
 }
 
-/* Page wrapper inside base layout */
-.main-container {
-    max-width: 1000px;
-    margin: 30px auto;
-    padding: 0 20px 60px 20px;
+/* Mobile Hamburger Layout Adjustments */
+@media (max-width: 768px) {
+    .nav-links {
+        display: none;
+        flex-direction: column;
+        align-items: flex-start;
+        position: absolute;
+        top: 65px;
+        left: 0;
+        width: 100%;
+        background-color: #2c3e50;
+        padding: 15px 20px;
+        box-shadow: 0 8px 16px rgba(0, 0, 0, 0.15);
+        height: auto;
+    }
+    .dropdown-content {
+        position: static;
+        visibility: visible;
+        opacity: 1;
+        transform: none;
+        box-shadow: none;
+        border-top: none;
+        background-color: transparent;
+        padding: 0;
+        display: none;
+    }
+    .dropdown:hover .dropdown-content, .dropdown.active-mobile .dropdown-content {
+        display: block;
+    }
+    .dropdown-content a {
+        color: #bdc3c7;
+        padding-left: 30px;
+    }
+    .dropdown-content a:hover {
+        background-color: transparent;
+        color: #3498db;
+    }
 }
-
 
 /* ======================================================
    Base Page Styling
@@ -388,4 +510,37 @@ button {
 
 .footer-container p {
     margin: 0;
+}
+
+
+/* ======================================================
+   Table Search Bar Styling
+====================================================== */
+.table-search-container {
+    padding: 12px 18px;
+    background-color: #f8fafc;
+    border-bottom: 1px solid #e2e8f0;
+    display: flex;
+    justify-content: flex-end; /* Aligns search bar to the right */
+}
+
+.table-search-input {
+    padding: 8px 30px 8px 14px;
+    width: 250px;
+    border: 1px solid #cbd5e1;
+    border-radius: 20px; /* Pill shape */
+    font-size: 13px;
+    color: #1e293b;
+    background-color: #ffffff;
+    transition: all 0.2s ease-in-out;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='14' height='14' viewBox='0 0 24 24' fill='none' stroke='%2394a3b8' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Ccircle cx='11' cy='11' r='8'%3E%3C/circle%3E%3Cline x1='21' y1='21' x2='16.65' y2='16.65'%3E%3C/line%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: calc(100% - 10px) center; /* Positions magnifying glass icon */
+}
+
+.table-search-input:focus {
+    outline: none;
+    border-color: #3498db;
+    box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.2);
+    width: 280px; /* Expands slightly when focused */
 }

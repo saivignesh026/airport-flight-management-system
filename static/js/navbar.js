@@ -3,15 +3,32 @@ document.addEventListener("DOMContentLoaded", function () {
     const navLinksContainer = document.querySelector(".nav-links");
     const currentPath = window.location.pathname.toLowerCase();
 
-    // 1. Highlight active navigation item based on current URL path
+    // 1. Highlight active navigation item and parent dropdowns
     if (navLinksContainer) {
-        const links = navLinksContainer.querySelectorAll("a");
-        links.forEach((link) => {
+        // Clear all active states first
+        document.querySelectorAll('.nav-item').forEach(el => el.classList.remove('active'));
+        
+        // Handle standalone links (like Home)
+        const topLinks = navLinksContainer.querySelectorAll("a.nav-item");
+        topLinks.forEach((link) => {
+            const linkHref = link.getAttribute("href").toLowerCase();
+            if (currentPath === linkHref) {
+                link.classList.add("active");
+            }
+        });
+
+        // Handle dropdown links
+        const dropdownLinks = document.querySelectorAll(".dropdown-content a");
+        dropdownLinks.forEach((link) => {
             const linkHref = link.getAttribute("href").toLowerCase();
             // Match exact path or sub-routes (e.g. /Aircraft/update/1 matches /Aircraft)
             if (currentPath === linkHref || (linkHref !== "/" && currentPath.startsWith(linkHref))) {
-                links.forEach((l) => l.classList.remove("active"));
                 link.classList.add("active");
+                // Highlight the parent dropdown button
+                const parentDropdownBtn = link.closest('.dropdown').querySelector('.dropbtn');
+                if (parentDropdownBtn) {
+                    parentDropdownBtn.classList.add('active');
+                }
             }
         });
     }
@@ -43,12 +60,15 @@ document.addEventListener("DOMContentLoaded", function () {
             navLinksContainer.classList.toggle("nav-open");
             toggleBtn.classList.toggle("is-active");
         });
-
-        // Close mobile dropdown when a link is clicked
-        navLinksContainer.querySelectorAll("a").forEach((link) => {
-            link.addEventListener("click", () => {
-                navLinksContainer.classList.remove("nav-open");
-                toggleBtn.classList.remove("is-active");
+        
+        // Toggle dropdowns on mobile click
+        const dropBtns = document.querySelectorAll('.dropbtn');
+        dropBtns.forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                if(window.innerWidth <= 768) {
+                    e.preventDefault();
+                    btn.parentElement.classList.toggle('active-mobile');
+                }
             });
         });
     }
