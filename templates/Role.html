@@ -1,0 +1,49 @@
+{% extends 'base.html'%}
+{%block title%}AFMS-Roles{%endblock%}
+{% block content %}
+
+    <h1>Roles List</h1>
+
+    <table>
+        <tr>
+            <th>Role ID</th>
+            <th>Role Name</th>
+            <th>Department Name</th>
+            <th>Edit</th>
+            <th>Delete</th>
+        </tr>
+
+        {%for Role in Role_Data%}
+        <tr>
+            <td>{{Role.Role_ID}}</td>
+            <td>{{Role.Role_Name}}</td>
+            <td>{{Role.Department_Name}}</td>
+            <td>
+                <a href="{{url_for('Roles.Update_Role', id=Role.Role_ID)}}">Edit</a>
+            </td>
+            <td>
+                <form action="{{ url_for('Roles.Delete_Role', id=Role.Role_ID)}}" method="POST">
+                    <button type="submit" class="btn-delete">Delete</button>
+                </form>
+            </td>
+        </tr>
+        {%endfor%}
+    </table>
+
+    <h1>Add Role</h1>
+    
+    <form action="{{ url_for('Roles.Add_Role') }}" method="POST">
+        <label>Role Name</label>
+        <input type="text" name="Role_Name" required><br>
+
+        <label>Department Name</label>
+        <select name="Department_ID" required>
+            {%for Department in Department_Data%}
+            <option value="{{Department.Department_ID}}">{{Department.Department_Name}}</option>
+            {%endfor%}
+        </select><br>
+
+        <button type="submit" class="btn-submit">Add</button>
+    </form>
+
+{%endblock%}

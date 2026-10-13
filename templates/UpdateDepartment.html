@@ -1,0 +1,22 @@
+{% extends 'base.html'%}
+{%block title%}AFMS-Departments{%endblock%}
+{% block content %}
+
+<h1>Update Department Details</h1>
+
+<div>
+    <form action="{{url_for('Departments.Update_Department', id=Department.Department_ID)}}" method="POST">
+        
+        <label>Department Name</label>
+        <input type="text" name="Department_Name" value="{{Department.Department_Name}}" required><br>
+
+        <label>Description</label>
+        <input type="text" name="Description" value="{{Department.Description}}"><br>
+
+        <button type="submit" class="btn-submit">Save Changes</button>
+        <a href="{{ url_for('Departments.Display_Department')}}" style="color:red">Cancel</a>
+        
+    </form>
+</div>
+
+{%endblock%}

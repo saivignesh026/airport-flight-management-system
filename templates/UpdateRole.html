@@ -1,0 +1,28 @@
+{% extends 'base.html'%}
+{%block title%}AFMS-Roles{%endblock%}
+{% block content %}
+
+<h1>Update Role Details</h1>
+
+<div>
+    <form action="{{url_for('Roles.Update_Role', id=Role.Role_ID)}}" method="POST">
+        
+        <label>Role Name</label>
+        <input type="text" name="Role_Name" value="{{Role.Role_Name}}" required><br>
+
+        <label>Department Name</label>
+        <select name="Department_ID" required>
+            {%for Department in Department_Data%}
+            <option value="{{Department.Department_ID}}" 
+                {{ 'selected' if Department.Department_ID == Role.Department_ID }}
+            >{{Department.Department_Name}}</option>
+            {%endfor%}
+        </select><br>
+
+        <button type="submit" class="btn-submit">Save Changes</button>
+        <a href="{{ url_for('Roles.Display_Role')}}" style="color:red">Cancel</a>
+        
+    </form>
+</div>
+
+{%endblock%}

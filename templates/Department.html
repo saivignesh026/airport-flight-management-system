@@ -1,0 +1,45 @@
+{% extends 'base.html'%}
+{%block title%}AFMS-Departments{%endblock%}
+{% block content %}
+
+    <h1>Departments List</h1>
+
+    <table>
+        <tr>
+            <th>Department ID</th>
+            <th>Department Name</th>
+            <th>Description</th>
+            <th>Edit</th>
+            <th>Delete</th>
+        </tr>
+
+        {%for Department in Department_Data%}
+        <tr>
+            <td>{{Department.Department_ID}}</td>
+            <td>{{Department.Department_Name}}</td>
+            <td>{{Department.Description}}</td>
+            <td>
+                <a href="{{url_for('Departments.Update_Department', id=Department.Department_ID)}}">Edit</a>
+            </td>
+            <td>
+                <form action="{{ url_for('Departments.Delete_Department', id=Department.Department_ID)}}" method="POST">
+                    <button type="submit" class="btn-delete">Delete</button>
+                </form>
+            </td>
+        </tr>
+        {%endfor%}
+    </table>
+
+    <h1>Add Department</h1>
+    
+    <form action="{{ url_for('Departments.Add_Department') }}" method="POST">
+        <label>Department Name</label>
+        <input type="text" name="Department_Name" required><br>
+
+        <label>Description</label>
+        <input type="text" name="Description"><br>
+
+        <button type="submit" class="btn-submit">Add</button>
+    </form>
+
+{%endblock%}

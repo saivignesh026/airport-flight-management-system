@@ -17,6 +17,9 @@
             <a href="{{ url_for('Runways.Display_Runway') }}" class="{{ 'active' if request.blueprint == 'Runways' }}">Runways</a>
             <a href="{{ url_for('Terminals.Display_Terminal') }}" class="{{ 'active' if request.blueprint == 'Terminals' }}">Terminals</a>
             <a href="{{ url_for('Gates.Display_Gate') }}" class="{{ 'active' if request.blueprint == 'Gates' }}">Gates</a>
+            <a href="{{ url_for('Departments.Display_Department') }}">Departments</a>
+            <a href="{{ url_for('Roles.Display_Role') }}">Roles</a>
+            <a href="{{ url_for('Employees.Display_Employee') }}">Employees</a>
         </nav>
     </div>
 </header>

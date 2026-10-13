@@ -1,0 +1,74 @@
+{% extends 'base.html'%}
+{%block title%}AFMS-Employees{%endblock%}
+{% block content %}
+
+    <h1>Employees List</h1>
+
+    <table>
+        <tr>
+            <th>Employee ID</th>
+            <th>Employee Name</th>
+            <th>Department</th>
+            <th>Role</th>
+            <th>Hire Date</th>
+            <th>Status</th>
+            <th>Edit</th>
+            <th>Delete</th>
+        </tr>
+
+        {%for Employee in Employee_Data%}
+        <tr>
+            <td>{{Employee.Employee_ID}}</td>
+            <td>{{Employee.Employee_Name}}</td>
+            <td>{{Employee.Department_Name}}</td>
+            <td>{{Employee.Role_Name}}</td>
+            <td>{{Employee.Hire_Date}}</td>
+            <td>{{Employee.Employee_Status}}</td>
+            <td>
+                <a href="{{url_for('Employees.Update_Employee', id=Employee.Employee_ID)}}">Edit</a>
+            </td>
+            <td>
+                <form action="{{ url_for('Employees.Delete_Employee', id=Employee.Employee_ID)}}" method="POST">
+                    <button type="submit" class="btn-delete">Delete</button>
+                </form>
+            </td>
+        </tr>
+        {%endfor%}
+    </table>
+
+    <h1>Add Employee</h1>
+    
+    <form action="{{ url_for('Employees.Add_Employee') }}" method="POST">
+        <label>Employee Name</label>
+        <input type="text" name="Employee_Name" required><br>
+
+        <label>Department Name</label>
+        <select name="Department_ID">
+            <option value="">None</option>
+            {%for Department in Department_Data%}
+            <option value="{{Department.Department_ID}}">{{Department.Department_Name}}</option>
+            {%endfor%}
+        </select><br>
+        
+        <label>Role Name</label>
+        <select name="Role_ID">
+            <option value="">None</option>
+            {%for Role in Role_Data%}
+            <option value="{{Role.Role_ID}}">{{Role.Role_Name}}</option>
+            {%endfor%}
+        </select><br>
+
+        <label>Hire Date</label>
+        <input type="date" name="Hire_Date"><br>
+
+        <label>Status</label>
+        <select name="Employee_Status" required>
+            <option value="Active">Active</option>
+            <option value="On Leave">On Leave</option>
+            <option value="Resigned">Resigned</option>
+        </select><br>
+
+        <button type="submit" class="btn-submit">Add</button>
+    </form>
+
+{%endblock%}
