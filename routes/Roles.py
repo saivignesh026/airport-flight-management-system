@@ -9,10 +9,7 @@ Roles_bp = Blueprint(
 
 @Roles_bp.route('/')
 def Display_Role():
-    sql = 'SELECT r.Role_ID, r.Role_Name, r.Department_ID, d.Department_Name \
-           FROM Role r \
-           JOIN Department d ON r.Department_ID = d.Department_ID \
-           ORDER BY r.Role_ID'
+    sql = 'select * from Role_Details'
     Role_Data = fetch_all(sql)
     Department_Data = fetch_all('SELECT Department_ID, Department_Name FROM Department')
     return render_template('Role.html', Role_Data=Role_Data, Department_Data=Department_Data)
@@ -47,10 +44,7 @@ def Update_Role(id):
         execute(sql, params)
         return redirect(url_for('Roles.Display_Role'))
     else:
-        sql = 'SELECT r.Role_ID, r.Role_Name, r.Department_ID, d.Department_Name \
-               FROM Role r \
-               JOIN Department d ON r.Department_ID = d.Department_ID \
-               WHERE r.Role_ID=%s'
+        sql = 'call Role_To_Edit(%s)'
         params = (id,)
         Role_To_Edit = fetch_one(sql, params)    
         Department_Data = fetch_all('SELECT Department_ID, Department_Name FROM Department')

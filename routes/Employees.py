@@ -9,12 +9,7 @@ Employees_bp = Blueprint(
 
 @Employees_bp.route('/')
 def Display_Employee():
-    sql = 'SELECT e.Employee_ID, e.Employee_Name, e.Hire_Date, e.Employee_Status, \
-                  e.Department_ID, d.Department_Name, e.Role_ID, r.Role_Name \
-           FROM Employee e \
-           LEFT JOIN Department d ON e.Department_ID = d.Department_ID \
-           LEFT JOIN Role r ON e.Role_ID = r.Role_ID \
-           ORDER BY e.Employee_ID'
+    sql = 'select * from Employee_Details'
     Employee_Data = fetch_all(sql)
     Department_Data = fetch_all('SELECT Department_ID, Department_Name FROM Department')
     Role_Data = fetch_all('SELECT Role_ID, Role_Name FROM Role')
@@ -59,12 +54,7 @@ def Update_Employee(id):
         execute(sql, params)
         return redirect(url_for('Employees.Display_Employee'))
     else:
-        sql = 'SELECT e.Employee_ID, e.Employee_Name, e.Hire_Date, e.Employee_Status, \
-                      e.Department_ID, d.Department_Name, e.Role_ID, r.Role_Name \
-               FROM Employee e \
-               LEFT JOIN Department d ON e.Department_ID = d.Department_ID \
-               LEFT JOIN Role r ON e.Role_ID = r.Role_ID \
-               WHERE e.Employee_ID=%s'
+        sql = 'call Employee_To_Edit(%s)'
         params = (id,)
         Employee_To_Edit = fetch_one(sql, params)    
         Department_Data = fetch_all('SELECT Department_ID, Department_Name FROM Department')
