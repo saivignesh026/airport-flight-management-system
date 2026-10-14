@@ -6,7 +6,7 @@
 
     <table>
         <tr>
-            <th>Terminal ID</th>
+           
             <th>Terminal Number</th>
             <th>Terminal Name</th>
             <th>Status</th>
@@ -17,7 +17,7 @@
 
         {% for Terminal in Terminal_Data %}
         <tr>
-            <td>{{ Terminal.Terminal_ID }}</td>
+            
             <td>{{ Terminal.Terminal_Number if Terminal.Terminal_Number else '' }}</td>
             <td>{{ Terminal.Terminal_Name }}</td>
             <td>{{ Terminal.Terminal_Status }}</td>
