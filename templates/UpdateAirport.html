@@ -5,7 +5,7 @@
 
 <h1>Update Airport Details</h1>
 
-<form form="{{url_for('Airports.Update_Airport' , id=Airport.Airport_ID)}}" method="POST">
+<form action="{{url_for('Airports.Update_Airport' , id=Airport.Airport_ID)}}" method="POST">
 
     <label>IATA Code</label>
     <input type="text" name="Airport_IATA_Code" value="{{Airport.IATA_Code}}"><br>

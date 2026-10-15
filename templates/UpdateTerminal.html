@@ -27,7 +27,7 @@
                 {% for Airport in Airport_Data %}
                 <option value="{{ Airport.Airport_ID }}" {{ 'selected' if Airport.Airport_ID == Terminal.Airport_ID }}>
                     {{ Airport.Airport_Name }}
-                </option>
+                </option>   
                 {% endfor %}
             </select><br>
 

@@ -334,6 +334,11 @@ label {
 input[type="text"], 
 input[type="number"], 
 input[type="date"],
+input[type="email"],
+input[type="tel"],
+input[type="time"],
+input[type="datetime-local"],
+input:not([type]),
 select {
     padding: 9px 12px;
     width: 280px;
@@ -577,6 +582,11 @@ body.dark-mode tbody tr:hover {
 body.dark-mode input[type="text"], 
 body.dark-mode input[type="number"], 
 body.dark-mode input[type="date"], 
+body.dark-mode input[type="email"],
+body.dark-mode input[type="tel"],
+body.dark-mode input[type="time"],
+body.dark-mode input[type="datetime-local"],
+body.dark-mode input:not([type]),
 body.dark-mode select,
 body.dark-mode .table-search-input {
     background-color: #0f172a;
@@ -616,5 +626,140 @@ body.dark-mode td a {
 
 body.dark-mode td a:hover {
     background-color: #3498db;
+    color: #ffffff;
+}
+
+/* ======================================================
+   Universal Searchable Dropdown Styling
+====================================================== */
+.custom-select-wrapper {
+    position: relative;
+    display: inline-block;
+    width: 306px; /* Matches 280px input + 24px padding + 2px border */
+    margin-bottom: 14px;
+    vertical-align: middle;
+}
+
+.custom-select-trigger {
+    padding: 9px 32px 9px 12px;
+    border: 1px solid #cbd5e1;
+    border-radius: 6px;
+    font-size: 14px;
+    color: #1e293b;
+    background-color: #ffffff;
+    cursor: pointer;
+    user-select: none;
+    position: relative;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    transition: all 0.2s ease-in-out;
+}
+
+.custom-select-trigger::after {
+    content: "▾";
+    position: absolute;
+    right: 12px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: #64748b;
+    font-size: 12px;
+    transition: transform 0.2s ease;
+}
+
+.custom-select-wrapper.open .custom-select-trigger {
+    border-color: #3498db;
+    box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.2);
+}
+
+.custom-select-wrapper.open .custom-select-trigger::after {
+    transform: translateY(-50%) rotate(180deg);
+}
+
+.custom-select-dropdown {
+    display: none;
+    position: absolute;
+    top: calc(100% + 4px);
+    left: 0;
+    width: 100%;
+    background-color: #ffffff;
+    border: 1px solid #cbd5e1;
+    border-radius: 8px;
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
+    z-index: 999;
+    overflow: hidden;
+}
+
+.custom-select-wrapper.open .custom-select-dropdown {
+    display: block;
+}
+
+.custom-select-search {
+    width: calc(100% - 16px) !important;
+    margin: 8px !important;
+    padding: 7px 10px !important;
+    box-sizing: border-box;
+    border: 1px solid #cbd5e1;
+    border-radius: 5px;
+    font-size: 13px;
+}
+
+.custom-select-options {
+    max-height: 180px;
+    overflow-y: auto;
+}
+
+.custom-select-option {
+    padding: 9px 12px;
+    font-size: 14px;
+    color: #1e293b;
+    cursor: pointer;
+    transition: background-color 0.15s ease;
+}
+
+.custom-select-option:hover {
+    background-color: #ebf5fb;
+    color: #2980b9;
+}
+
+.custom-select-option.selected {
+    background-color: #3498db;
+    color: #ffffff;
+    font-weight: 600;
+}
+
+.custom-select-no-results {
+    padding: 10px 12px;
+    font-size: 13px;
+    color: #94a3b8;
+    text-align: center;
+    font-style: italic;
+}
+
+/* Dark Mode Overrides for Searchable Dropdown */
+body.dark-mode .custom-select-trigger,
+body.dark-mode .custom-select-dropdown {
+    background-color: #0f172a;
+    color: #f1f5f9;
+    border-color: #475569;
+}
+
+body.dark-mode .custom-select-search {
+    background-color: #1e293b !important;
+    color: #f1f5f9 !important;
+    border-color: #475569 !important;
+}
+
+body.dark-mode .custom-select-option {
+    color: #f1f5f9;
+}
+
+body.dark-mode .custom-select-option:hover {
+    background-color: #1e293b;
+    color: #38bdf8;
+}
+
+body.dark-mode .custom-select-option.selected {
+    background-color: #2980b9;
     color: #ffffff;
 }

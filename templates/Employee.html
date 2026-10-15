@@ -8,6 +8,7 @@
         <tr>
             <th>Employee ID</th>
             <th>Employee Name</th>
+            <th>Email and Contact Number</th>
             <th>Department</th>
             <th>Role</th>
             <th>Hire Date</th>
@@ -20,6 +21,7 @@
         <tr>
             <td>{{Employee.Employee_ID}}</td>
             <td>{{Employee.Employee_Name}}</td>
+            <td>{{Employee.Employee_Email}}<br>{{Employee.Contact_Number}}</td>
             <td>{{Employee.Department_Name}}</td>
             <td>{{Employee.Role_Name}}</td>
             <td>{{Employee.Hire_Date}}</td>
@@ -41,6 +43,12 @@
     <form action="{{ url_for('Employees.Add_Employee') }}" method="POST">
         <label>Employee Name</label>
         <input type="text" name="Employee_Name" required><br>
+
+        <label>Email</label>
+        <input type="email" name="Employee_Email" required><br>
+
+        <label>Phone Number</label>
+        <input type="tel" name="Contact_Number" required><br>
 
         <label>Department Name</label>
         <select name="Department_ID">
