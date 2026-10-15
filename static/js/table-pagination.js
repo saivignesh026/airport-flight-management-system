@@ -1,88 +1,81 @@
 document.addEventListener("DOMContentLoaded", function () {
-    const ROWS_PER_PAGE = 5;
+    const ROWS_PER_PAGE = 6;
 
     document.querySelectorAll("table").forEach(function (table) {
-        // Collect ONLY data rows (skips header rows with <th>)
-        const allRows = Array.from(table.querySelectorAll("tr")).filter(function (tr) {
-            return tr.querySelector("td") !== null;
-        });
-
-        let filteredRows = [...allRows]; 
+        const allRows = Array.from(table.querySelectorAll("tr")).filter(tr => tr.querySelector("td") !== null);
+        let filteredRows = [...allRows];
         let currentPage = 1;
 
-        // Wrap the table in .table-container if not already wrapped
         if (!table.parentElement.classList.contains("table-container")) {
             const container = document.createElement("div");
             container.className = "table-container";
             table.parentNode.insertBefore(container, table);
             container.appendChild(table);
         }
-        
+
         const targetContainer = table.closest(".table-container");
 
-        // 1. Create and inject Search Bar dynamically
+        // Header Chrome with Live Count + Search Input
         const searchContainer = document.createElement("div");
         searchContainer.className = "table-search-container";
-        searchContainer.innerHTML = `<input type="text" class="table-search-input" placeholder="Search records...">`;
+        searchContainer.innerHTML = `
+            <span class="page-info table-count-badge">${allRows.length} total records</span>
+            <input type="text" class="table-search-input" placeholder="Search table...">
+        `;
         targetContainer.insertBefore(searchContainer, table);
 
-        // 2. Create Pagination Controls container
+        const countBadge = searchContainer.querySelector(".table-count-badge");
         const nav = document.createElement("div");
         nav.className = "pagination-controls";
         targetContainer.parentNode.insertBefore(nav, targetContainer.nextSibling);
 
-        // Render Function: Handles both searching and paginating
         function renderTable() {
             const totalPages = Math.ceil(filteredRows.length / ROWS_PER_PAGE) || 1;
-            
             if (currentPage > totalPages) currentPage = totalPages;
 
             const start = (currentPage - 1) * ROWS_PER_PAGE;
             const end = start + ROWS_PER_PAGE;
 
-            // Hide ALL rows first
-            allRows.forEach(row => row.style.display = "none");
+            allRows.forEach(row => (row.style.display = "none"));
+            filteredRows.slice(start, end).forEach(row => (row.style.display = ""));
 
-            // Show ONLY the filtered rows
-            filteredRows.slice(start, end).forEach(row => row.style.display = "");
+            countBadge.textContent = filteredRows.length === allRows.length
+                ? `${allRows.length} records`
+                : `${filteredRows.length} of ${allRows.length} records`;
 
-            // Update Pagination UI
             nav.innerHTML = `
-                <span class="page-info">Showing page ${currentPage} of ${totalPages} (${filteredRows.length} records found)</span>
+                <span class="page-info">Page ${currentPage} of ${totalPages}</span>
                 <div class="pagination-buttons">
-                    <button type="button" class="page-btn btn-prev" ${currentPage === 1 ? "disabled" : ""}>Previous</button>
-                    <button type="button" class="page-btn btn-next" ${currentPage === totalPages ? "disabled" : ""}>Next</button>
+                    <button type="button" class="page-btn btn-prev" ${currentPage === 1 ? "disabled" : ""}>← Previous</button>
+                    <button type="button" class="page-btn btn-next" ${currentPage === totalPages ? "disabled" : ""}>Next →</button>
                 </div>
             `;
 
-            nav.querySelector(".btn-prev").addEventListener("click", () => {
-                if (currentPage > 1) { currentPage--; renderTable(); }
-            });
-            nav.querySelector(".btn-next").addEventListener("click", () => {
-                if (currentPage < totalPages) { currentPage++; renderTable(); }
+            nav.querySelector(".btn-prev").addEventListener("pointerdown", () => {
+                if (currentPage > 1) {
+                    currentPage--;
+                    renderTable();
+                }
             });
 
-            if (allRows.length <= ROWS_PER_PAGE && filteredRows.length === allRows.length) {
-                nav.style.display = 'none';
-            } else {
-                nav.style.display = 'flex';
-            }
+            nav.querySelector(".btn-next").addEventListener("pointerdown", () => {
+                if (currentPage < totalPages) {
+                    currentPage++;
+                    renderTable();
+                }
+            });
+
+            nav.style.display = allRows.length <= ROWS_PER_PAGE && filteredRows.length === allRows.length ? "none" : "flex";
         }
 
-        // 3. Search Event Listener
         const searchInput = searchContainer.querySelector(".table-search-input");
         searchInput.addEventListener("input", function (e) {
             const query = e.target.value.toLowerCase();
-            
-            filteredRows = allRows.filter(row => {
-                return row.textContent.toLowerCase().includes(query);
-            });
-            
-            currentPage = 1; 
+            filteredRows = allRows.filter(row => row.textContent.toLowerCase().includes(query));
+            currentPage = 1;
             renderTable();
         });
 
-        // Initialize
         renderTable();
     });
 });
