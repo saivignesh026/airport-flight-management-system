@@ -58,19 +58,19 @@
 <form action="{{ url_for('Airlines.Add_Airline')}}" method="POST">
     
     <label for="airline_name">Airline Name:</label>
-    <input type="text" id="airline_name" name="Airline_Name">
+    <input type="text" id="airline_name" name="Airline_Name" placeholder="e.g., IndiGo, Air India">
     <br>
     
     <label for="iata_code">IATA Code:</label>
-    <input type="text" id="iata_code" name="IATA_Code">
+    <input type="text" id="iata_code" name="IATA_Code"  placeholder="2-letter code (e.g., 6E, AI)">
     <br>
 
     <label for="icao_code">ICAO Code:</label>
-    <input type="text" id="icao_code" name="ICAO_Code">
+    <input type="text" id="icao_code" name="ICAO_Code" placeholder="3-letter code (e.g., IGO, AIC)">
     <br>
 
     <label for="airline_country">Country:</label>
-    <input type="text" id="airline_country" name="Airline_Country">
+    <input type="text" id="airline_country" name="Airline_Country" placeholder="e.g., India, United Arab Emirates">
     
     <br>
     <button type="submit" class="btn-submit">Add Flight</button>

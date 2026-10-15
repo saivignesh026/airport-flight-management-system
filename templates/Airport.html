@@ -50,16 +50,16 @@
 <form action="{{url_for('Airports.Add_Airport')}}" method="POST">
 
     <label>IATA Code</label>
-    <input type="text" name="Airport_IATA_Code"><br>
+    <input type="text" name="Airport_IATA_Code" placeholder="3-letter code (e.g., HYD, BOM)"><br>
 
     <label>Name</label>
-    <input type="text" name="Airport_Name"><br>
+    <input type="text" name="Airport_Name" placeholder="e.g., Rajiv Gandhi International Airport"><br>
 
     <label>City</label>
-    <input type="text" name="Airport_City"><br>
+    <input type="text" name="Airport_City" placeholder="e.g., Hyderabad, Mumbai"><br>
 
     <label>Country</label>
-    <input type="text" name="Airport_Country"><br>
+    <input type="text" name="Airport_Country" placeholder="e.g., India"><br>
 
     <button type="submit" class="btn-submit">Add</button>
 

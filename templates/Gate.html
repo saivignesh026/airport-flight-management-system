@@ -39,7 +39,7 @@
     <form action="{{ url_for('Gates.Add_Gate') }}" method="POST">
 
         <label>Gate Number</label>
-        <input type="text" name="Gate_Number" maxlength="3" required><br>
+        <input type="text" name="Gate_Number" maxlength="3" placeholder="e.g., G15, G22" required><br>
 
         <label>Status</label>
         <select name="Gate_Status" required>

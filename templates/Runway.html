@@ -38,10 +38,10 @@
     <form action="{{ url_for('Runways.Add_Runway') }}" method="POST">
 
         <label>Code</label>
-        <input type="text" name="Runway_Code" required><br>
+        <input type="text" name="Runway_Code" required placeholder="e.g., 09L/27R, 14/32"><br>
 
         <label>Length</label>
-        <input type="number" step="any" min="0" name="Runway_Length" required><br>
+        <input type="number" step="any" min="0" name="Runway_Length" placeholder="Length in metres (e.g., 4260.00)"  required ><br>
 
         <label>Status</label>
         <select name="Runway_Status" required>

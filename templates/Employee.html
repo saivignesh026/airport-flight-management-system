@@ -42,13 +42,13 @@
     
     <form action="{{ url_for('Employees.Add_Employee') }}" method="POST">
         <label>Employee Name</label>
-        <input type="text" name="Employee_Name" required><br>
+        <input type="text" name="Employee_Name" placeholder="Enter Full Name" required><br>
 
         <label>Email</label>
-        <input type="email" name="Employee_Email" required><br>
+        <input type="email" name="Employee_Email" placeholder="e.g., arjun.mehta@airport.com" required><br>
 
         <label>Phone Number</label>
-        <input type="tel" name="Contact_Number" required><br>
+        <input type="tel" name="Contact_Number" placeholder="10-digit number (e.g., 9876543210)" required><br>
 
         <label>Department Name</label>
         <select name="Department_ID">

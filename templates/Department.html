@@ -34,11 +34,11 @@
     
     <form action="{{ url_for('Departments.Add_Department') }}" method="POST">
         <label>Department Name</label>
-        <input type="text" name="Department_Name" required><br>
+        <input type="text" name="Department_Name" placeholder="e.g., Air Traffic Control, Security" required><br>
 
         <label>Description</label>
         <input type="text" name="Description"><br>
-
+        
         <button type="submit" class="btn-submit">Add</button>
     </form>
 
