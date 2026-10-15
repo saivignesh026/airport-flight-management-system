@@ -1,168 +1,214 @@
-document.addEventListener("DOMContentLoaded", function () {
-    // --- 1. Dark/Light Mode Logic ---
-    const themeToggle = document.getElementById("theme-toggle");
-    const iconMoon = document.querySelector(".icon-moon");
-    const iconSun = document.querySelector(".icon-sun");
+/* navbar.js
+   Theme toggle, active links, scroll shadow, mobile menu, split-view upgrade.
+   Script order (all with `defer`): searchable-select.js, navbar.js,
+   table-pagination.js (pagination LAST). */
+(function () {
+    "use strict";
 
-    if (localStorage.getItem("theme") === "dark") {
-        document.body.classList.add("dark-mode");
-        if (iconMoon && iconSun) {
-            iconMoon.style.display = "none";
-            iconSun.style.display = "inline-block";
+    const root = document.documentElement;
+    const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)");
+    const mobileMq = window.matchMedia("(max-width: 768px)");
+    const THEME_KEY = "theme";
+
+    function storedTheme() {
+        try { return localStorage.getItem(THEME_KEY); } catch (e) { return null; }
+    }
+
+    // --- 1. Dark / light mode -------------------------------------------------
+    function initTheme() {
+        const btn = document.getElementById("theme-toggle");
+        const systemDark = window.matchMedia("(prefers-color-scheme: dark)");
+        const isDark = () => root.classList.contains("dark-mode");
+        const setDark = (dark) => {
+            root.classList.toggle("dark-mode", dark);
+            if (btn) btn.setAttribute("aria-pressed", String(dark));
+        };
+
+        // Safety net if theme-init.js was not added to <head> (idempotent).
+        const saved = storedTheme();
+        setDark(saved ? saved === "dark" : systemDark.matches);
+
+        if (btn) {
+            btn.addEventListener("click", () => {
+                const next = !isDark();
+                try { localStorage.setItem(THEME_KEY, next ? "dark" : "light"); } catch (e) { /* ignore */ }
+
+                // Rare action, so a short crossfade is fine. The browser
+                // snapshots the page and fades it on the GPU, which is far
+                // cheaper than transitioning colours on every element.
+                if (document.startViewTransition && !reduceMotion.matches) {
+                    document.startViewTransition(() => setDark(next));
+                } else {
+                    setDark(next);
+                }
+            });
         }
-    }
 
-    if (themeToggle) {
-        themeToggle.addEventListener("click", () => {
-            document.body.classList.toggle("dark-mode");
-            const isDark = document.body.classList.contains("dark-mode");
-            localStorage.setItem("theme", isDark ? "dark" : "light");
-            if (iconMoon && iconSun) {
-                iconMoon.style.display = isDark ? "none" : "inline-block";
-                iconSun.style.display = isDark ? "inline-block" : "none";
-            }
+        // Follow the OS only while the user hasn't chosen explicitly.
+        systemDark.addEventListener("change", (e) => {
+            if (!storedTheme()) setDark(e.matches);
         });
     }
 
-    // --- 2. Active Navigation & Scroll Depth ---
-    const navbar = document.querySelector(".navbar");
-    const navLinksContainer = document.querySelector(".nav-links");
-    const currentPath = window.location.pathname.toLowerCase();
+    // --- 2. Active navigation -------------------------------------------------
+    function initActiveLinks() {
+        const navLinks = document.querySelector(".nav-links");
+        if (!navLinks) return;
 
-    if (navLinksContainer) {
-        document.querySelectorAll(".nav-item").forEach(el => el.classList.remove("active"));
+        const normalize = (p) => {
+            const s = p.toLowerCase().replace(/\/+$/, "");
+            return s === "" ? "/" : s;
+        };
+        const current = normalize(window.location.pathname);
+        const matches = (linkPath) =>
+            current === linkPath || (linkPath !== "/" && current.startsWith(linkPath + "/"));
 
-        navLinksContainer.querySelectorAll("a.nav-item").forEach(link => {
-            if (currentPath === link.getAttribute("href").toLowerCase()) {
+        document.querySelectorAll(".nav-item").forEach((el) => {
+            el.classList.remove("active");
+            el.removeAttribute("aria-current");
+        });
+
+        navLinks.querySelectorAll("a.nav-item").forEach((link) => {
+            const href = link.getAttribute("href");
+            if (!href || href.startsWith("#")) return;
+            if (current === normalize(link.pathname)) {
                 link.classList.add("active");
+                link.setAttribute("aria-current", "page");
             }
         });
 
-        document.querySelectorAll(".dropdown-content a").forEach(link => {
-            const linkHref = link.getAttribute("href").toLowerCase();
-            if (currentPath === linkHref || (linkHref !== "/" && currentPath.startsWith(linkHref))) {
+        document.querySelectorAll(".dropdown-content a").forEach((link) => {
+            const href = link.getAttribute("href");
+            if (!href || href.startsWith("#")) return;
+            if (matches(normalize(link.pathname))) {
                 link.classList.add("active");
+                link.setAttribute("aria-current", "page");
                 const parentBtn = link.closest(".dropdown")?.querySelector(".dropbtn");
                 if (parentBtn) parentBtn.classList.add("active");
             }
         });
     }
 
-    window.addEventListener("scroll", function () {
-        if (!navbar) return;
-        navbar.classList.toggle("navbar-scrolled", window.scrollY > 8);
-    }, { passive: true });
+    // --- 3. Scroll shadow -----------------------------------------------------
+    // IntersectionObserver on a 1px sentinel at the top of the page: zero
+    // scroll listeners, and the class only changes when the state flips.
+    function initScrollShadow() {
+        const navbar = document.querySelector(".navbar");
+        if (!navbar || !("IntersectionObserver" in window)) return;
 
-    // --- 3. Mobile Hamburger Menu ---
-    const navContainer = document.querySelector(".nav-container");
-    if (navContainer && navLinksContainer) {
+        const sentinel = document.createElement("div");
+        sentinel.setAttribute("aria-hidden", "true");
+        sentinel.style.cssText =
+            "position:absolute;top:0;left:0;width:1px;height:8px;pointer-events:none;visibility:hidden";
+        document.body.prepend(sentinel);
+
+        new IntersectionObserver(([entry]) => {
+            navbar.classList.toggle("navbar-scrolled", !entry.isIntersecting);
+        }).observe(sentinel);
+    }
+
+    // --- 4. Mobile hamburger menu ----------------------------------------------
+    function initMobileMenu() {
+        const navContainer = document.querySelector(".nav-container");
+        const navLinks = document.querySelector(".nav-links");
+        if (!navContainer || !navLinks) return;
+
+        navLinks.id = navLinks.id || "primary-nav";
+
         const toggleBtn = document.createElement("button");
+        toggleBtn.type = "button";
         toggleBtn.className = "nav-toggle-btn";
         toggleBtn.setAttribute("aria-label", "Toggle navigation");
-        toggleBtn.innerHTML = `
-            <span class="hamburger-bar"></span>
-            <span class="hamburger-bar"></span>
-            <span class="hamburger-bar"></span>
-        `;
+        toggleBtn.setAttribute("aria-controls", navLinks.id);
+        toggleBtn.setAttribute("aria-expanded", "false");
+        toggleBtn.innerHTML =
+            '<span class="hamburger-bar"></span><span class="hamburger-bar"></span><span class="hamburger-bar"></span>';
         navContainer.appendChild(toggleBtn);
 
-        toggleBtn.addEventListener("click", function () {
-            navLinksContainer.classList.toggle("nav-open");
-            toggleBtn.classList.toggle("is-active");
-        });
+        const setOpen = (open) => {
+            navLinks.classList.toggle("nav-open", open);
+            toggleBtn.classList.toggle("is-active", open);
+            toggleBtn.setAttribute("aria-expanded", String(open));
+        };
+        const isOpen = () => navLinks.classList.contains("nav-open");
 
-        document.querySelectorAll(".dropbtn").forEach(btn => {
-            btn.addEventListener("click", e => {
-                if (window.innerWidth <= 768) {
-                    e.preventDefault();
-                    btn.parentElement.classList.toggle("active-mobile");
-                }
+        toggleBtn.addEventListener("click", () => setOpen(!isOpen()));
+
+        // Close on outside press, Escape, or when growing past the breakpoint.
+        document.addEventListener("pointerdown", (e) => {
+            if (isOpen() && !navContainer.contains(e.target)) setOpen(false);
+        });
+        document.addEventListener("keydown", (e) => {
+            if (e.key === "Escape" && isOpen()) {
+                setOpen(false);
+                toggleBtn.focus();
+            }
+        });
+        mobileMq.addEventListener("change", (e) => { if (!e.matches) setOpen(false); });
+
+        // Sub-menus inside the mobile panel (matchMedia: no layout read).
+        document.querySelectorAll(".dropbtn").forEach((btn) => {
+            btn.addEventListener("click", (e) => {
+                if (!mobileMq.matches) return;
+                e.preventDefault();
+                const open = btn.parentElement.classList.toggle("active-mobile");
+                btn.setAttribute("aria-expanded", String(open));
             });
         });
     }
 
-    // --- 4. Auto-Upgrade CRUD Pages into Side-by-Side Split View ---
-    const main = document.querySelector("main.main-container");
-    if (main && !main.querySelector(".dashboard-wrapper") && !main.querySelector(".stats-grid")) {
+    // --- 5. Auto-upgrade CRUD pages into a split view --------------------------
+    // All moves happen into detached panes, and the wrapper is attached once,
+    // so the browser lays the page out a single time.
+    function initSplitLayout() {
+        const main = document.querySelector("main.main-container");
+        if (!main || main.querySelector(".dashboard-wrapper") || main.querySelector(".stats-grid")) return;
+
         const headings = Array.from(main.querySelectorAll(":scope > h1, :scope > div > h1"));
         const tables = main.querySelectorAll("table");
-        const addForms = Array.from(main.querySelectorAll("form")).filter(f => !f.closest("td") && f.method.toLowerCase() === "post");
+        const addForms = Array.from(main.querySelectorAll("form"))
+            .filter((f) => !f.closest("td") && f.method.toLowerCase() === "post");
 
-        if (tables.length === 1 && addForms.length === 1 && headings.length >= 2) {
-            const wrapper = document.createElement("div");
-            wrapper.className = "dashboard-wrapper";
+        if (tables.length !== 1 || addForms.length !== 1 || headings.length < 2) return;
 
-            const leftPane = document.createElement("div");
-            leftPane.className = "split-table-pane";
+        const form = addForms[0];
+        const secondHeading = headings[1];
+        const formDiv = form.closest("div");
+        // Move the form's wrapper div only if it lives inside <main>, isn't the
+        // first child, and doesn't also contain the table.
+        const formTarget =
+            formDiv && main.contains(formDiv) && formDiv !== main.firstElementChild && !formDiv.contains(tables[0])
+                ? formDiv
+                : form;
 
-            const rightPane = document.createElement("div");
-            rightPane.className = "split-form-pane";
+        const wrapper = document.createElement("div");
+        wrapper.className = "dashboard-wrapper";
+        const leftPane = document.createElement("div");
+        leftPane.className = "split-table-pane";
+        const rightPane = document.createElement("div");
+        rightPane.className = "split-form-pane";
 
-            const secondHeading = headings[1];
-            const formTarget = addForms[0].closest("div:not(.main-container)") && addForms[0].closest("div") !== main.firstElementChild
-                ? addForms[0].closest("div")
-                : addForms[0];
+        const originalChildren = Array.from(main.children);
+        rightPane.append(secondHeading, formTarget);
+        originalChildren.forEach((child) => {
+            if (child.parentNode === main) leftPane.appendChild(child);
+        });
 
-            // Move elements smoothly into Left (Table) and Right (Add Form) panes
-            secondHeading.parentNode.insertBefore(wrapper, secondHeading);
-            rightPane.appendChild(secondHeading);
-            rightPane.appendChild(formTarget);
-
-            Array.from(main.children).forEach(child => {
-                if (child !== wrapper) {
-                    leftPane.appendChild(child);
-                }
-            });
-
-            wrapper.appendChild(leftPane);
-            wrapper.appendChild(rightPane);
-        }
+        wrapper.append(leftPane, rightPane);
+        main.appendChild(wrapper);
     }
 
-    // --- 5. Semantic Status Pills for Operational Clarity ---
-    const statusMap = {
-        "active": "status-success",
-        "open": "status-success",
-        "operational": "status-success",
-        "on time": "status-success",
-        "confirmed": "status-success",
-        "payment received": "status-success",
-        "checked-in": "status-success",
-        "boarded": "status-success",
-        "claimed": "status-success",
-        "arrived": "status-success",
+    function init() {
+        initTheme();
+        initActiveLinks();
+        initScrollShadow();
+        initMobileMenu();
+        initSplitLayout();
+    }
 
-        "scheduled": "status-info",
-        "boarding": "status-info",
-        "departed": "status-info",
-        "loaded": "status-info",
-        "screened": "status-info",
-        "sorted": "status-info",
-        "in-transit": "status-info",
-
-        "delayed": "status-warning",
-        "maintenance": "status-warning",
-        "under construction": "status-warning",
-        "on leave": "status-warning",
-        "pending": "status-warning",
-        "not boarded": "status-warning",
-
-        "cancelled": "status-danger",
-        "closed": "status-danger",
-        "inactive": "status-danger",
-        "resigned": "status-danger",
-        "failed": "status-danger",
-        "lost": "status-danger",
-        "no show": "status-danger"
-    };
-
-    document.querySelectorAll("td").forEach(td => {
-        if (td.children.length === 0) {
-            const raw = td.textContent.trim();
-            const key = raw.toLowerCase();
-            if (statusMap[key]) {
-                td.innerHTML = `<span class="status-pill ${statusMap[key]}">${raw}</span>`;
-            }
-        }
-    });
-});
+    if (document.readyState === "loading") {
+        document.addEventListener("DOMContentLoaded", init);
+    } else {
+        init();
+    }
+})();

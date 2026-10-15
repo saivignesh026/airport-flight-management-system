@@ -1,9 +1,28 @@
 /* ==========================================================================
-   AFMS — High-Performance Apple Design System (60 FPS Optimized)
+   AFMS — Apple-style Design System (performance + motion pass)
+
+   Motion rules used throughout:
+   - Only `transform` and `opacity` are animated for movement (GPU, no layout).
+   - Colour/border changes use plain `ease` at ~120ms (paint only, tiny areas).
+   - Entrances use --ease-out; exits are faster than entrances.
+   - Press feedback is scale(0.97) and starts on :active (instant).
+   - Nothing that is seen 100+ times a day animates (page loads, table paging,
+     row hover, keyboard-opened popovers).
+   - Reduced-motion and hover-gating ship with the animations (bottom of file).
    ========================================================================== */
 
 :root {
     --font-sans: system-ui, -apple-system, BlinkMacSystemFont, "SF Pro Display", "SF Pro Text", "Segoe UI", sans-serif;
+    color-scheme: light;
+
+    /* Motion tokens */
+    --ease-out: cubic-bezier(0.23, 1, 0.32, 1);
+    --ease-in-out: cubic-bezier(0.77, 0, 0.175, 1);
+    --dur-press: 140ms;
+    --dur-color: 120ms;
+    --dur-enter: 160ms;
+    --dur-exit: 110ms;
+    --nav-height: 3.75rem;
 
     /* Light Mode Palette */
     --bg-canvas: #f5f5f7;
@@ -13,6 +32,7 @@
 
     /* Translucent Navbar Only */
     --nav-bg: rgba(255, 255, 255, 0.85);
+    --nav-edge-shadow: rgba(0, 0, 0, 0.07);
     --hairline-border: rgba(60, 60, 67, 0.12);
     --input-border: rgba(60, 60, 67, 0.22);
 
@@ -28,7 +48,7 @@
     --accent-red: #ff3b30;
     --accent-red-tint: rgba(255, 59, 48, 0.12);
 
-    /* Lightweight Shadows (Fast GPU Compositing) */
+    /* Lightweight Shadows */
     --shadow-card: 0 1px 3px rgba(0, 0, 0, 0.04), 0 4px 12px rgba(0, 0, 0, 0.03);
     --shadow-popover: 0 8px 24px rgba(0, 0, 0, 0.12), 0 2px 6px rgba(0, 0, 0, 0.06);
     --focus-ring: 0 0 0 3px rgba(0, 113, 227, 0.25);
@@ -40,13 +60,19 @@
     --radius-pill: 9999px;
 }
 
+/* Dark mode lives on <html> (set by theme-init.js before first paint).
+   `body.dark-mode` is kept as an alias so old markup still works. */
+:root.dark-mode,
 body.dark-mode {
+    color-scheme: dark;
+
     --bg-canvas: #000000;
     --bg-surface: #1c1c1e;
     --bg-subtle: #2c2c2e;
     --bg-hover: rgba(10, 132, 255, 0.12);
 
     --nav-bg: rgba(28, 28, 30, 0.85);
+    --nav-edge-shadow: rgba(0, 0, 0, 0.45);
     --hairline-border: rgba(255, 255, 255, 0.12);
     --input-border: rgba(255, 255, 255, 0.20);
 
@@ -72,9 +98,19 @@ body.dark-mode {
     box-sizing: border-box;
 }
 
+[hidden] {
+    display: none !important;
+}
+
 html {
     font: 100%/1.5 var(--font-sans);
     -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    -webkit-text-size-adjust: 100%;
+    background-color: var(--bg-canvas);
+    /* Stops the page from shifting sideways when filtering a table makes
+       the scrollbar appear/disappear. */
+    scrollbar-gutter: stable;
 }
 
 body {
@@ -88,6 +124,7 @@ body {
     display: flex;
     flex-direction: column;
     min-height: 100vh;
+    min-height: 100dvh;
 }
 
 .main-container {
@@ -105,6 +142,7 @@ h1 {
     letter-spacing: -0.022em;
     color: var(--text-primary);
     margin: 0 0 1.25rem 0;
+    text-wrap: balance;
 }
 
 h2 {
@@ -114,11 +152,20 @@ h2 {
     letter-spacing: -0.016em;
     color: var(--text-primary);
     margin: 2rem 0 1rem 0;
+    text-wrap: balance;
 }
 
 small {
     font-size: 0.8125rem;
     color: var(--text-secondary);
+}
+
+/* Keyboard focus (mouse clicks don't show it) */
+a:focus-visible,
+button:focus-visible,
+.custom-select-trigger:focus-visible {
+    outline: 2px solid var(--accent-blue);
+    outline-offset: 2px;
 }
 
 /* ==========================================================================
@@ -134,15 +181,34 @@ small {
     border-bottom: 1px solid var(--hairline-border);
 }
 
-.navbar-scrolled {
-    box-shadow: 0 2px 12px rgba(0, 0, 0, 0.06);
+/* Scroll shadow is a pseudo-element fading in (opacity = compositor-only),
+   instead of animating/repainting a box-shadow on a blurred sticky bar. */
+.navbar::after {
+    content: "";
+    position: absolute;
+    left: 0;
+    right: 0;
+    top: 100%;
+    height: 10px;
+    background: linear-gradient(var(--nav-edge-shadow), transparent);
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 160ms ease;
+}
+
+.navbar-scrolled::after {
+    opacity: 1;
+}
+
+@supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
+    .navbar { background: var(--bg-surface); }
 }
 
 .nav-container {
     max-width: 1420px;
     margin: 0 auto;
     padding: 0 1.5rem;
-    height: 3.75rem;
+    height: var(--nav-height);
     display: flex;
     justify-content: space-between;
     align-items: center;
@@ -189,7 +255,10 @@ small {
     border: none;
     cursor: pointer;
     font-family: inherit;
-    transition: background-color 120ms ease, color 120ms ease, transform 80ms ease-out;
+    transition:
+        background-color var(--dur-color) ease,
+        color var(--dur-color) ease,
+        transform var(--dur-press) var(--ease-out);
 }
 
 .nav-item:hover {
@@ -198,7 +267,7 @@ small {
 }
 
 .nav-item:active {
-    transform: scale(0.96);
+    transform: scale(0.97);
 }
 
 .nav-item.active {
@@ -219,17 +288,22 @@ small {
     font-size: 0.75rem;
     margin-left: 0.25rem;
     opacity: 0.7;
-    transition: transform 160ms ease;
+    transition: transform var(--dur-enter) var(--ease-out);
 }
 
-.dropdown:hover .chevron {
+.dropdown:hover .chevron,
+.dropdown:focus-within .chevron {
     transform: rotate(180deg);
 }
 
+/* Desktop dropdown: scales from its trigger corner. Enter 160ms, exit 110ms
+   with a 60ms grace so a diagonal mouse path doesn't slam it shut. */
 .dropdown-content {
     visibility: hidden;
     opacity: 0;
-    transform: translateY(4px);
+    transform: translateY(4px) scale(0.97);
+    transform-origin: top left;
+    pointer-events: none;
     position: absolute;
     top: calc(100% - 4px);
     left: 0;
@@ -240,13 +314,22 @@ small {
     box-shadow: var(--shadow-popover);
     padding: 0.4rem;
     z-index: 1001;
-    transition: opacity 140ms ease, transform 140ms ease, visibility 140ms;
+    transition:
+        opacity var(--dur-exit) var(--ease-out) 60ms,
+        transform var(--dur-exit) var(--ease-out) 60ms,
+        visibility 0s linear 170ms;
 }
 
-.dropdown:hover .dropdown-content {
+.dropdown:hover .dropdown-content,
+.dropdown:focus-within .dropdown-content {
     visibility: visible;
     opacity: 1;
-    transform: translateY(0);
+    transform: none;
+    pointer-events: auto;
+    transition:
+        opacity var(--dur-enter) var(--ease-out),
+        transform var(--dur-enter) var(--ease-out),
+        visibility 0s;
 }
 
 .dropdown-content a {
@@ -260,7 +343,8 @@ small {
     transition: background-color 100ms ease, color 100ms ease;
 }
 
-.dropdown-content a:hover {
+.dropdown-content a:hover,
+.dropdown-content a:focus-visible {
     background-color: var(--accent-blue);
     color: #ffffff;
 }
@@ -271,11 +355,26 @@ small {
     font-weight: 600;
 }
 
+.dropdown-content a.active:hover,
+.dropdown-content a.active:focus-visible {
+    background-color: var(--accent-blue);
+    color: #ffffff;
+}
+
+/* Theme toggle: icon swap is pure CSS so there is no flash on load */
+.icon-sun { display: none !important; }
+.icon-moon { display: inline-block !important; }
+:root.dark-mode .icon-sun,
+body.dark-mode .icon-sun { display: inline-block !important; }
+:root.dark-mode .icon-moon,
+body.dark-mode .icon-moon { display: none !important; }
+
 .theme-btn {
     background: var(--bg-subtle);
     border: 1px solid var(--hairline-border);
     width: 2.25rem;
     height: 2.25rem;
+    padding: 0;
     border-radius: 50%;
     font-size: 1.05rem;
     cursor: pointer;
@@ -283,11 +382,10 @@ small {
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    transition: transform 90ms ease-out;
 }
 
 .theme-btn:active {
-    transform: scale(0.90);
+    transform: scale(0.95);
 }
 
 /* ==========================================================================
@@ -295,10 +393,15 @@ small {
    ========================================================================== */
 .dashboard-wrapper {
     display: grid;
-    grid-template-columns: 1fr;
+    grid-template-columns: minmax(0, 1fr);
     gap: 2rem;
     align-items: start;
     margin-top: 0.75rem;
+}
+
+.split-table-pane,
+.split-form-pane {
+    min-width: 0;
 }
 
 @media (min-width: 1080px) {
@@ -331,16 +434,27 @@ small {
     display: flex;
     flex-direction: column;
     align-items: flex-start;
-    transition: transform 150ms ease, border-color 150ms ease;
+    transition:
+        transform var(--dur-press) var(--ease-out),
+        border-color var(--dur-color) ease;
 }
 
 .stat-card:hover {
-    transform: translateY(-2px);
     border-color: var(--accent-blue);
 }
 
 .stat-card:active {
-    transform: scale(0.98);
+    transform: scale(0.985);
+}
+
+/* The lift only happens on real pointers (touch fires false hovers) */
+@media (hover: hover) and (pointer: fine) {
+    .stat-card:hover {
+        transform: translateY(-2px);
+    }
+    .stat-card:active {
+        transform: translateY(0) scale(0.985);
+    }
 }
 
 .stat-value {
@@ -401,8 +515,19 @@ tr:last-child td {
     border-bottom: none;
 }
 
+/* Row hover is instant on purpose: tables are scanned constantly. */
 tbody tr:hover {
     background-color: var(--bg-hover);
+}
+
+.table-empty {
+    text-align: center;
+    color: var(--text-tertiary);
+    padding: 2rem 1rem;
+}
+
+tbody tr:hover > .table-empty {
+    background-color: transparent;
 }
 
 td a {
@@ -414,7 +539,10 @@ td a {
     border-radius: var(--radius-pill);
     background-color: var(--accent-blue-tint);
     display: inline-block;
-    transition: background-color 120ms ease, color 120ms ease, transform 80ms ease-out;
+    transition:
+        background-color var(--dur-color) ease,
+        color var(--dur-color) ease,
+        transform var(--dur-press) var(--ease-out);
 }
 
 td a:hover {
@@ -423,7 +551,7 @@ td a:hover {
 }
 
 td a:active {
-    transform: scale(0.95);
+    transform: scale(0.97);
 }
 
 td form {
@@ -453,7 +581,7 @@ td form {
     background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='14' height='14' viewBox='0 0 24 24' fill='none' stroke='%2386868b' stroke-width='2.2' stroke-linecap='round' stroke-linejoin='round'%3E%3Ccircle cx='11' cy='11' r='8'%3E%3C/circle%3E%3Cline x1='21' y1='21' x2='16.65' y2='16.65'%3E%3C/line%3E%3C/svg%3E") !important;
     background-repeat: no-repeat !important;
     background-position: calc(100% - 12px) center !important;
-    transition: border-color 120ms ease, box-shadow 120ms ease !important;
+    transition: border-color var(--dur-color) ease, box-shadow var(--dur-color) ease !important;
 }
 
 .table-search-input:focus {
@@ -488,7 +616,7 @@ td form {
     background-color: rgba(40, 205, 65, 0.14);
     color: #168829;
 }
-body.dark-mode .status-pill.status-success {
+.dark-mode .status-pill.status-success {
     background-color: rgba(48, 209, 88, 0.18);
     color: #4ae06c;
 }
@@ -502,7 +630,7 @@ body.dark-mode .status-pill.status-success {
     background-color: rgba(255, 149, 0, 0.15);
     color: #b86800;
 }
-body.dark-mode .status-pill.status-warning {
+.dark-mode .status-pill.status-warning {
     background-color: rgba(255, 159, 10, 0.20);
     color: #ffb340;
 }
@@ -544,8 +672,8 @@ label {
     vertical-align: middle;
 }
 
-input[type="text"], 
-input[type="number"], 
+input[type="text"],
+input[type="number"],
 input[type="date"],
 input[type="email"],
 input[type="tel"],
@@ -564,7 +692,7 @@ select {
     background-color: var(--bg-surface);
     margin-bottom: 0.85rem;
     vertical-align: middle;
-    transition: border-color 120ms ease, box-shadow 120ms ease;
+    transition: border-color var(--dur-color) ease, box-shadow var(--dur-color) ease;
 }
 
 input::placeholder {
@@ -586,11 +714,16 @@ button {
     font-weight: 600;
     font-size: 0.875rem;
     user-select: none;
-    transition: background-color 120ms ease, transform 80ms ease-out;
+    touch-action: manipulation; /* removes the 300ms tap delay */
+    transition:
+        background-color var(--dur-color) ease,
+        color var(--dur-color) ease,
+        border-color var(--dur-color) ease,
+        transform var(--dur-press) var(--ease-out);
 }
 
-button:active {
-    transform: scale(0.96);
+button:active:not(:disabled) {
+    transform: scale(0.97);
 }
 
 .btn-submit {
@@ -617,7 +750,7 @@ button:active {
 }
 
 /* ==========================================================================
-   Pagination Bar
+   Pagination Bar (no page-change animation: used constantly)
    ========================================================================== */
 .pagination-controls {
     display: flex;
@@ -661,7 +794,6 @@ button:active {
 .page-btn:disabled {
     opacity: 0.38;
     cursor: not-allowed;
-    transform: none;
 }
 
 /* ==========================================================================
@@ -674,6 +806,18 @@ button:active {
     max-width: 100%;
     margin-bottom: 0.85rem;
     vertical-align: middle;
+}
+
+/* The real <select> stays in the DOM (form submit, `required` validation,
+   label clicks) but is invisible. display:none would break `required`. */
+.custom-select-native {
+    position: absolute !important;
+    inset: 0;
+    width: 100% !important;
+    height: 100%;
+    margin: 0 !important;
+    opacity: 0;
+    pointer-events: none;
 }
 
 .custom-select-trigger {
@@ -689,7 +833,11 @@ button:active {
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
-    transition: border-color 120ms ease, box-shadow 120ms ease;
+    transition: border-color var(--dur-color) ease, box-shadow var(--dur-color) ease;
+}
+
+.custom-select-trigger.is-placeholder {
+    color: var(--text-tertiary);
 }
 
 .custom-select-trigger::after {
@@ -700,7 +848,7 @@ button:active {
     transform: translateY(-50%);
     color: var(--text-tertiary);
     font-size: 0.78rem;
-    transition: transform 150ms ease;
+    transition: transform var(--dur-enter) var(--ease-out);
 }
 
 .custom-select-wrapper.open .custom-select-trigger {
@@ -712,8 +860,14 @@ button:active {
     transform: translateY(-50%) rotate(180deg);
 }
 
+.custom-select-wrapper.is-disabled .custom-select-trigger {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+/* Popover: scales from the edge nearest the trigger. Opens in 150ms, closes
+   in 100ms. Opened from the keyboard = no animation at all. */
 .custom-select-dropdown {
-    display: none;
     position: absolute;
     top: calc(100% + 5px);
     left: 0;
@@ -724,10 +878,38 @@ button:active {
     box-shadow: var(--shadow-popover);
     z-index: 999;
     overflow: hidden;
+
+    visibility: hidden;
+    opacity: 0;
+    pointer-events: none;
+    transform: translateY(-4px) scale(0.97);
+    transform-origin: top center;
+    transition:
+        opacity 100ms var(--ease-out),
+        transform 100ms var(--ease-out),
+        visibility 0s linear 100ms;
+}
+
+.custom-select-wrapper.drop-up .custom-select-dropdown {
+    top: auto;
+    bottom: calc(100% + 5px);
+    transform: translateY(4px) scale(0.97);
+    transform-origin: bottom center;
 }
 
 .custom-select-wrapper.open .custom-select-dropdown {
-    display: block;
+    visibility: visible;
+    opacity: 1;
+    pointer-events: auto;
+    transform: none;
+    transition:
+        opacity 150ms var(--ease-out),
+        transform 150ms var(--ease-out),
+        visibility 0s;
+}
+
+.custom-select-wrapper[data-input="key"] .custom-select-dropdown {
+    transition: none;
 }
 
 .custom-select-search {
@@ -743,6 +925,7 @@ button:active {
 .custom-select-options {
     max-height: 195px;
     overflow-y: auto;
+    overscroll-behavior: contain;
     padding: 0 0.35rem 0.35rem 0.35rem;
 }
 
@@ -754,9 +937,14 @@ button:active {
     cursor: pointer;
 }
 
-.custom-select-option:hover {
+.custom-select-option.is-active {
     background-color: var(--bg-hover);
     color: var(--accent-blue);
+}
+
+.custom-select-option[aria-disabled="true"] {
+    opacity: 0.4;
+    cursor: not-allowed;
 }
 
 .custom-select-option.selected {
@@ -765,11 +953,19 @@ button:active {
     font-weight: 600;
 }
 
-.custom-select-no-results {
+.custom-select-no-results,
+.custom-select-hint {
     padding: 0.75rem;
     font-size: 0.825rem;
     color: var(--text-tertiary);
     text-align: center;
+}
+
+@media (hover: hover) and (pointer: fine) {
+    .custom-select-option:not(.selected):not([aria-disabled="true"]):hover {
+        background-color: var(--bg-hover);
+        color: var(--accent-blue);
+    }
 }
 
 /* ==========================================================================
@@ -799,35 +995,76 @@ button:active {
 }
 
 .hamburger-bar {
+    display: block;
     width: 20px;
     height: 2px;
     background-color: var(--text-primary);
     border-radius: 2px;
+    transition: transform 200ms var(--ease-out), opacity 120ms ease;
 }
+
+/* Bars are 2px with a 4px gap, so centre-to-centre is 6px */
+.nav-toggle-btn.is-active .hamburger-bar:nth-child(1) { transform: translateY(6px) rotate(45deg); }
+.nav-toggle-btn.is-active .hamburger-bar:nth-child(2) { opacity: 0; }
+.nav-toggle-btn.is-active .hamburger-bar:nth-child(3) { transform: translateY(-6px) rotate(-45deg); }
 
 @media (max-width: 768px) {
     .nav-toggle-btn { display: flex; }
+
+    /* Mobile menu drops down from the hamburger. Always display:flex so it
+       can transition; visibility removes it from tab order while closed. */
     .nav-links {
-        display: none;
+        display: flex;
         flex-direction: column;
         align-items: stretch;
         position: absolute;
-        top: 3.75rem;
+        top: var(--nav-height);
         left: 0;
         width: 100%;
+        height: auto;
+        max-height: calc(100vh - var(--nav-height));
+        max-height: calc(100dvh - var(--nav-height));
+        overflow-y: auto;
+        overscroll-behavior: contain;
         background: var(--bg-surface);
         padding: 1rem;
         border-bottom: 1px solid var(--hairline-border);
         box-shadow: var(--shadow-popover);
-        height: auto;
+
+        visibility: hidden;
+        opacity: 0;
+        pointer-events: none;
+        transform: translateY(-8px);
+        transform-origin: top center;
+        transition:
+            opacity 150ms var(--ease-out),
+            transform 150ms var(--ease-out),
+            visibility 0s linear 150ms;
     }
-    .nav-links.nav-open { display: flex; }
+
+    .nav-links.nav-open {
+        visibility: visible;
+        opacity: 1;
+        pointer-events: auto;
+        transform: none;
+        transition:
+            opacity 200ms var(--ease-out),
+            transform 200ms var(--ease-out),
+            visibility 0s;
+    }
+
     .dropdown { flex-direction: column; align-items: stretch; height: auto; }
-    .dropdown-content {
+
+    /* Inside the mobile menu, sub-menus are an instant tap toggle. */
+    .dropdown-content,
+    .dropdown:hover .dropdown-content,
+    .dropdown:focus-within .dropdown-content {
         position: static;
         visibility: visible;
         opacity: 1;
         transform: none;
+        pointer-events: auto;
+        transition: none;
         box-shadow: none;
         border: none;
         background: transparent;
@@ -835,10 +1072,64 @@ button:active {
         padding-left: 0.75rem;
     }
     .dropdown.active-mobile .dropdown-content { display: block; }
+
     label { width: 100%; margin-bottom: 0.35rem; }
     input[type="text"], input[type="number"], input[type="date"],
     input[type="email"], input[type="tel"], input[type="time"],
     input[type="datetime-local"], select, .custom-select-wrapper {
         width: 100%;
+    }
+}
+
+/* ==========================================================================
+   Theme-switch crossfade (View Transitions API; navbar.js skips it when
+   reduced motion is on). One GPU-composited fade instead of repainting
+   every element with its own colour transition.
+   ========================================================================== */
+::view-transition-old(root),
+::view-transition-new(root) {
+    animation-duration: 220ms;
+    animation-timing-function: ease;
+}
+
+/* ==========================================================================
+   Accessibility: transparency + reduced motion
+   ========================================================================== */
+@media (prefers-reduced-transparency: reduce) {
+    .navbar {
+        background: var(--bg-surface);
+        backdrop-filter: none;
+        -webkit-backdrop-filter: none;
+    }
+}
+
+/* Reduced motion = fewer and gentler, not none: opacity/colour fades stay,
+   movement (slides, scales, lifts, hamburger morph) goes. */
+@media (prefers-reduced-motion: reduce) {
+    .dropdown-content,
+    .custom-select-dropdown,
+    .custom-select-wrapper.drop-up .custom-select-dropdown,
+    .nav-links {
+        transform: none !important;
+    }
+
+    .nav-item:active,
+    td a:active,
+    button:active:not(:disabled),
+    .stat-card:hover,
+    .stat-card:active {
+        transform: none !important;
+    }
+
+    .hamburger-bar,
+    .chevron,
+    .custom-select-trigger::after {
+        transition: none;
+    }
+
+    ::view-transition-group(*),
+    ::view-transition-old(*),
+    ::view-transition-new(*) {
+        animation-duration: 1ms;
     }
 }
