@@ -1,0 +1,66 @@
+{% extends 'base.html' %}
+{% block title %}AFMS - Update Flight Schedule{% endblock %}
+{% block content %}
+    <h1>Update Flight Schedule</h1>
+    <div>
+        <form action="{{ url_for('Flight_Instances.Update_Flight_Instance', id=Instance.Instance_ID) }}" method="POST">
+            <label>Flight Number</label>
+            <select name="Flight_ID" required>
+                {% for f in Flight_Data %}
+                <option value="{{ f.Flight_ID }}" {{ 'selected' if f.Flight_ID == Instance.Flight_ID }}>
+                    {{ f.Flight_Number }}
+                </option>
+                {% endfor %}
+            </select><br>
+
+            <label>Aircraft</label>
+            <select name="Aircraft_ID" required>
+                {% for ac in Aircraft_Data %}
+                <option value="{{ ac.Aircraft_ID }}" {{ 'selected' if ac.Aircraft_ID == Instance.Aircraft_ID }}>
+                    {{ ac.Tail_Number }} - {{ ac.Model }}
+                </option>
+                {% endfor %}
+            </select><br>
+
+            <label>Gate</label>
+            <select name="Gate_ID" required>
+                {% for g in Gate_Data %}
+                <option value="{{ g.Gate_ID }}" {{ 'selected' if g.Gate_ID == Instance.Gate_ID }}>
+                    {{ g.Gate_Number }}
+                </option>
+                {% endfor %}
+            </select><br>
+
+            <label>Runway</label>
+            <select name="Runway_ID" required>
+                {% for r in Runway_Data %}
+                <option value="{{ r.Runway_ID }}" {{ 'selected' if r.Runway_ID == Instance.Runway_ID }}>
+                    {{ r.Runway_Code }}
+                </option>
+                {% endfor %}
+            </select><br>
+
+            <label>Scheduled Dep.</label>
+            <input type="datetime-local" name="Scheduled_Departure" value="{{ Instance.Scheduled_Departure|string|replace(' ', 'T') }}" required><br>
+
+            <label>Scheduled Arr.</label>
+            <input type="datetime-local" name="Scheduled_Arrival" value="{{ Instance.Scheduled_Arrival|string|replace(' ', 'T') }}" required><br>
+
+            <label>Actual Dep.</label>
+            <input type="datetime-local" name="Actual_Departure" value="{{ Instance.Actual_Departure|string|replace(' ', 'T') if Instance.Actual_Departure else '' }}"><br>
+
+            <label>Actual Arr.</label>
+            <input type="datetime-local" name="Actual_Arrival" value="{{ Instance.Actual_Arrival|string|replace(' ', 'T') if Instance.Actual_Arrival else '' }}"><br>
+
+            <label>Status</label>
+            <select name="Flight_Instance_Status" required>
+                {% for Status in Status_Enum %}
+                <option value="{{ Status }}" {{ 'selected' if Status == Instance.Flight_Instance_Status }}>{{ Status }}</option>
+                {% endfor %}
+            </select><br>
+
+            <button type="submit" class="btn-submit">Save Changes</button>
+            <a href="{{ url_for('Flight_Instances.Display_Flight_Instance') }}" style="color:red">Cancel</a>
+        </form>
+    </div>
+{% endblock %}
