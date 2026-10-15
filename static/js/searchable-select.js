@@ -1,15 +1,12 @@
 document.addEventListener("DOMContentLoaded", function () {
     document.querySelectorAll("select").forEach(function (select) {
-        // Hide the native select but keep it in the DOM for form submission & validation
         select.style.display = "none";
 
-        // 1. Create Wrapper
         const wrapper = document.createElement("div");
         wrapper.className = "custom-select-wrapper";
         select.parentNode.insertBefore(wrapper, select);
         wrapper.appendChild(select);
 
-        // 2. Create Display Button (shows currently selected option)
         const trigger = document.createElement("div");
         trigger.className = "custom-select-trigger";
         trigger.tabIndex = 0;
@@ -18,14 +15,13 @@ document.addEventListener("DOMContentLoaded", function () {
         trigger.textContent = selectedOption ? selectedOption.textContent.trim() : "Select...";
         wrapper.appendChild(trigger);
 
-        // 3. Create Dropdown Panel (Search Input + Options List)
         const dropdown = document.createElement("div");
         dropdown.className = "custom-select-dropdown";
 
         const searchInput = document.createElement("input");
         searchInput.type = "text";
         searchInput.className = "custom-select-search";
-        searchInput.placeholder = "Search...";
+        searchInput.placeholder = "Filter options...";
         dropdown.appendChild(searchInput);
 
         const optionsList = document.createElement("div");
@@ -34,28 +30,26 @@ document.addEventListener("DOMContentLoaded", function () {
 
         wrapper.appendChild(dropdown);
 
-        // 4. Populate Options
         function renderOptions(filter = "") {
             optionsList.innerHTML = "";
             let matchCount = 0;
+            const query = filter.toLowerCase();
 
             Array.from(select.options).forEach((opt, index) => {
                 const text = opt.textContent.trim();
-                if (text.toLowerCase().includes(filter.toLowerCase())) {
+                if (!query || text.toLowerCase().includes(query)) {
                     matchCount++;
                     const item = document.createElement("div");
                     item.className = "custom-select-option";
-                    if (index === select.selectedIndex) {
-                        item.classList.add("selected");
-                    }
+                    if (index === select.selectedIndex) item.classList.add("selected");
                     item.textContent = text;
 
-                    item.addEventListener("click", function (e) {
+                    item.addEventListener("pointerdown", function (e) {
                         e.stopPropagation();
                         select.selectedIndex = index;
                         select.dispatchEvent(new Event("change"));
                         trigger.textContent = text;
-                        closeDropdown();
+                        wrapper.classList.remove("open");
                     });
 
                     optionsList.appendChild(item);
@@ -65,50 +59,33 @@ document.addEventListener("DOMContentLoaded", function () {
             if (matchCount === 0) {
                 const noResult = document.createElement("div");
                 noResult.className = "custom-select-no-results";
-                noResult.textContent = "No matches found";
+                noResult.textContent = "No matching options";
                 optionsList.appendChild(noResult);
             }
         }
 
-        function openDropdown() {
-            // Close any other open searchable dropdowns first
-            document.querySelectorAll(".custom-select-wrapper.open").forEach(w => {
-                if (w !== wrapper) w.classList.remove("open");
-            });
-            wrapper.classList.add("open");
-            searchInput.value = "";
-            renderOptions();
-            setTimeout(() => searchInput.focus(), 10);
-        }
-
-        function closeDropdown() {
-            wrapper.classList.remove("open");
-        }
-
-        // 5. Event Listeners
-        trigger.addEventListener("click", function (e) {
+        trigger.addEventListener("pointerdown", function (e) {
             e.stopPropagation();
-            if (wrapper.classList.contains("open")) {
-                closeDropdown();
-            } else {
-                openDropdown();
+            e.preventDefault();
+            const isOpen = wrapper.classList.contains("open");
+
+            document.querySelectorAll(".custom-select-wrapper.open").forEach(w => {
+                w.classList.remove("open");
+            });
+
+            if (!isOpen) {
+                wrapper.classList.add("open");
+                searchInput.value = "";
+                renderOptions();
+                requestAnimationFrame(() => searchInput.focus());
             }
         });
 
-        searchInput.addEventListener("click", function (e) {
-            e.stopPropagation();
-        });
-
-        searchInput.addEventListener("input", function (e) {
-            renderOptions(e.target.value);
-        });
-
-        // Initial render
-        renderOptions();
+        dropdown.addEventListener("pointerdown", e => e.stopPropagation());
+        searchInput.addEventListener("input", e => renderOptions(e.target.value));
     });
 
-    // Close dropdown when clicking anywhere outside
-    document.addEventListener("click", function () {
+    document.addEventListener("pointerdown", function () {
         document.querySelectorAll(".custom-select-wrapper.open").forEach(w => {
             w.classList.remove("open");
         });
