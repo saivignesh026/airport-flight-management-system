@@ -49,6 +49,19 @@
     function enhance(table) {
         if (table.dataset.noPaginate !== undefined) return null;
 
+        // Ensure header rows (<tr> with <th>) live in <thead> so swapping
+        // rows in <tbody> never wipes them out.
+        const headerRows = Array.from(table.rows).filter(
+            (tr) =>
+                tr.parentNode.tagName !== "THEAD" &&
+                tr.parentNode.tagName !== "TFOOT" &&
+                !tr.querySelector(":scope > td")
+        );
+        if (headerRows.length) {
+            const thead = table.tHead || table.createTHead();
+            headerRows.forEach((tr) => thead.appendChild(tr));
+        }
+
         const rows = Array.from(table.rows).filter(
             (tr) => tr.parentNode.tagName !== "TFOOT" && tr.querySelector(":scope > td")
         );
@@ -98,7 +111,7 @@
         const nextBtn = nav.querySelector(".btn-next");
 
         // ---- Row host + empty state -------------------------------------------
-        const host = rows.length ? rows[0].parentNode : (table.tBodies[0] || table);
+        const host = rows.length ? rows[0].parentNode : (table.tBodies[0] || table.createTBody());
         const singleHost = rows.every((r) => r.parentNode === host);
 
         const emptyRow = document.createElement("tr");
