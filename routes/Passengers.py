@@ -49,7 +49,7 @@ def Update_Passenger(id):
         return redirect(url_for('Passengers.Display_Passenger'))
     else:
         Passenger = fetch_one('SELECT * FROM Passenger WHERE Passenger_ID = %s', (id,))
-        return render_template('UpdatePassenger.html', Passenger=Passenger)
+        return render_template('Update/UpdatePassenger.html', Passenger=Passenger)
 
 
 @Passengers_bp.route('/manifest', methods=['GET'])
@@ -58,53 +58,17 @@ def Flight_Passenger_Manifest():
     from_airport_id = request.args.get('from_airport_id', '')
     to_airport_id = request.args.get('to_airport_id', '')
 
-    sql = '''
-        SELECT 
-            p.Passenger_ID,
-            CONCAT(p.First_Name, ' ', p.Last_Name) AS Passenger_Name,
-            p.Passport_Number,
-            p.Nationality,
-            p.Contact_Number,
-            p.Email,
-            f.Flight_ID,
-            f.Flight_Number,
-            al.Name AS Airline_Name,
-            dep.Airport_ID AS From_Airport_ID,
-            dep.Airport_Name AS From_Airport_Name,
-            dep.IATA_Code AS From_IATA,
-            dep.Airport_City AS From_City,
-            arr.Airport_ID AS To_Airport_ID,
-            arr.Airport_Name AS To_Airport_Name,
-            arr.IATA_Code AS To_IATA,
-            arr.Airport_City AS To_City,
-            fi.Scheduled_Departure,
-            fi.Flight_Instance_Status,
-            b.Booking_ID,
-            b.Seat_Number,
-            b.Class,
-            b.Booking_Status,
-            c.CheckIn_Status,
-            c.Boarding_Status
-        FROM Booking b
-        JOIN Passenger p ON b.Passenger_ID = p.Passenger_ID
-        JOIN Flight_Instance fi ON b.Instance_ID = fi.Instance_ID
-        JOIN Flight f ON fi.Flight_ID = f.Flight_ID
-        JOIN Airline al ON f.Airline_ID = al.Airline_ID
-        JOIN Airport dep ON f.Departure_Airport_ID = dep.Airport_ID
-        JOIN Airport arr ON f.Arrival_Airport_ID = arr.Airport_ID
-        LEFT JOIN Check_In c ON b.Booking_ID = c.Booking_ID
-        WHERE 1=1
-    '''
+    sql ='select * from Passenger_Manifest where 1=1 '
     params = []
 
     if flight_id:
-        sql += ' AND f.Flight_ID = %s'
+        sql += ' AND Flight_ID = %s'
         params.append(flight_id)
     if from_airport_id:
-        sql += ' AND dep.Airport_ID = %s'
+        sql += ' AND From_Airport_ID = %s'
         params.append(from_airport_id)
     if to_airport_id:
-        sql += ' AND arr.Airport_ID = %s'
+        sql += ' AND  To_Airport_ID = %s'
         params.append(to_airport_id)
 
     sql += ' ORDER BY fi.Scheduled_Departure DESC, f.Flight_Number, b.Seat_Number'

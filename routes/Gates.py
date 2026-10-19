@@ -59,4 +59,4 @@ def Update_Gate(id):
         params = (id,)
         Gate_To_Edit = fetch_one(sql, params)
         Terminal_Data = fetch_all('select Terminal_ID, Terminal_Name, Terminal_Number from Terminal')
-        return render_template('UpdateGate.html', Gate=Gate_To_Edit, Terminal_Data=Terminal_Data, Status_Enum=Status_Enum)
+        return render_template('Update/UpdateGate.html', Gate=Gate_To_Edit, Terminal_Data=Terminal_Data, Status_Enum=Status_Enum)

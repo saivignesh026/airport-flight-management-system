@@ -19,26 +19,7 @@ Baggage_Status_Enum = ('Checked-In', 'Screened', 'Sorted', 'Loaded', 'In-Transit
 
 @Bookings_bp.route('/')
 def Display_Booking():
-    sql = '''
-        SELECT b.Booking_ID, CONCAT(p.First_Name, ' ', p.Last_Name) AS Passenger_Name,
-               p.Passport_Number, f.Flight_Number, b.Seat_Number, b.Class,
-               b.Booking_Price, b.Booking_Status,
-               py.Payment_Method, py.Payment_Status, py.Transaction_Reference,
-               c.CheckIn_Status, c.Boarding_Status,
-               ba.Baggage_Type, ba.Weight_KG, ba.Baggage_Status
-        FROM Booking b
-        LEFT JOIN Passenger p ON b.Passenger_ID = p.Passenger_ID
-        LEFT JOIN Flight_Instance fi ON b.Instance_ID = fi.Instance_ID
-        LEFT JOIN Flight f ON fi.Flight_ID = f.Flight_ID
-        LEFT JOIN Payment py ON b.Booking_ID = py.Booking_ID
-        LEFT JOIN Check_In c ON b.Booking_ID = c.Booking_ID
-        LEFT JOIN (
-            SELECT Booking_ID, MAX(Baggage_ID) AS First_Bag_ID
-            FROM Baggage GROUP BY Booking_ID
-        ) bm ON b.Booking_ID = bm.Booking_ID
-        LEFT JOIN Baggage ba ON bm.First_Bag_ID = ba.Baggage_ID
-        ORDER BY b.Booking_ID DESC
-    '''
+    sql ='select * from Booking_Details;'
     Booking_Data = fetch_all(sql)
     Passenger_Data = fetch_all('SELECT Passenger_ID, First_Name, Last_Name, Passport_Number FROM Passenger')
     Instance_Data = fetch_all('''
@@ -165,17 +146,7 @@ def Update_Booking(id):
 
         return redirect(url_for('Bookings.Display_Booking'))
     else:
-        Booking = fetch_one('''
-            SELECT b.*, py.Payment_Method, py.Payment_Status, py.Transaction_Reference,
-                   c.CheckIn_Status, c.Boarding_Status,
-                   ba.Baggage_Type, ba.Weight_KG, ba.Baggage_Status
-            FROM Booking b
-            LEFT JOIN Payment py ON b.Booking_ID = py.Booking_ID
-            LEFT JOIN Check_In c ON b.Booking_ID = c.Booking_ID
-            LEFT JOIN Baggage ba ON b.Booking_ID = ba.Booking_ID
-            WHERE b.Booking_ID = %s
-            LIMIT 1
-        ''', (id,))
+        Booking = fetch_one('CALL Booking_To_Edit(%s)', (id,))
         Passenger_Data = fetch_all('SELECT Passenger_ID, First_Name, Last_Name, Passport_Number FROM Passenger')
         Instance_Data = fetch_all('''
             SELECT fi.Instance_ID, f.Flight_Number, fi.Scheduled_Departure
@@ -183,7 +154,7 @@ def Update_Booking(id):
             JOIN Flight f ON fi.Flight_ID = f.Flight_ID
         ''')
         return render_template(
-            'UpdateBooking.html',
+            'Update/UpdateBooking.html',
             Booking=Booking,
             Passenger_Data=Passenger_Data,
             Instance_Data=Instance_Data,

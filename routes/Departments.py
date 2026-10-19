@@ -46,4 +46,4 @@ def Update_Department(id):
         sql = 'SELECT Department_ID, Department_Name, Description FROM Department WHERE Department_ID=%s'
         params = (id,)
         Department_To_Edit = fetch_one(sql, params)    
-        return render_template('UpdateDepartment.html', Department=Department_To_Edit)
+        return render_template('Update/UpdateDepartment.html', Department=Department_To_Edit)

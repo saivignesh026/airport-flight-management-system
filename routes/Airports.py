@@ -55,5 +55,5 @@ def Update_Airport(id):
         sql='select *from Airport where Airport_ID=%s'
         params=(id,)
         Airport_To_Edit=fetch_one(sql,params)
-        return render_template('UpdateAirport.html',Airport=Airport_To_Edit)
+        return render_template('Update/UpdateAirport.html',Airport=Airport_To_Edit)
         

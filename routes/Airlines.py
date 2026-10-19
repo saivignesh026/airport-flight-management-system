@@ -55,5 +55,5 @@ def Update_Airline(id):
         sql = 'SELECT * FROM Airline WHERE Airline_ID=%s'
         params = (id,)
         airline_to_edit = fetch_one(sql, params)
-        return render_template('UpdateAirline.html', airline=airline_to_edit)
+        return render_template('Update/UpdateAirline.html', airline=airline_to_edit)
     
