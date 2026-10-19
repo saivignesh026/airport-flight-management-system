@@ -11,16 +11,7 @@ Status_Enum = ('Scheduled', 'Delayed', 'Cancelled')
 
 @Flights_bp.route('/')
 def Display_Flight():
-    sql = '''
-        SELECT f.Flight_ID, f.Flight_Number, a.Name AS Airline_Name,
-               dep.Airport_Name AS Departure_Airport, arr.Airport_Name AS Arrival_Airport,
-               f.Scheduled_Departure_Time, f.Scheduled_Arrival_Time, f.Status AS Flight_Status
-        FROM Flight f
-        JOIN Airline a ON f.Airline_ID = a.Airline_ID
-        JOIN Airport dep ON f.Departure_Airport_ID = dep.Airport_ID
-        JOIN Airport arr ON f.Arrival_Airport_ID = arr.Airport_ID
-        ORDER BY f.Flight_ID
-    '''
+    sql ='select * from Flight_Details'
     Flight_Data = fetch_all(sql)
     Airline_Data = fetch_all('SELECT Airline_ID, Name FROM Airline')
     Airport_Data = fetch_all('SELECT Airport_ID, Airport_Name, IATA_Code FROM Airport')
