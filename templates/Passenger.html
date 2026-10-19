@@ -2,6 +2,65 @@
 {%block title%}AFMS-Passengers{%endblock%}
 {% block content %}
 
+<h1>Passengers List</h1>
+    <table>
+        <tr>
+            <th>ID</th>
+            <th>Full Name</th>
+            <th>Passport Number</th>
+            <th>Nationality</th>
+            <th>Contact Number</th>
+            <th>Email</th>
+            <th>Edit</th>
+            <th>Delete</th>
+        </tr>
+        {% for Passenger in Passenger_Data %}
+        <tr>
+            <td>{{ Passenger.Passenger_ID }}</td>
+            <td>{{ Passenger.First_Name }} {{ Passenger.Last_Name }}</td>
+            <td>{{ Passenger.Passport_Number }}</td>
+            <td>{{ Passenger.Nationality }}</td>
+            <td>{{ Passenger.Contact_Number }}</td>
+            <td>{{ Passenger.Email }}</td>
+            <td>
+                <a href="{{ url_for('Passengers.Update_Passenger', id=Passenger.Passenger_ID) }}">Edit</a>
+            </td>
+            <td>
+                <form action="{{ url_for('Passengers.Delete_Passenger', id=Passenger.Passenger_ID) }}" method="POST">
+                    <button type="submit" class="btn-delete">Delete</button>
+                </form>
+            </td>
+        </tr>
+        {% endfor %}
+    </table>
+
+
+
+<h1>Add Passenger</h1>
+    <form action="{{ url_for('Passengers.Add_Passenger') }}" method="POST">
+        <label>First Name</label>
+        <input type="text" name="First_Name" placeholder="e.g., Nikhil" required><br>
+
+        <label>Last Name</label>
+        <input type="text" name="Last_Name" placeholder="e.g., Kumar" required><br>
+
+        <label>Passport No.</label>
+        <input type="text" name="Passport_Number" placeholder="e.g., Y8905182" required><br>
+
+        <label>Nationality</label>
+        <input type="text" name="Nationality" placeholder="e.g., India" required><br>
+
+        <label>Contact Number</label>
+        <input type="tel" name="Contact_Number" placeholder="e.g., +919366201988" required><br>
+
+        <label>Email</label>
+        <input type="email" name="Email" placeholder="e.g., nikhilkumar@gmail.com" required><br>
+
+        <button type="submit" class="btn-submit">Add Passenger</button>
+    </form>
+
+
+
 
 
 
