@@ -59,4 +59,4 @@ def Update_Terminal(id):
         params = (id,)
         Terminal_To_Edit = fetch_one(sql, params)
         Airport_Data = fetch_all('select Airport_Name, Airport_ID from Airport')
-        return render_template('UpdateTerminal.html', Terminal=Terminal_To_Edit, Airport_Data=Airport_Data, Status_Enum=Status_Enum)
+        return render_template('Update/UpdateTerminal.html', Terminal=Terminal_To_Edit, Airport_Data=Airport_Data, Status_Enum=Status_Enum)

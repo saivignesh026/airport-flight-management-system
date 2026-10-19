@@ -48,4 +48,4 @@ def Update_Role(id):
         params = (id,)
         Role_To_Edit = fetch_one(sql, params)    
         Department_Data = fetch_all('SELECT Department_ID, Department_Name FROM Department')
-        return render_template('UpdateRole.html', Department_Data=Department_Data, Role=Role_To_Edit)
+        return render_template('Update/UpdateRole.html', Department_Data=Department_Data, Role=Role_To_Edit)

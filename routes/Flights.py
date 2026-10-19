@@ -77,7 +77,7 @@ def Update_Flight(id):
         Airline_Data = fetch_all('SELECT Airline_ID, Name FROM Airline')
         Airport_Data = fetch_all('SELECT Airport_ID, Airport_Name, IATA_Code FROM Airport')
         return render_template(
-            'UpdateFlight.html',
+            'Update/UpdateFlight.html',
             Flight=Flight_To_Edit,
             Airline_Data=Airline_Data,
             Airport_Data=Airport_Data,

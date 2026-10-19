@@ -60,4 +60,4 @@ def Update_Employee(id):
         Employee_To_Edit = fetch_one('CALL Employee_To_Edit(%s)', (id,))
         Department_Data = fetch_all('SELECT Department_ID, Department_Name FROM Department')
         Role_Data = fetch_all('SELECT Role_ID, Role_Name FROM Role')
-        return render_template('UpdateEmployee.html', Department_Data=Department_Data, Role_Data=Role_Data, Employee=Employee_To_Edit)
+        return render_template('Update/UpdateEmployee.html', Department_Data=Department_Data, Role_Data=Role_Data, Employee=Employee_To_Edit)

@@ -59,6 +59,6 @@ def Update_Aircraft(id):
         params=(id,)
         Aircraft_To_Edit=fetch_one(sql,params)    
         Airline_Data=fetch_all('select Name,Airline_ID from Airline')
-        return render_template('UpdateAircraft.html',Airline_Data=Airline_Data,Aircraft=Aircraft_To_Edit)
+        return render_template('Update/UpdateAircraft.html',Airline_Data=Airline_Data,Aircraft=Aircraft_To_Edit)
             
 

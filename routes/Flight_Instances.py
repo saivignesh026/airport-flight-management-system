@@ -84,7 +84,7 @@ def Update_Flight_Instance(id):
         Gate_Data = fetch_all('SELECT Gate_ID, Gate_Number FROM Gate')
         Runway_Data = fetch_all('SELECT Runway_ID, Runway_Code FROM Runway')
         return render_template(
-            'UpdateFlightInstance.html',
+            'Update/UpdateFlightInstance.html',
             Instance=Instance,
             Flight_Data=Flight_Data,
             Aircraft_Data=Aircraft_Data,
