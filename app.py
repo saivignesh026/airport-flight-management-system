@@ -14,14 +14,10 @@ from routes.Gates import Gates_bp
 from routes.Departments import Departments_bp
 from routes.Roles import Roles_bp
 from routes.Employees import Employees_bp
-<<<<<<< HEAD
-from routes.Passengers import Passengers_bp
-=======
 from routes.Flights import Flights_bp
 from routes.Flight_Instances import Flight_Instances_bp
 from routes.Passengers import Passengers_bp
 from routes.Bookings import Bookings_bp
->>>>>>> origin/Testing2
 
 app = Flask(__name__)
 
@@ -34,14 +30,10 @@ app.register_blueprint(Gates_bp)
 app.register_blueprint(Departments_bp)
 app.register_blueprint(Roles_bp)
 app.register_blueprint(Employees_bp)
-<<<<<<< HEAD
-app.register_blueprint(Passengers_bp)
-=======
 app.register_blueprint(Flights_bp)
 app.register_blueprint(Flight_Instances_bp)
 app.register_blueprint(Passengers_bp)
 app.register_blueprint(Bookings_bp)
->>>>>>> origin/Testing2
 
 app.secret_key = os.getenv('SECRET_KEY', 'fallback_secret_for_testing')
 
