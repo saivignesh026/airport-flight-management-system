@@ -12,6 +12,7 @@ from routes.Gates import Gates_bp
 from routes.Departments import Departments_bp
 from routes.Roles import Roles_bp
 from routes.Employees import Employees_bp
+from routes.Passengers import Passengers_bp
 
 app=Flask(__name__)
 
@@ -24,6 +25,7 @@ app.register_blueprint(Gates_bp)
 app.register_blueprint(Departments_bp)
 app.register_blueprint(Roles_bp)
 app.register_blueprint(Employees_bp)
+app.register_blueprint(Passengers_bp)
 
 
 app.secret_key=os.getenv('SECRET_KEY','fallback_secret_for_testing')
