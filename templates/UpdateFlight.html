@@ -1,0 +1,54 @@
+{% extends 'base.html' %}
+{% block title %}AFMS - Update Flight{% endblock %}
+{% block content %}
+    <h1>Update Flight Details</h1>
+    <div>
+        <form action="{{ url_for('Flights.Update_Flight', id=Flight.Flight_ID) }}" method="POST">
+            <label>Flight Number</label>
+            <input type="text" name="Flight_Number" value="{{ Flight.Flight_Number }}" required><br>
+
+            <label>Airline</label>
+            <select name="Airline_ID" required>
+                {% for Airline in Airline_Data %}
+                <option value="{{ Airline.Airline_ID }}" {{ 'selected' if Airline.Airline_ID == Flight.Airline_ID }}>
+                    {{ Airline.Name }}
+                </option>
+                {% endfor %}
+            </select><br>
+
+            <label>Departure Airport</label>
+            <select name="Departure_Airport_ID" required>
+                {% for Airport in Airport_Data %}
+                <option value="{{ Airport.Airport_ID }}" {{ 'selected' if Airport.Airport_ID == Flight.Departure_Airport_ID }}>
+                    {{ Airport.Airport_Name }} ({{ Airport.IATA_Code }})
+                </option>
+                {% endfor %}
+            </select><br>
+
+            <label>Arrival Airport</label>
+            <select name="Arrival_Airport_ID" required>
+                {% for Airport in Airport_Data %}
+                <option value="{{ Airport.Airport_ID }}" {{ 'selected' if Airport.Airport_ID == Flight.Arrival_Airport_ID }}>
+                    {{ Airport.Airport_Name }} ({{ Airport.IATA_Code }})
+                </option>
+                {% endfor %}
+            </select><br>
+
+            <label>Departure Time</label>
+            <input type="time" name="Scheduled_Departure_Time" step="1" value="{{ Flight.Scheduled_Departure_Time }}" required><br>
+
+            <label>Arrival Time</label>
+            <input type="time" name="Scheduled_Arrival_Time" step="1" value="{{ Flight.Scheduled_Arrival_Time }}" required><br>
+
+            <label>Status</label>
+            <select name="Status" required>
+                {% for Status in Status_Enum %}
+                <option value="{{ Status }}" {{ 'selected' if Status == Flight.Status }}>{{ Status }}</option>
+                {% endfor %}
+            </select><br>
+
+            <button type="submit" class="btn-submit">Save Changes</button>
+            <a href="{{ url_for('Flights.Display_Flight') }}" style="color:red">Cancel</a>
+        </form>
+    </div>
+{% endblock %}

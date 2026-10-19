@@ -5,55 +5,36 @@
     <h1>Aircrafts List</h1>
     <div>
         <table>
-
             <tr>
-                    
-                    <th>Tail Number</th>
-                    <th>Model</th>
-                    <th>Capacity</th>
-                    <th>Airline Name</th>
-                    <th>Edit</th>
-                    <th>Delete</th>
-                
+                <th>Tail Number</th>
+                <th>Model</th>
+                <th>Capacity</th>
+                <th>Airline Name</th>
+                <th>Edit</th>
+                <th>Delete</th>
             </tr>
-
             {%for Aircraft in Aircraft_Data%}
             <tr>
-            
-                
                 <td>{{Aircraft.Tail_Number}}</td>
                 <td>{{Aircraft.Model}}</td>
                 <td>{{Aircraft.Capacity}}</td>
                 <td>{{Aircraft.Airline_Name}}</td>
-
-
                 <td>
-
-                        <a href="{{url_for('Aircrafts.Update_Aircraft',id=Aircraft.Aircraft_ID)}}">Edit</a>
-
+                    <a href="{{url_for('Aircrafts.Update_Aircraft',id=Aircraft.Aircraft_ID)}}">Edit</a>
                 </td>
-
                 <td>
-                    
                     <form action="{{ url_for('Aircrafts.Delete_Aircraft' ,id=Aircraft.Aircraft_ID)}}" method="POST">
                         <button type="submit" class="btn-delete">Delete</button>
                     </form>
-
                 </td>
-            
             </tr>
             {%endfor%}
-
-            
-
         </table>
-    
-
+    </div> <!-- CLOSED DIV TAG HERE -->
 
     <h1>Add Aircraft</h1>
     
     <form action="{{ url_for('Aircrafts.Add_Aircraft') }}" method="POST">
-    
         <label>Tail Number</label>
         <input type="text" name="Tail_Number" placeholder="e.g., VT-IUZ, A6-EQA"><br>
 
@@ -65,20 +46,12 @@
 
         <label>Airline Name</label>
         <select name="Airline_ID" required>
-        
-        {%for Airline in Airline_Data%}
-
-        <option value="{{Airline.Airline_ID}}">{{Airline.Name}}</option>
-
-        {%endfor%}
-        
-        
-        
+            {%for Airline in Airline_Data%}
+            <option value="{{Airline.Airline_ID}}">{{Airline.Name}}</option>
+            {%endfor%}
         </select>
 
         <button type="submit" class="btn-submit">Add</button>
-
-    
     </form>
 
 {%endblock%}

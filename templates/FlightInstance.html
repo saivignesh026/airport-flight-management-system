@@ -1,0 +1,91 @@
+{% extends 'base.html' %}
+{% block title %}AFMS - Flight Schedules{% endblock %}
+{% block content %}
+    <h1>Flight Schedules (Instances)</h1>
+    <table>
+        <tr>
+            <th>ID</th>
+            <th>Flight</th>
+            <th>Aircraft</th>
+            <th>Gate / Terminal</th>
+            <th>Runway</th>
+            <th>Scheduled Dep / Arr</th>
+            <th>Actual Dep / Arr</th>
+            <th>Status</th>
+            <th>Edit</th>
+            <th>Delete</th>
+        </tr>
+        {% for Inst in Instance_Data %}
+        <tr>
+            <td>#{{ Inst.Instance_ID }}</td>
+            <td><strong>{{ Inst.Flight_Number }}</strong></td>
+            <td>{{ Inst.Aircraft_Model }} ({{ Inst.Tail_Number }})</td>
+            <td>{{ Inst.Gate_Number }} ({{ Inst.Terminal_Number }} - {{ Inst.Airport }})</td>
+            <td>{{ Inst.Runway_Code }}</td>
+            <td>{{ Inst.Scheduled_Departure }}<br>{{ Inst.Scheduled_Arrival }}</td>
+            <td>{{ Inst.Actual_Departure if Inst.Actual_Departure else '—' }}<br>{{ Inst.Actual_Arrival if Inst.Actual_Arrival else '—' }}</td>
+            <td>{{ Inst.Instance_Status }}</td>
+            <td>
+                <a href="{{ url_for('Flight_Instances.Update_Flight_Instance', id=Inst.Instance_ID) }}">Edit</a>
+            </td>
+            <td>
+                <form action="{{ url_for('Flight_Instances.Delete_Flight_Instance', id=Inst.Instance_ID) }}" method="POST">
+                    <button type="submit" class="btn-delete">Delete</button>
+                </form>
+            </td>
+        </tr>
+        {% endfor %}
+    </table>
+
+    <h1>Schedule a Flight Instance</h1>
+    <form action="{{ url_for('Flight_Instances.Add_Flight_Instance') }}" method="POST">
+        <label>Flight Number</label>
+        <select name="Flight_ID" required>
+            {% for f in Flight_Data %}
+            <option value="{{ f.Flight_ID }}">{{ f.Flight_Number }}</option>
+            {% endfor %}
+        </select><br>
+
+        <label>Aircraft</label>
+        <select name="Aircraft_ID" required>
+            {% for ac in Aircraft_Data %}
+            <option value="{{ ac.Aircraft_ID }}">{{ ac.Tail_Number }} - {{ ac.Model }}</option>
+            {% endfor %}
+        </select><br>
+
+        <label>Gate</label>
+        <select name="Gate_ID" required>
+            {% for g in Gate_Data %}
+            <option value="{{ g.Gate_ID }}">{{ g.Gate_Number }}</option>
+            {% endfor %}
+        </select><br>
+
+        <label>Runway</label>
+        <select name="Runway_ID" required>
+            {% for r in Runway_Data %}
+            <option value="{{ r.Runway_ID }}">{{ r.Runway_Code }}</option>
+            {% endfor %}
+        </select><br>
+
+        <label>Scheduled Dep.</label>
+        <input type="datetime-local" name="Scheduled_Departure" required><br>
+
+        <label>Scheduled Arr.</label>
+        <input type="datetime-local" name="Scheduled_Arrival" required><br>
+
+        <label>Actual Dep.</label>
+        <input type="datetime-local" name="Actual_Departure"><br>
+
+        <label>Actual Arr.</label>
+        <input type="datetime-local" name="Actual_Arrival"><br>
+
+        <label>Status</label>
+        <select name="Flight_Instance_Status" required>
+            {% for Status in Status_Enum %}
+            <option value="{{ Status }}">{{ Status }}</option>
+            {% endfor %}
+        </select><br>
+
+        <button type="submit" class="btn-submit">Schedule Flight</button>
+    </form>
+{% endblock %}

@@ -1,0 +1,75 @@
+{% extends 'base.html' %}
+{% block title %}AFMS - Flight Passenger Manifest{% endblock %}
+{% block content %}
+    <h1>Flight Passenger Manifest (By Flight, Origin & Destination)</h1>
+
+    <!-- Filter Form -->
+    <form action="{{ url_for('Passengers.Flight_Passenger_Manifest') }}" method="GET" style="max-width: 100%; display: flex; flex-wrap: wrap; gap: 20px; align-items: center;">
+        <div>
+            <label style="width: auto; margin-right: 8px;">Flight:</label>
+            <select name="flight_id">
+                <option value="">All Flights</option>
+                {% for fl in Flight_List %}
+                <option value="{{ fl.Flight_ID }}" {{ 'selected' if selected_flight == (fl.Flight_ID|string) }}>
+                    {{ fl.Flight_Number }}
+                </option>
+                {% endfor %}
+            </select>
+        </div>
+
+        <div>
+            <label style="width: auto; margin-right: 8px;">From Airport:</label>
+            <select name="from_airport_id">
+                <option value="">All Departure Airports</option>
+                {% for ap in Airport_List %}
+                <option value="{{ ap.Airport_ID }}" {{ 'selected' if selected_from == (ap.Airport_ID|string) }}>
+                    {{ ap.Airport_City }} ({{ ap.IATA_Code }}) - {{ ap.Airport_Name }}
+                </option>
+                {% endfor %}
+            </select>
+        </div>
+
+        <div>
+            <label style="width: auto; margin-right: 8px;">Destination Airport:</label>
+            <select name="to_airport_id">
+                <option value="">All Destination Airports</option>
+                {% for ap in Airport_List %}
+                <option value="{{ ap.Airport_ID }}" {{ 'selected' if selected_to == (ap.Airport_ID|string) }}>
+                    {{ ap.Airport_City }} ({{ ap.IATA_Code }}) - {{ ap.Airport_Name }}
+                </option>
+                {% endfor %}
+            </select>
+        </div>
+
+        <div>
+            <button type="submit" class="btn-submit" style="margin-top: 0;">Filter Passengers</button>
+            <a href="{{ url_for('Passengers.Flight_Passenger_Manifest') }}" style="margin-left: 10px; color: #e74c3c; font-weight: 600; text-decoration: none;">Reset</a>
+        </div>
+    </form>
+
+    <!-- Passenger Manifest Table -->
+    <table>
+        <tr>
+            <th>Passenger Name</th>
+            <th>Passport & Contact</th>
+            <th>Flight & Airline</th>
+            <th>From Airport (Origin)</th>
+            <th>Destination Airport</th>
+            <th>Departure Time</th>
+            <th>Seat & Class</th>
+            <th>Check-In / Boarding</th>
+        </tr>
+        {% for row in Manifest_Data %}
+        <tr>
+            <td><strong>{{ row.Passenger_Name }}</strong><br><small>{{ row.Nationality }}</small></td>
+            <td>{{ row.Passport_Number }}<br><small>{{ row.Contact_Number }}</small></td>
+            <td><strong>{{ row.Flight_Number }}</strong><br><small>{{ row.Airline_Name }}</small></td>
+            <td><strong>{{ row.From_City }} ({{ row.From_IATA }})</strong><br><small>{{ row.From_Airport_Name }}</small></td>
+            <td><strong>{{ row.To_City }} ({{ row.To_IATA }})</strong><br><small>{{ row.To_Airport_Name }}</small></td>
+            <td>{{ row.Scheduled_Departure }}<br><small>{{ row.Flight_Instance_Status }}</small></td>
+            <td><strong>{{ row.Seat_Number }}</strong> ({{ row.Class }})<br><small>{{ row.Booking_Status }}</small></td>
+            <td>{{ row.CheckIn_Status if row.CheckIn_Status else 'Pending' }} / {{ row.Boarding_Status if row.Boarding_Status else 'Not Boarded' }}</td>
+        </tr>
+        {% endfor %}
+    </table>
+{% endblock %}

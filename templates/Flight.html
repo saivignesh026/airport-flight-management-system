@@ -1,0 +1,79 @@
+{% extends 'base.html' %}
+{% block title %}AFMS - Flights{% endblock %}
+{% block content %}
+    <h1>Flight Routes List</h1>
+    <table>
+        <tr>
+            <th>Flight Number</th>
+            <th>Airline</th>
+            <th>Departure Airport</th>
+            <th>Arrival Airport</th>
+            <th>Departure Time</th>
+            <th>Arrival Time</th>
+            <th>Status</th>
+            <th>Edit</th>
+            <th>Delete</th>
+        </tr>
+        {% for Flight in Flight_Data %}
+        <tr>
+            <td><strong>{{ Flight.Flight_Number }}</strong></td>
+            <td>{{ Flight.Airline_Name }}</td>
+            <td>{{ Flight.Departure_Airport }}</td>
+            <td>{{ Flight.Arrival_Airport }}</td>
+            <td>{{ Flight.Scheduled_Departure_Time }}</td>
+            <td>{{ Flight.Scheduled_Arrival_Time }}</td>
+            <td>{{ Flight.Flight_Status }}</td>
+            <td>
+                <a href="{{ url_for('Flights.Update_Flight', id=Flight.Flight_ID) }}">Edit</a>
+            </td>
+            <td>
+                <form action="{{ url_for('Flights.Delete_Flight', id=Flight.Flight_ID) }}" method="POST">
+                    <button type="submit" class="btn-delete">Delete</button>
+                </form>
+            </td>
+        </tr>
+        {% endfor %}
+    </table>
+
+    <h1>Add Flight Route</h1>
+    <form action="{{ url_for('Flights.Add_Flight') }}" method="POST">
+        <label>Flight Number</label>
+        <input type="text" name="Flight_Number" placeholder="e.g., 6E101, AI201" required><br>
+
+        <label>Airline</label>
+        <select name="Airline_ID" required>
+            {% for Airline in Airline_Data %}
+            <option value="{{ Airline.Airline_ID }}">{{ Airline.Name }}</option>
+            {% endfor %}
+        </select><br>
+
+        <label>Departure Airport</label>
+        <select name="Departure_Airport_ID" required>
+            {% for Airport in Airport_Data %}
+            <option value="{{ Airport.Airport_ID }}">{{ Airport.Airport_Name }} ({{ Airport.IATA_Code }})</option>
+            {% endfor %}
+        </select><br>
+
+        <label>Arrival Airport</label>
+        <select name="Arrival_Airport_ID" required>
+            {% for Airport in Airport_Data %}
+            <option value="{{ Airport.Airport_ID }}">{{ Airport.Airport_Name }} ({{ Airport.IATA_Code }})</option>
+            {% endfor %}
+        </select><br>
+
+        <label>Departure Time</label>
+        <input type="time" name="Scheduled_Departure_Time" step="1" required><br>
+
+        <label>Arrival Time</label>
+        <input type="time" name="Scheduled_Arrival_Time" step="1" required><br>
+
+        <label>Status</label>
+        <select name="Status" required>
+            {% for Status in Status_Enum %}
+            <option value="{{ Status }}">{{ Status }}</option>
+            {% endfor %}
+        </select><br>
+
+        <button type="submit" class="btn-submit">Add Flight</button>
+    </form>
+{% endblock %}
