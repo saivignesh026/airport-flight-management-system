@@ -23,10 +23,13 @@ def Add_Employee():
     Role_ID = request.form['Role_ID'] or None
     Hire_Date = request.form['Hire_Date'] or None
     Employee_Status = request.form['Employee_Status']
+    Employee_Email = request.form['Employee_Email']
+    Contact_Number = request.form['Contact_Number'] 
 
-    params = (Employee_Name, Department_ID, Role_ID, Hire_Date, Employee_Status)
-    sql = 'INSERT INTO Employee (Employee_Name, Department_ID, Role_ID, Hire_Date, Employee_Status) \
-           VALUES (%s, %s, %s, %s, %s)'
+
+    params = (Employee_Name, Employee_Email, Contact_Number, Department_ID, Role_ID, Hire_Date, Employee_Status)
+    sql = 'INSERT INTO Employee (Employee_Name,Employee_Email,Contact_Number,Department_ID, Role_ID, Hire_Date, Employee_Status) \
+           VALUES (%s, %s, %s, %s, %s,%s,%s)'
     execute(sql, params)
 
     return redirect(url_for('Employees.Display_Employee'))
@@ -43,13 +46,16 @@ def Delete_Employee(id):
 def Update_Employee(id):
     if request.method == 'POST':
         Employee_Name = request.form['Employee_Name']
-        Department_ID = request.form['Department_ID'] or None
-        Role_ID = request.form['Role_ID'] or None
-        Hire_Date = request.form['Hire_Date'] or None
+        Department_ID = request.form['Department_ID'] 
+        Role_ID = request.form['Role_ID'] 
+        Hire_Date = request.form['Hire_Date'] 
         Employee_Status = request.form['Employee_Status']
+        Employee_Email = request.form['Employee_Email']
+        Contact_Number = request.form['Contact_Number'] 
+
         
-        params = (Employee_Name, Department_ID, Role_ID, Hire_Date, Employee_Status, id)
-        sql = 'UPDATE Employee SET Employee_Name=%s, Department_ID=%s, Role_ID=%s, Hire_Date=%s, Employee_Status=%s \
+        params = (Employee_Name, Employee_Email, Contact_Number, Department_ID, Role_ID, Hire_Date, Employee_Status,id)
+        sql = 'UPDATE Employee SET Employee_Name=%s,Employee_Email=%s,Contact_Number=%s,Department_ID=%s, Role_ID=%s, Hire_Date=%s, Employee_Status=%s \
                WHERE Employee_ID=%s'
         execute(sql, params)
         return redirect(url_for('Employees.Display_Employee'))

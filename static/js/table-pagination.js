@@ -1,5 +1,5 @@
 document.addEventListener("DOMContentLoaded", function () {
-    const ROWS_PER_PAGE = 5;
+    const ROWS_PER_PAGE = 10;
 
     document.querySelectorAll("table").forEach(function (table) {
         // Collect ONLY data rows (skips header rows with <th>)
