@@ -1,0 +1,124 @@
+{% extends 'base.html' %}
+{% block title %}AFMS - Bookings, Check-In & Baggage{% endblock %}
+{% block content %}
+    <h1>Bookings, Check-In, Payments & Baggage</h1>
+    <table>
+        <tr>
+            <th>ID</th>
+            <th>Passenger</th>
+            <th>Flight & Seat</th>
+            <th>Booking & Fare</th>
+            <th>Payment</th>
+            <th>Check-In & Boarding</th>
+            <th>Baggage</th>
+            <th>Edit</th>
+            <th>Delete</th>
+        </tr>
+        {% for b in Booking_Data %}
+        <tr>
+            <td>#{{ b.Booking_ID }}</td>
+            <td>{{ b.Passenger_Name }}<br><small>{{ b.Passport_Number }}</small></td>
+            <td><strong>{{ b.Flight_Number }}</strong><br>Seat {{ b.Seat_Number }} ({{ b.Class }})</td>
+            <td>{{ b.Booking_Status }}<br>₹{{ b.Booking_Price }}</td>
+            <td>{{ b.Payment_Method }}<br>{{ b.Payment_Status }}</td>
+            <td>{{ b.CheckIn_Status }}<br>{{ b.Boarding_Status }}</td>
+            <td>{{ b.Baggage_Type }} ({{ b.Weight_KG }} kg)<br>{{ b.Baggage_Status }}</td>
+            <td>
+                <a href="{{ url_for('Bookings.Update_Booking', id=b.Booking_ID) }}">Edit</a>
+            </td>
+            <td>
+                <form action="{{ url_for('Bookings.Delete_Booking', id=b.Booking_ID) }}" method="POST">
+                    <button type="submit" class="btn-delete">Delete</button>
+                </form>
+            </td>
+        </tr>
+        {% endfor %}
+    </table>
+
+    <h1>Create New Booking (With Payment, Check-In & Baggage)</h1>
+    <form action="{{ url_for('Bookings.Add_Booking') }}" method="POST">
+        <label>Passenger</label>
+        <select name="Passenger_ID" required>
+            {% for p in Passenger_Data %}
+            <option value="{{ p.Passenger_ID }}">{{ p.First_Name }} {{ p.Last_Name }} ({{ p.Passport_Number }})</option>
+            {% endfor %}
+        </select><br>
+
+        <label>Flight Schedule</label>
+        <select name="Instance_ID" required>
+            {% for inst in Instance_Data %}
+            <option value="{{ inst.Instance_ID }}">{{ inst.Flight_Number }} ({{ inst.Scheduled_Departure }})</option>
+            {% endfor %}
+        </select><br>
+
+        <label>Seat Number</label>
+        <input type="text" name="Seat_Number" maxlength="3" placeholder="e.g., 12A, 04A" required><br>
+
+        <label>Cabin Class</label>
+        <select name="Class" required>
+            {% for c in Class_Enum %}
+            <option value="{{ c }}">{{ c }}</option>
+            {% endfor %}
+        </select><br>
+
+        <label>Ticket Fare (₹)</label>
+        <input type="number" step="0.01" min="0" name="Booking_Price" placeholder="e.g., 5500.00" required><br>
+
+        <label>Booking Status</label>
+        <select name="Booking_Status" required>
+            {% for st in Booking_Status_Enum %}
+            <option value="{{ st }}" {{ 'selected' if st == 'Confirmed' }}>{{ st }}</option>
+            {% endfor %}
+        </select><br>
+
+        <label>Payment Method</label>
+        <select name="Payment_Method" required>
+            {% for pm in Payment_Method_Enum %}
+            <option value="{{ pm }}">{{ pm }}</option>
+            {% endfor %}
+        </select><br>
+
+        <label>Payment Status</label>
+        <select name="Payment_Status" required>
+            {% for ps in Payment_Status_Enum %}
+            <option value="{{ ps }}" {{ 'selected' if ps == 'Payment Received' }}>{{ ps }}</option>
+            {% endfor %}
+        </select><br>
+
+        <label>Transaction Ref</label>
+        <input type="text" name="Transaction_Reference" placeholder="e.g., TXNRFE1009845"><br>
+
+        <label>Check-In Status</label>
+        <select name="CheckIn_Status" required>
+            {% for cs in CheckIn_Status_Enum %}
+            <option value="{{ cs }}" {{ 'selected' if cs == 'Checked-In' }}>{{ cs }}</option>
+            {% endfor %}
+        </select><br>
+
+        <label>Boarding Status</label>
+        <select name="Boarding_Status" required>
+            {% for bs in Boarding_Status_Enum %}
+            <option value="{{ bs }}">{{ bs }}</option>
+            {% endfor %}
+        </select><br>
+
+        <label>Baggage Type</label>
+        <select name="Baggage_Type" required>
+            {% for bt in Baggage_Type_Enum %}
+            <option value="{{ bt }}">{{ bt }}</option>
+            {% endfor %}
+        </select><br>
+
+        <label>Baggage (KG)</label>
+        <input type="number" step="0.01" min="0" name="Weight_KG" placeholder="Weight in kg (e.g., 15.00)" value="15.00" required><br>
+
+        <label>Baggage Status</label>
+        <select name="Baggage_Status" required>
+            {% for bgs in Baggage_Status_Enum %}
+            <option value="{{ bgs }}" {{ 'selected' if bgs == 'Checked-In' }}>{{ bgs }}</option>
+            {% endfor %}
+        </select><br>
+
+        <button type="submit" class="btn-submit">Confirm Booking</button>
+    </form>
+{% endblock %}

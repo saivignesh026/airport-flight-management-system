@@ -3,7 +3,7 @@
         <!-- Brand / Logo returns to Home -->
         <a href="{{ url_for('Home') }}" class="nav-brand-link" style="text-decoration: none;">
             <div class="nav-brand">
-                <span class="brand-icon">✈</span>
+                <span class="brand-icon">✈️</span>
                 <span class="brand-title">AFMS Portal</span>
             </div>
         </a>
@@ -16,6 +16,8 @@
             <div class="dropdown">
                 <button class="dropbtn nav-item">Flight Ops <span class="chevron">▾</span></button>
                 <div class="dropdown-content">
+                    <a href="{{ url_for('Flights.Display_Flight') }}">Flights (Routes)</a>
+                    <a href="{{ url_for('Flight_Instances.Display_Flight_Instance') }}">Flight Schedules</a>
                     <a href="{{ url_for('Airlines.Display_Airline') }}">Airlines</a>
                     <a href="{{ url_for('Airports.Display_Airport') }}">Airports</a>
                     <a href="{{ url_for('Aircrafts.Display_Aircraft') }}">Aircrafts</a>
@@ -25,6 +27,7 @@
                 </div>
             </div>
 
+<<<<<<< HEAD
            <!-- Passenger & Bookings Dropdown -->
             <div class="dropdown">
                 <button class="dropbtn nav-item">Passenger Services <span class="chevron">▾</span></button>
@@ -33,6 +36,17 @@
                 </div>
             </div>  
 
+=======
+            <!-- Passenger & Bookings Dropdown -->
+            <div class="dropdown">
+                <button class="dropbtn nav-item">Passenger Services <span class="chevron">▾</span></button>
+                <div class="dropdown-content">
+                    <a href="{{ url_for('Passengers.Display_Passenger') }}">Passengers</a>
+                    <a href="{{ url_for('Passengers.Flight_Passenger_Manifest') }}">Flight Passenger Manifest</a>
+                    <a href="{{ url_for('Bookings.Display_Booking') }}">Bookings, Check-In & Baggage</a>
+                </div>
+            </div>
+>>>>>>> origin/Testing2
 
             <!-- HR & Admin Dropdown -->
             <div class="dropdown">

@@ -1,8 +1,15 @@
+<<<<<<< HEAD
 {% extends 'base.html'%}
 {%block title%}AFMS-Passengers{%endblock%}
 {% block content %}
 
 <h1>Passengers List</h1>
+=======
+{% extends 'base.html' %}
+{% block title %}AFMS - Passengers{% endblock %}
+{% block content %}
+    <h1>Passengers List</h1>
+>>>>>>> origin/Testing2
     <table>
         <tr>
             <th>ID</th>
@@ -14,6 +21,7 @@
             <th>Edit</th>
             <th>Delete</th>
         </tr>
+<<<<<<< HEAD
         {% for Passenger in Passenger_Data %}
         <tr>
             <td>{{ Passenger.Passenger_ID }}</td>
@@ -27,6 +35,21 @@
             </td>
             <td>
                 <form action="{{ url_for('Passengers.Delete_Passenger', id=Passenger.Passenger_ID) }}" method="POST">
+=======
+        {% for p in Passenger_Data %}
+        <tr>
+            <td>{{ p.Passenger_ID }}</td>
+            <td>{{ p.First_Name }} {{ p.Last_Name }}</td>
+            <td>{{ p.Passport_Number }}</td>
+            <td>{{ p.Nationality }}</td>
+            <td>{{ p.Contact_Number }}</td>
+            <td>{{ p.Email }}</td>
+            <td>
+                <a href="{{ url_for('Passengers.Update_Passenger', id=p.Passenger_ID) }}">Edit</a>
+            </td>
+            <td>
+                <form action="{{ url_for('Passengers.Delete_Passenger', id=p.Passenger_ID) }}" method="POST">
+>>>>>>> origin/Testing2
                     <button type="submit" class="btn-delete">Delete</button>
                 </form>
             </td>
@@ -34,9 +57,13 @@
         {% endfor %}
     </table>
 
+<<<<<<< HEAD
 
 
 <h1>Add Passenger</h1>
+=======
+    <h1>Add Passenger</h1>
+>>>>>>> origin/Testing2
     <form action="{{ url_for('Passengers.Add_Passenger') }}" method="POST">
         <label>First Name</label>
         <input type="text" name="First_Name" placeholder="e.g., Nikhil" required><br>
@@ -58,6 +85,7 @@
 
         <button type="submit" class="btn-submit">Add Passenger</button>
     </form>
+<<<<<<< HEAD
 
 
 
@@ -65,3 +93,6 @@
 
 
 {%endblock%}
+=======
+{% endblock %}
+>>>>>>> origin/Testing2

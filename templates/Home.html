@@ -1,0 +1,103 @@
+{% extends 'base.html' %}
+{% block title %}AFMS - Live Operations Dashboard{% endblock %}
+{% block content %}
+    <h1>Airport Flight Management Dashboard</h1>
+
+    <!-- KPI Summary Cards -->
+    <div class="stats-grid">
+        <a href="{{ url_for('Airports.Display_Airport') }}" class="stat-card">
+            <span class="stat-value">{{ stats.airports }}</span>
+            <span class="stat-label">Airports</span>
+        </a>
+        <a href="{{ url_for('Flights.Display_Flight') }}" class="stat-card">
+            <span class="stat-value">{{ stats.flights }}</span>
+            <span class="stat-label">Flight Routes</span>
+        </a>
+        <a href="{{ url_for('Flight_Instances.Display_Flight_Instance') }}" class="stat-card">
+            <span class="stat-value">{{ stats.instances }}</span>
+            <span class="stat-label">Scheduled Flights</span>
+        </a>
+        <a href="{{ url_for('Passengers.Display_Passenger') }}" class="stat-card">
+            <span class="stat-value">{{ stats.passengers }}</span>
+            <span class="stat-label">Passengers</span>
+        </a>
+        <a href="{{ url_for('Bookings.Display_Booking') }}" class="stat-card">
+            <span class="stat-value">{{ stats.bookings }}</span>
+            <span class="stat-label">Confirmed Bookings</span>
+        </a>
+        <a href="{{ url_for('Employees.Display_Employee') }}" class="stat-card">
+            <span class="stat-value">{{ stats.employees }}</span>
+            <span class="stat-label">Active Staff</span>
+        </a>
+    </div>
+
+    <h2>Live Flight Operations Board</h2>
+    <table>
+        <tr>
+            <th>Flight</th>
+            <th>Aircraft</th>
+            <th>Airport & Terminal</th>
+            <th>Gate / Runway</th>
+            <th>Scheduled Departure</th>
+            <th>Scheduled Arrival</th>
+            <th>Status</th>
+        </tr>
+        {% for f in live_flights %}
+        <tr>
+            <td><strong>{{ f.Flight_Number }}</strong></td>
+            <td>{{ f.Aircraft_Model }} ({{ f.Tail_Number }})</td>
+            <td>{{ f.Airport }} ({{ f.Terminal_Number }})</td>
+            <td>Gate {{ f.Gate_Number }} / Rwy {{ f.Runway_Code }}</td>
+            <td>{{ f.Scheduled_Departure }}</td>
+            <td>{{ f.Scheduled_Arrival }}</td>
+            <td>{{ f.Instance_Status }}</td>
+        </tr>
+        {% endfor %}
+    </table>
+
+    <h2>Passenger Journey & Baggage Status Overview</h2>
+    <table>
+        <tr>
+            <th>Booking ID</th>
+            <th>Passenger</th>
+            <th>Flight</th>
+            <th>Booking</th>
+            <th>Payment</th>
+            <th>Check-In / Boarding</th>
+            <th>Baggage</th>
+        </tr>
+        {% for b in booking_overview %}
+        <tr>
+            <td>#{{ b.Booking_ID }}</td>
+            <td>{{ b.Passenger_Name }}</td>
+            <td><strong>{{ b.Flight_Number }}</strong></td>
+            <td>{{ b.Booking_Status }}</td>
+            <td>₹{{ b.Amount }} ({{ b.Payment_Method }} - {{ b.Payment_Status }})</td>
+            <td>{{ b.CheckIn_Status }} / {{ b.Boarding_Status }}</td>
+            <td>{{ b.Baggage_Type }} ({{ b.Weight_KG }} kg - {{ b.Baggage_Status }})</td>
+        </tr>
+        {% endfor %}
+    </table>
+
+    <h2>Airport Infrastructure Matrix</h2>
+    <table>
+        <tr>
+            <th>IATA</th>
+            <th>Airport Name</th>
+            <th>City</th>
+            <th>Terminal</th>
+            <th>Gate</th>
+            <th>Runway</th>
+        </tr>
+        {% for inf in infrastructure %}
+        <tr>
+            <td><strong>{{ inf.IATA_Code }}</strong></td>
+            <td>{{ inf.Airport_Name }}</td>
+            <td>{{ inf.Airport_City }}</td>
+            <td>{{ inf.Terminal_Name }} ({{ inf.Terminal_Number }}) - {{ inf.Terminal_Status }}</td>
+            <td>{{ inf.Gate_Number }} ({{ inf.Gate_Status }})</td>
+            <td>{{ inf.Runway_Code }} ({{ inf.Runway_Length }}m - {{ inf.Runway_Status }})</td>
+        </tr>
+        {% endfor %}
+    </table>
+{% endblock %}
