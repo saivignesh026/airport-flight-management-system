@@ -2,39 +2,38 @@
 {% block title %}AFMS - Flight Schedules{% endblock %}
 {% block content %}
     <h1>Flight Schedules (Instances)</h1>
-    <table>
-        <tr>
-            <th>ID</th>
+    <table class="flight-schedule-table">
+        <thead><tr>
             <th>Flight</th>
             <th>Aircraft</th>
-            <th>Gate / Terminal</th>
+            <th>Airport / gate</th>
             <th>Runway</th>
-            <th>Scheduled Dep / Arr</th>
-            <th>Actual Dep / Arr</th>
+            <th>Scheduled</th>
+            <th>Actual</th>
             <th>Status</th>
-            <th>Edit</th>
-            <th>Delete</th>
-        </tr>
+            <th>Actions</th>
+        </tr></thead>
+        <tbody>
         {% for Inst in Instance_Data %}
         <tr>
-            <td>#{{ Inst.Instance_ID }}</td>
-            <td><strong>{{ Inst.Flight_Number }}</strong></td>
-            <td>{{ Inst.Aircraft_Model }} ({{ Inst.Tail_Number }})</td>
-            <td>{{ Inst.Gate_Number }} ({{ Inst.Terminal_Number }} - {{ Inst.Airport }})</td>
-            <td>{{ Inst.Runway_Code }}</td>
-            <td>{{ Inst.Scheduled_Departure }}<br>{{ Inst.Scheduled_Arrival }}</td>
-            <td>{{ Inst.Actual_Departure if Inst.Actual_Departure else '—' }}<br>{{ Inst.Actual_Arrival if Inst.Actual_Arrival else '—' }}</td>
-            <td>{{ Inst.Instance_Status }}</td>
-            <td>
-                <a href="{{ url_for('Flight_Instances.Update_Flight_Instance', id=Inst.Instance_ID) }}">Edit</a>
-            </td>
-            <td>
+            <td data-label="Flight"><strong>{{ Inst.Flight_Number }}</strong><small class="schedule-instance-id">Instance #{{ Inst.Instance_ID }}</small></td>
+            <td data-label="Aircraft">{{ Inst.Aircraft_Model }}<small>{{ Inst.Tail_Number }}</small></td>
+            <td data-label="Airport / gate">{{ Inst.Airport }}<small>Terminal {{ Inst.Terminal_Number }} · Gate {{ Inst.Gate_Number }}</small></td>
+            <td data-label="Runway">{{ Inst.Runway_Code }}</td>
+            <td data-label="Scheduled"><time data-operational-date datetime="{{ Inst.Scheduled_Departure|string|replace(' ', 'T') }}">{{ Inst.Scheduled_Departure }}</time><small><time data-operational-date datetime="{{ Inst.Scheduled_Arrival|string|replace(' ', 'T') }}">{{ Inst.Scheduled_Arrival }}</time></small></td>
+            <td data-label="Actual">{% if Inst.Actual_Departure %}<time data-operational-date datetime="{{ Inst.Actual_Departure|string|replace(' ', 'T') }}">{{ Inst.Actual_Departure }}</time>{% else %}—{% endif %}<small>{% if Inst.Actual_Arrival %}<time data-operational-date datetime="{{ Inst.Actual_Arrival|string|replace(' ', 'T') }}">{{ Inst.Actual_Arrival }}</time>{% else %}—{% endif %}</small></td>
+            <td data-label="Status">{{ Inst.Instance_Status }}</td>
+            <td data-label="Actions" class="schedule-actions">
+                <div class="schedule-action-group">
+                    <a class="schedule-edit" href="{{ url_for('Flight_Instances.Update_Flight_Instance', id=Inst.Instance_ID) }}">Edit</a>
                 <form action="{{ url_for('Flight_Instances.Delete_Flight_Instance', id=Inst.Instance_ID) }}" method="POST">
                     <button type="submit" class="btn-delete">Delete</button>
                 </form>
+                </div>
             </td>
         </tr>
         {% endfor %}
+        </tbody>
     </table>
 
     <h1>Schedule a Flight Instance</h1>

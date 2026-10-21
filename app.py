@@ -1,4 +1,5 @@
 from flask import Flask, render_template, redirect, url_for, request
+from collections import Counter
 from dotenv import load_dotenv
 import os
 from db import fetch_all, fetch_one
@@ -50,12 +51,50 @@ def Home():
     live_flights = fetch_all('SELECT * FROM Flight_Operational_Details ORDER BY Scheduled_Departure DESC')
     booking_overview = fetch_all('SELECT * FROM Booking_Status_Details ORDER BY Booking_ID DESC')
     infrastructure = fetch_all('SELECT * FROM Airport_Infrastructure')
+
+    # Keep the homepage summary derived from the same operational records shown
+    # below, so its status mix cannot drift from the detailed flight list.
+    status_counts = Counter(str(f.get('Instance_Status') or 'Unknown') for f in live_flights)
+    flight_status_summary = []
+    for label, tone in (
+        ('On Time', 'success'), ('Scheduled', 'info'), ('Boarding', 'boarding'),
+        ('Delayed', 'warning'), ('Departed', 'departed'), ('Arrived', 'arrived'),
+        ('Cancelled', 'danger'), ('Unknown', 'unknown')
+    ):
+        count = status_counts.get(label, 0)
+        if count:
+            flight_status_summary.append({
+                'label': label,
+                'count': count,
+                'percent': round(count * 100 / len(live_flights)),
+                'tone': tone
+            })
+
+    infrastructure_summary = [
+        {
+            'label': 'Terminals',
+            'count': len({(i.get('IATA_Code') or i.get('Airport_Name') or i.get('Airport'), i.get('Terminal_Number')) for i in infrastructure if i.get('Terminal_Number') is not None}),
+            'tone': 'cyan'
+        },
+        {
+            'label': 'Gates',
+            'count': len({(i.get('IATA_Code') or i.get('Airport_Name') or i.get('Airport'), i.get('Terminal_Number'), i.get('Gate_Number')) for i in infrastructure if i.get('Gate_Number') is not None}),
+            'tone': 'amber'
+        },
+        {
+            'label': 'Runways',
+            'count': len({(i.get('IATA_Code') or i.get('Airport_Name') or i.get('Airport'), i.get('Runway_Code')) for i in infrastructure if i.get('Runway_Code') is not None}),
+            'tone': 'violet'
+        }
+    ]
     return render_template(
         'Home.html',
         stats=stats,
         live_flights=live_flights,
         booking_overview=booking_overview,
-        infrastructure=infrastructure
+        infrastructure=infrastructure,
+        flight_status_summary=flight_status_summary,
+        infrastructure_summary=infrastructure_summary
     )
 
 if __name__ == "__main__":
