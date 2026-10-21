@@ -1,4 +1,4 @@
-from flask import Blueprint, render_template, redirect, request, url_for
+from flask import Blueprint, render_template, redirect, request, url_for, flash
 from db import fetch_all, fetch_one, execute
 
 Departments_bp = Blueprint(
@@ -15,33 +15,46 @@ def Display_Department():
 
 @Departments_bp.route('/add', methods=['POST'])
 def Add_Department():
-    Department_Name = request.form['Department_Name']
-    Description = request.form['Description']
+    try:
+        Department_Name = request.form['Department_Name']
+        Description = request.form['Description']
 
-    params = (Department_Name, Description)
-    sql = 'INSERT INTO Department (Department_Name, Description) VALUES (%s, %s)'
-    execute(sql, params)
+        params = (Department_Name, Description)
+        sql = 'INSERT INTO Department (Department_Name, Description) VALUES (%s, %s)'
+        execute(sql, params)
+        flash(f'Department "{Department_Name}" was successfully added.', 'success')
+    except Exception as e:
+        flash(f'Failed to add department: {str(e)}', 'danger')
 
     return redirect(url_for('Departments.Display_Department'))
 
 @Departments_bp.route('/delete/<int:id>', methods=['POST'])
 def Delete_Department(id):
     if request.method == 'POST':
-        sql = 'DELETE FROM Department WHERE Department_ID=%s'
-        params = (id,)
-        execute(sql, params)
+        try:
+            sql = 'DELETE FROM Department WHERE Department_ID=%s'
+            params = (id,)
+            execute(sql, params)
+            flash('Department deleted successfully.', 'success')
+        except Exception as e:
+            flash(f'Failed to delete department: {str(e)}', 'danger')
         return redirect(url_for('Departments.Display_Department'))
 
 @Departments_bp.route('/update/<int:id>', methods=["POST", 'GET'])
 def Update_Department(id):
     if request.method == 'POST':
-        Department_Name = request.form['Department_Name']
-        Description = request.form['Description']
-        
-        params = (Department_Name, Description, id)
-        sql = 'UPDATE Department SET Department_Name=%s, Description=%s WHERE Department_ID=%s'
-        execute(sql, params)
-        return redirect(url_for('Departments.Display_Department'))
+        try:
+            Department_Name = request.form['Department_Name']
+            Description = request.form['Description']
+
+            params = (Department_Name, Description, id)
+            sql = 'UPDATE Department SET Department_Name=%s, Description=%s WHERE Department_ID=%s'
+            execute(sql, params)
+            flash(f'Department "{Department_Name}" updated successfully.', 'success')
+            return redirect(url_for('Departments.Display_Department'))
+        except Exception as e:
+            flash(f'Failed to update department: {str(e)}', 'danger')
+            return redirect(url_for('Departments.Update_Department', id=id))
     else:
         sql = 'SELECT Department_ID, Department_Name, Description FROM Department WHERE Department_ID=%s'
         params = (id,)
