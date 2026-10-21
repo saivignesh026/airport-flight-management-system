@@ -1134,12 +1134,13 @@ button:active:not(:disabled) {
     }
 }
 
-/* Flash Alerts */
+/* Container */
 .flash-container {
     width: 100%;
     margin-bottom: 1.5rem;
 }
 
+/* Base Alert */
 .alert {
     display: flex;
     justify-content: space-between;
@@ -1148,46 +1149,68 @@ button:active:not(:disabled) {
     border-radius: 6px;
     margin-bottom: 0.75rem;
     font-size: 0.95rem;
-    border: 1px solid transparent;
+    border: 1px solid;
     transition: opacity 0.3s ease;
 }
 
+/* Success */
 .alert-success {
-    background-color: #d1e7dd;
-    color: #0f5132;
-    border-color: #badbcc;
+    background-color: #0d2818;
+    color: #75b798;
+    border-color: #144e2b;
 }
 
-.alert-danger {
-    background-color: #f8d7da;
-    color: #842029;
-    border-color: #f5c2c7;
+/* Danger / Error */
+.alert-danger,
+.alert-error {
+    background-color: #2c0b0e;
+    color: #ea868f;
+    border-color: #58151c;
 }
 
+/* Warning */
 .alert-warning {
-    background-color: #fff3cd;
-    color: #664d03;
-    border-color: #ffecb5;
+    background-color: #332701;
+    color: #ffda6a;
+    border-color: #664d03;
 }
 
+/* Info */
 .alert-info {
-    background-color: #cff4fc;
-    color: #055160;
-    border-color: #b6effb;
+    background-color: #031633;
+    color: #6ea8fe;
+    border-color: #084298;
 }
 
-/* Close 'x' button */
+/* Dismiss Button */
 .alert-close {
-    background: none;
+    background: transparent;
     border: none;
     font-size: 1.25rem;
     line-height: 1;
     cursor: pointer;
     color: inherit;
-    opacity: 0.6;
+    opacity: 0.7;
     padding: 0 0 0 1rem;
 }
 
 .alert-close:hover {
     opacity: 1;
+}
+
+.alert {
+    transition: opacity 0.3s ease, transform 0.3s ease, margin 0.3s ease, max-height 0.3s ease;
+    max-height: 100px;
+    overflow: hidden;
+}
+
+.alert.fade-out {
+    opacity: 0;
+    transform: translateY(-8px);
+    max-height: 0;
+    margin-top: 0;
+    margin-bottom: 0;
+    padding-top: 0;
+    padding-bottom: 0;
+    border: none;
 }
