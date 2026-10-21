@@ -27,7 +27,7 @@ def Add_Terminal():
         Airport_ID = request.form['Airport_ID']
 
         params = (Terminal_Number, Terminal_Name, Terminal_Status, Airport_ID)
-        sql = 'insert into Terminal (Terminal_Number, Terminal_Name, Terminal_Status, Airport_ID) values (%s, %s, %s, %s)'
+        sql = 'CALL Add_Terminal(%s, %s, %s, %s)'
         execute(sql, params)
         flash(f'Terminal "{Terminal_Name}" was successfully added.', 'success')
     except Exception as e:
@@ -40,7 +40,7 @@ def Add_Terminal():
 def Delete_Terminal(id):
     if request.method == 'POST':
         try:
-            sql = 'delete from Terminal where Terminal_ID = %s'
+            sql = 'CALL Delete_Terminal(%s)'
             params = (id,)
             execute(sql, params)
             flash('Terminal deleted successfully.', 'success')
@@ -59,7 +59,7 @@ def Update_Terminal(id):
             Airport_ID = request.form['Airport_ID']
 
             params = (Terminal_Number, Terminal_Name, Terminal_Status, Airport_ID, id)
-            sql = 'update Terminal set Terminal_Number=%s, Terminal_Name=%s, Terminal_Status=%s, Airport_ID=%s where Terminal_ID=%s'
+            sql = 'CALL Update_Terminal(%s, %s, %s, %s, %s)'
             execute(sql, params)
             flash(f'Terminal "{Terminal_Name}" updated successfully.', 'success')
             return redirect(url_for('Terminals.Display_Terminal'))

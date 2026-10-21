@@ -24,7 +24,7 @@ def Add_Aircraft():
         Airline_ID = request.form['Airline_ID']
 
         params = (Tail_Number, Model, Capacity, Airline_ID)
-        sql = 'INSERT INTO Aircraft (Tail_Number, Model, Capacity, Airline_ID) VALUES (%s, %s, %s, %s)'
+        sql = 'CALL Add_Aircraft(%s, %s, %s, %s)'
         execute(sql, params)
         flash(f'Aircraft "{Tail_Number}" was successfully added.', 'success')
     except Exception as e:
@@ -36,7 +36,7 @@ def Add_Aircraft():
 @Aircrafts_bp.route('/delete/<int:id>', methods=['POST'])
 def Delete_Aircraft(id):
     try:
-        sql = 'DELETE FROM Aircraft WHERE Aircraft_ID = %s'
+        sql = 'CALL Delete_Aircraft(%s)'
         params = (id,)
         execute(sql, params)
         flash('Aircraft deleted successfully.', 'success')
@@ -56,7 +56,7 @@ def Update_Aircraft(id):
             Airline_ID = request.form['Airline_ID']
 
             params = (Tail_Number, Model, Capacity, Airline_ID, id)
-            sql = 'UPDATE Aircraft SET Tail_Number = %s, Model = %s, Capacity = %s, Airline_ID = %s WHERE Aircraft_ID = %s'
+            sql = 'CALL Update_Aircraft(%s, %s, %s, %s, %s)'
             execute(sql, params)
             flash(f'Aircraft "{Tail_Number}" updated successfully.', 'success')
             return redirect(url_for('Aircrafts.Display_Aircraft'))

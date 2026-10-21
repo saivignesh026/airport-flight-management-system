@@ -25,7 +25,7 @@ def Add_Airport():
         Airport_Name=request.form['Airport_Name']
         Airport_City=request.form['Airport_City']
         Airport_Country=request.form['Airport_Country']
-        sql='insert into Airport (IATA_Code, Airport_Name, Airport_City, Airport_Country)  values (%s,%s,%s,%s)'
+        sql='CALL Add_Airport(%s, %s, %s, %s)'
         params=(Airport_IATA_Code,Airport_Name,Airport_City,Airport_Country)
         execute(sql,params)
         flash(f'Airport "{Airport_Name}" was successfully added.', 'success')
@@ -37,7 +37,7 @@ def Add_Airport():
 def Delete_Airport(id):
     if request.method=='POST':
         try:
-            sql='delete from Airport where Airport_ID=%s'
+            sql='CALL Delete_Airport(%s)'
             params=(id,)
             execute(sql,params)
             flash('Airport deleted successfully.', 'success')
@@ -54,7 +54,7 @@ def Update_Airport(id):
             Airport_City=request.form['Airport_City']
             Airport_Country=request.form['Airport_Country']
 
-            sql='update Airport set IATA_Code=%s,Airport_Name=%s,Airport_City=%s,Airport_Country=%s where Airport_ID=%s'
+            sql='CALL Update_Airport(%s, %s, %s, %s, %s)'
             params=(Airport_IATA_Code,Airport_Name,Airport_City,Airport_Country,id)
 
             execute(sql,params)
@@ -64,7 +64,7 @@ def Update_Airport(id):
             flash(f'Failed to update airport: {str(e)}', 'danger')
             return redirect(url_for('Airports.Update_Airport', id=id))
     else:
-        sql='select *from Airport where Airport_ID=%s'
+        sql='CALL Airport_To_Edit(%s)'
         params=(id,)
         Airport_To_Edit=fetch_one(sql,params)
         return render_template('Update/UpdateAirport.html',Airport=Airport_To_Edit)

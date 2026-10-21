@@ -48,7 +48,7 @@ def Update_Department(id):
             Description = request.form['Description']
 
             params = (Department_Name, Description, id)
-            sql = 'UPDATE Department SET Department_Name=%s, Description=%s WHERE Department_ID=%s'
+            sql = 'CALL Update_Department(%s, %s, %s)'
             execute(sql, params)
             flash(f'Department "{Department_Name}" updated successfully.', 'success')
             return redirect(url_for('Departments.Display_Department'))
@@ -56,7 +56,7 @@ def Update_Department(id):
             flash(f'Failed to update department: {str(e)}', 'danger')
             return redirect(url_for('Departments.Update_Department', id=id))
     else:
-        sql = 'SELECT Department_ID, Department_Name, Description FROM Department WHERE Department_ID=%s'
+        sql = 'CALL Department_To_Edit(%s)'
         params = (id,)
         Department_To_Edit = fetch_one(sql, params)    
         return render_template('Update/UpdateDepartment.html', Department=Department_To_Edit)
