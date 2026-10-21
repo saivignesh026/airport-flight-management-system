@@ -67,26 +67,32 @@ def Add_Booking():
         now_str = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
 
         with transaction() as cur:
-            cur.execute('''
-                INSERT INTO Booking (Booking_Date, Booking_Status, Booking_Price, Seat_Number, Class, Passenger_ID, Instance_ID)
-                VALUES (%s, %s, %s, %s, %s, %s, %s)
-            ''', (now_str, Booking_Status, Booking_Price, Seat_Number, Class, Passenger_ID, Instance_ID))
-            booking_id = cur.lastrowid
+            cur.callproc('Add_Booking', (
+                Booking_Status, Booking_Price, Seat_Number, Class, Passenger_ID, Instance_ID
+            ))
+            for result in cur.stored_results():
+                result.fetchall()
 
-            cur.execute('''
-                INSERT INTO Payment (Booking_ID, Amount, Payment_Date, Payment_Method, Payment_Status, Transaction_Reference)
-                VALUES (%s, %s, %s, %s, %s, %s)
-            ''', (booking_id, Booking_Price, now_str, Payment_Method, Payment_Status, Transaction_Reference))
+            cur.execute('SELECT LAST_INSERT_ID() AS Booking_ID')
+            booking_id = cur.fetchone()['Booking_ID']
 
-            cur.execute('''
-                INSERT INTO Check_In (Booking_ID, CheckIn_Time, CheckIn_Status, Boarding_Status)
-                VALUES (%s, %s, %s, %s)
-            ''', (booking_id, now_str, CheckIn_Status, Boarding_Status))
+            cur.callproc('Add_Payment', (
+                booking_id, Booking_Price, now_str, Payment_Method, Payment_Status, Transaction_Reference
+            ))
+            for result in cur.stored_results():
+                result.fetchall()
 
-            cur.execute('''
-                INSERT INTO Baggage (Weight_KG, Baggage_Type, Baggage_Status, Booking_ID)
-                VALUES (%s, %s, %s, %s)
-            ''', (Weight_KG, Baggage_Type, Baggage_Status, booking_id))
+            cur.callproc('Add_Check_In', (
+                booking_id, now_str, CheckIn_Status, Boarding_Status
+            ))
+            for result in cur.stored_results():
+                result.fetchall()
+
+            cur.callproc('Add_Baggage', (
+                Weight_KG, Baggage_Type, Baggage_Status, booking_id
+            ))
+            for result in cur.stored_results():
+                result.fetchall()
         flash('Booking was successfully added.', 'success')
     except Exception as e:
         flash(f'Failed to add booking: {str(e)}', 'danger')
@@ -97,10 +103,9 @@ def Add_Booking():
 def Delete_Booking(id):
     try:
         with transaction() as cur:
-            cur.execute('DELETE FROM Baggage WHERE Booking_ID = %s', (id,))
-            cur.execute('DELETE FROM Check_In WHERE Booking_ID = %s', (id,))
-            cur.execute('DELETE FROM Payment WHERE Booking_ID = %s', (id,))
-            cur.execute('DELETE FROM Booking WHERE Booking_ID = %s', (id,))
+            cur.callproc('Delete_Booking', (id,))
+            for result in cur.stored_results():
+                result.fetchall()
         flash('Booking deleted successfully.', 'success')
     except Exception as e:
         flash(f'Failed to delete booking: {str(e)}', 'danger')

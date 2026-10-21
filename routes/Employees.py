@@ -27,9 +27,7 @@ def Add_Employee():
         Employee_Status = request.form['Employee_Status']
 
         params = (Employee_Name, Employee_Email, Contact_Number, Department_ID, Role_ID, Hire_Date, Employee_Status)
-        sql = '''INSERT INTO Employee
-                 (Employee_Name, Employee_Email, Contact_Number, Department_ID, Role_ID, Hire_Date, Employee_Status)
-                 VALUES (%s, %s, %s, %s, %s, %s, %s)'''
+        sql = 'CALL Add_Employee(%s, %s, %s, %s, %s, %s, %s)'
         execute(sql, params)
         flash(f'Employee "{Employee_Name}" was successfully added.', 'success')
     except Exception as e:
@@ -40,7 +38,7 @@ def Add_Employee():
 def Delete_Employee(id):
     if request.method == 'POST':
         try:
-            sql = 'DELETE FROM Employee WHERE Employee_ID=%s'
+            sql = 'CALL Delete_Employee(%s)'
             execute(sql, (id,))
             flash('Employee deleted successfully.', 'success')
         except Exception as e:

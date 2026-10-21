@@ -22,9 +22,7 @@ def Add_Passenger():
         Contact_Number = request.form['Contact_Number']
         Email = request.form['Email']
 
-        sql = '''INSERT INTO Passenger
-                 (First_Name, Last_Name, Passport_Number, Nationality, Contact_Number, Email)
-                 VALUES (%s, %s, %s, %s, %s, %s)'''
+        sql = 'CALL Add_Passenger(%s, %s, %s, %s, %s, %s)'
         execute(sql, (First_Name, Last_Name, Passport_Number, Nationality, Contact_Number, Email))
         flash(f'Passenger "{First_Name} {Last_Name}" was successfully added.', 'success')
     except Exception as e:
@@ -34,7 +32,7 @@ def Add_Passenger():
 @Passengers_bp.route('/delete/<int:id>', methods=['POST'])
 def Delete_Passenger(id):
     try:
-        execute('DELETE FROM Passenger WHERE Passenger_ID = %s', (id,))
+        execute('CALL Delete_Passenger(%s)', (id,))
         flash('Passenger deleted successfully.', 'success')
     except Exception as e:
         flash(f'Failed to delete passenger: {str(e)}', 'danger')
@@ -61,7 +59,7 @@ def Update_Passenger(id):
             flash(f'Failed to update passenger: {str(e)}', 'danger')
             return redirect(url_for('Passengers.Update_Passenger', id=id))
     else:
-        Passenger = fetch_one('SELECT * FROM Passenger WHERE Passenger_ID = %s', (id,))
+        Passenger = fetch_one('CALL Passenger_To_Edit(%s)', (id,))
         return render_template('Update/UpdatePassenger.html', Passenger=Passenger)
 
 

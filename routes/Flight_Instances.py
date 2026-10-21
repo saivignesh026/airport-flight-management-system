@@ -39,10 +39,7 @@ def Add_Flight_Instance():
         Actual_Arrival = request.form.get('Actual_Arrival') or None
         Flight_Instance_Status = request.form['Flight_Instance_Status']
 
-        sql = '''INSERT INTO Flight_Instance
-                 (Scheduled_Departure, Scheduled_Arrival, Actual_Departure, Actual_Arrival,
-                  Flight_Instance_Status, Flight_ID, Aircraft_ID, Gate_ID, Runway_ID)
-                 VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s)'''
+        sql = 'CALL Add_Flight_Instance(%s, %s, %s, %s, %s, %s, %s, %s, %s)'
         params = (
             Scheduled_Departure, Scheduled_Arrival, Actual_Departure, Actual_Arrival,
             Flight_Instance_Status, Flight_ID, Aircraft_ID, Gate_ID, Runway_ID
@@ -56,7 +53,7 @@ def Add_Flight_Instance():
 @Flight_Instances_bp.route('/delete/<int:id>', methods=['POST'])
 def Delete_Flight_Instance(id):
     try:
-        execute('DELETE FROM Flight_Instance WHERE Instance_ID = %s', (id,))
+        execute('CALL Delete_Flight_Instance(%s)', (id,))
         flash('Flight instance deleted successfully.', 'success')
     except Exception as e:
         flash(f'Failed to delete flight instance: {str(e)}', 'danger')
@@ -91,7 +88,7 @@ def Update_Flight_Instance(id):
             flash(f'Failed to update flight instance: {str(e)}', 'danger')
             return redirect(url_for('Flight_Instances.Update_Flight_Instance', id=id))
     else:
-        Instance = fetch_one('SELECT * FROM Flight_Instance WHERE Instance_ID = %s', (id,))
+        Instance = fetch_one('CALL Flight_Instance_To_Edit(%s)', (id,))
         Flight_Data = fetch_all('SELECT Flight_ID, Flight_Number FROM Flight')
         Aircraft_Data = fetch_all('SELECT Aircraft_ID, Tail_Number, Model FROM Aircraft')
         Gate_Data = fetch_all('SELECT Gate_ID, Gate_Number FROM Gate')
