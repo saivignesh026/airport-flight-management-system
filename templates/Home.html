@@ -1,103 +1,91 @@
 {% extends 'base.html' %}
-{% block title %}AFMS - Live Operations Dashboard{% endblock %}
+{% block title %}AFMS — Airport Operations{% endblock %}
 {% block content %}
-    <h1>Airport Flight Management Dashboard</h1>
-
-    <!-- KPI Summary Cards -->
-    <div class="stats-grid">
-        <a href="{{ url_for('Airports.Display_Airport') }}" class="stat-card">
-            <span class="stat-value">{{ stats.airports }}</span>
-            <span class="stat-label">Airports</span>
-        </a>
-        <a href="{{ url_for('Flights.Display_Flight') }}" class="stat-card">
-            <span class="stat-value">{{ stats.flights }}</span>
-            <span class="stat-label">Flight Routes</span>
-        </a>
-        <a href="{{ url_for('Flight_Instances.Display_Flight_Instance') }}" class="stat-card">
-            <span class="stat-value">{{ stats.instances }}</span>
-            <span class="stat-label">Scheduled Flights</span>
-        </a>
-        <a href="{{ url_for('Passengers.Display_Passenger') }}" class="stat-card">
-            <span class="stat-value">{{ stats.passengers }}</span>
-            <span class="stat-label">Passengers</span>
-        </a>
-        <a href="{{ url_for('Bookings.Display_Booking') }}" class="stat-card">
-            <span class="stat-value">{{ stats.bookings }}</span>
-            <span class="stat-label">Confirmed Bookings</span>
-        </a>
-        <a href="{{ url_for('Employees.Display_Employee') }}" class="stat-card">
-            <span class="stat-value">{{ stats.employees }}</span>
-            <span class="stat-label">Active Staff</span>
-        </a>
+<section class="ops-hero">
+    <div class="hero-copy">
+        <div class="eyebrow"><span class="live-dot"></span> AIRPORT OPERATIONS · LIVE OVERVIEW</div>
+        <h1>Every departure,<br><em>in sync.</em></h1>
+        <p>Your command view for flights, people, and the infrastructure that keeps the airport moving.</p>
+        <a class="hero-action" href="{{ url_for('Flight_Instances.Display_Flight_Instance') }}">View flight schedules <span>↗</span></a>
     </div>
+    <div class="hero-art" aria-hidden="true">
+        <div class="radar radar-one"></div><div class="radar radar-two"></div>
+        <div class="flight-path"></div><span class="plane-mark">✈</span>
+        <div class="hero-coordinate">OPS<br><b>01</b></div>
+        <div class="hero-caption">CONTROL<br>IN MOTION</div>
+    </div>
+</section>
 
-    <h2>Live Flight Operations Board</h2>
-    <table>
-        <tr>
-            <th>Flight</th>
-            <th>Aircraft</th>
-            <th>Airport & Terminal</th>
-            <th>Gate / Runway</th>
-            <th>Scheduled Departure</th>
-            <th>Scheduled Arrival</th>
-            <th>Status</th>
-        </tr>
-        {% for f in live_flights %}
-        <tr>
-            <td><strong>{{ f.Flight_Number }}</strong></td>
-            <td>{{ f.Aircraft_Model }} ({{ f.Tail_Number }})</td>
-            <td>{{ f.Airport }} ({{ f.Terminal_Number }})</td>
-            <td>Gate {{ f.Gate_Number }} / Rwy {{ f.Runway_Code }}</td>
-            <td>{{ f.Scheduled_Departure }}</td>
-            <td>{{ f.Scheduled_Arrival }}</td>
-            <td>{{ f.Instance_Status }}</td>
-        </tr>
-        {% endfor %}
-    </table>
+<section class="overview-section">
+    <div class="section-heading">
+        <div><span class="section-kicker">AT A GLANCE</span><h2>Network overview</h2></div>
+        <span class="updated-label"><i></i> {{ live_flights|length }} FLIGHT RECORDS</span>
+    </div>
+    <div class="stats-grid">
+        <a href="{{ url_for('Airports.Display_Airport') }}" class="stat-card stat-airport"><span class="stat-icon">⌖</span><span class="stat-value">{{ stats.airports }}</span><span class="stat-label">Airports</span><span class="stat-detail">Across the network <b>↗</b></span></a>
+        <a href="{{ url_for('Flights.Display_Flight') }}" class="stat-card"><span class="stat-icon">⌁</span><span class="stat-value">{{ stats.flights }}</span><span class="stat-label">Flight routes</span><span class="stat-detail">Routes managed <b>↗</b></span></a>
+        <a href="{{ url_for('Flight_Instances.Display_Flight_Instance') }}" class="stat-card"><span class="stat-icon">◷</span><span class="stat-value">{{ stats.instances }}</span><span class="stat-label">Scheduled flights</span><span class="stat-detail">Flight instances <b>↗</b></span></a>
+        <a href="{{ url_for('Passengers.Display_Passenger') }}" class="stat-card"><span class="stat-icon">♙</span><span class="stat-value">{{ stats.passengers }}</span><span class="stat-label">Passengers</span><span class="stat-detail">Traveler records <b>↗</b></span></a>
+        <a href="{{ url_for('Bookings.Display_Booking') }}" class="stat-card"><span class="stat-icon">▤</span><span class="stat-value">{{ stats.bookings }}</span><span class="stat-label">Bookings</span><span class="stat-detail">Confirmed journeys <b>↗</b></span></a>
+        <a href="{{ url_for('Employees.Display_Employee') }}" class="stat-card"><span class="stat-icon">♧</span><span class="stat-value">{{ stats.employees }}</span><span class="stat-label">Team members</span><span class="stat-detail">Airport personnel <b>↗</b></span></a>
+    </div>
+</section>
 
-    <h2>Passenger Journey & Baggage Status Overview</h2>
-    <table>
-        <tr>
-            <th>Booking ID</th>
-            <th>Passenger</th>
-            <th>Flight</th>
-            <th>Booking</th>
-            <th>Payment</th>
-            <th>Check-In / Boarding</th>
-            <th>Baggage</th>
-        </tr>
-        {% for b in booking_overview %}
-        <tr>
-            <td>#{{ b.Booking_ID }}</td>
-            <td>{{ b.Passenger_Name }}</td>
-            <td><strong>{{ b.Flight_Number }}</strong></td>
-            <td>{{ b.Booking_Status }}</td>
-            <td>₹{{ b.Amount }} ({{ b.Payment_Method }} - {{ b.Payment_Status }})</td>
-            <td>{{ b.CheckIn_Status }} / {{ b.Boarding_Status }}</td>
-            <td>{{ b.Baggage_Type }} ({{ b.Weight_KG }} kg - {{ b.Baggage_Status }})</td>
-        </tr>
-        {% endfor %}
-    </table>
+<section class="board-section">
+    <div class="section-heading board-heading">
+        <div><span class="section-kicker">THE DEPARTURE BOARD</span><h2>Flight operations</h2></div>
+        <a class="text-link" href="{{ url_for('Flight_Instances.Display_Flight_Instance') }}">All schedules <span>↗</span></a>
+    </div>
+    <div class="flight-dashboard">
+        <div class="flight-mix-panel">
+            <div class="flight-mix-heading"><span>FLIGHT STATUS MIX</span><b>{{ live_flights|length }}<small>total</small></b></div>
+            {% if flight_status_summary %}
+            <div class="flight-mix-bar" role="img" aria-label="Flight statuses represented as a proportion of all flights">
+                {% for item in flight_status_summary %}<span class="mix-{{ item.tone }}" style="width:{{ item.percent }}%"></span>{% endfor %}
+            </div>
+            <div class="flight-mix-legend">
+                {% for item in flight_status_summary %}<span><i class="mix-{{ item.tone }}"></i>{{ item.label }} <b>{{ item.count }}</b></span>{% endfor %}
+            </div>
+            {% else %}<p class="flight-empty-note">Flight status data will appear here when schedules are added.</p>{% endif %}
+        </div>
+        <div class="flight-card-grid">
+            {% for f in live_flights[:6] %}
+            <article class="flight-card">
+                <div class="flight-card-top"><span class="flight-card-number">{{ f.Flight_Number }}</span><span class="flight-state flight-state-{{ f.Instance_Status|lower|replace(' ', '-') }}">{{ f.Instance_Status }}</span></div>
+                <div class="flight-card-times"><div><small>DEPARTURE</small><b>{{ f.Scheduled_Departure }}</b></div><span class="flight-connector"><i></i></span><div><small>ARRIVAL</small><b>{{ f.Scheduled_Arrival }}</b></div></div>
+                <div class="flight-card-footer"><span>{{ f.Airport }} · T{{ f.Terminal_Number }} · Gate {{ f.Gate_Number }}</span><span>{{ f.Aircraft_Model }}</span></div>
+            </article>
+            {% else %}<div class="flight-empty-card">No scheduled flights to display yet.</div>{% endfor %}
+        </div>
+    </div>
+</section>
 
-    <h2>Airport Infrastructure Details</h2>
-    <table>
-        <tr>
-            <th>IATA</th>
-            <th>Airport Name</th>
-            <th>City</th>
-            <th>Terminal</th>
-            <th>Gate</th>
-            <th>Runway</th>
-        </tr>
-        {% for inf in infrastructure %}
-        <tr>
-            <td><strong>{{ inf.IATA_Code }}</strong></td>
-            <td>{{ inf.Airport_Name }}</td>
-            <td>{{ inf.Airport_City }}</td>
-            <td>{{ inf.Terminal_Name }} ({{ inf.Terminal_Number }}) - {{ inf.Terminal_Status }}</td>
-            <td>{{ inf.Gate_Number }} ({{ inf.Gate_Status }})</td>
-            <td>{{ inf.Runway_Code }} ({{ inf.Runway_Length }}m - {{ inf.Runway_Status }})</td>
-        </tr>
-        {% endfor %}
-    </table>
+<section class="detail-grid">
+    <div class="detail-panel">
+        <div class="section-heading"><div><span class="section-kicker">PASSENGER SERVICES</span><h2>Journey overview</h2></div><a class="text-link" href="{{ url_for('Bookings.Display_Booking') }}">Bookings ↗</a></div>
+        <div class="ops-table-wrap compact-table"><table class="ops-table">
+            <thead><tr><th>Booking</th><th>Passenger / flight</th><th>Payment</th><th>Journey status</th><th>Baggage</th></tr></thead><tbody>
+            {% for b in booking_overview %}<tr><td><strong>#{{ b.Booking_ID }}</strong><small>{{ b.Booking_Status }}</small></td><td><span class="cell-primary">{{ b.Passenger_Name }}</span><small>Flight {{ b.Flight_Number }}</small></td><td><span class="cell-primary">₹{{ b.Amount }}</span><small>{{ b.Payment_Method }} · {{ b.Payment_Status }}</small></td><td><span class="cell-primary">{{ b.CheckIn_Status }}</span><small>Boarding · {{ b.Boarding_Status }}</small></td><td><span class="cell-primary">{{ b.Baggage_Type }}</span><small>{{ b.Weight_KG }} kg · {{ b.Baggage_Status }}</small></td></tr>
+            {% else %}<tr><td colspan="5" class="table-empty">No passenger journeys to display yet.</td></tr>{% endfor %}</tbody>
+        </table></div>
+    </div>
+    <aside class="quick-panel">
+        <span class="section-kicker">QUICK ACCESS</span><h2>Move things forward.</h2>
+        <a href="{{ url_for('Airports.Display_Airport') }}"><span class="quick-icon">⌖</span><span><b>Airport network</b><small>Airports & infrastructure</small></span><i>↗</i></a>
+        <a href="{{ url_for('Passengers.Flight_Passenger_Manifest') }}"><span class="quick-icon">☷</span><span><b>Passenger manifest</b><small>Review flight passengers</small></span><i>↗</i></a>
+        <a href="{{ url_for('Employees.Display_Employee') }}"><span class="quick-icon">♧</span><span><b>People & teams</b><small>Staff and departments</small></span><i>↗</i></a>
+    </aside>
+</section>
+
+<section class="infrastructure-section">
+    <div class="section-heading"><div><span class="section-kicker">ON THE GROUND</span><h2>Airport infrastructure</h2></div><a class="text-link" href="{{ url_for('Airports.Display_Airport') }}">Manage network ↗</a></div>
+    <div class="infrastructure-metrics">
+        {% for asset in infrastructure_summary %}<div class="infra-metric infra-{{ asset.tone }}"><span>{{ asset.label }}</span><b>{{ asset.count }}</b><small>in network</small></div>{% endfor %}
+    </div>
+    <div class="ops-table-wrap"><table class="ops-table">
+        <thead><tr><th>IATA</th><th>Airport</th><th>City</th><th>Terminal</th><th>Gate</th><th>Runway</th></tr></thead><tbody>
+        {% for inf in infrastructure[:6] %}<tr><td><span class="iata-tag">{{ inf.IATA_Code }}</span></td><td><span class="cell-primary">{{ inf.Airport_Name }}</span></td><td>{{ inf.Airport_City }}</td><td>{{ inf.Terminal_Name }} <small>{{ inf.Terminal_Number }} · {{ inf.Terminal_Status }}</small></td><td>{{ inf.Gate_Number }} <small>{{ inf.Gate_Status }}</small></td><td>{{ inf.Runway_Code }} <small>{{ inf.Runway_Length }}m · {{ inf.Runway_Status }}</small></td></tr>
+        {% else %}<tr><td colspan="6" class="table-empty">No infrastructure records to display yet.</td></tr>{% endfor %}</tbody>
+    </table></div>
+</section>
 {% endblock %}
