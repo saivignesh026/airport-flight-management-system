@@ -7,7 +7,18 @@
 
     <!-- Must be plain (no defer/async): sets the theme before first paint.
          Bump v= whenever you change a static file so browsers refetch it. -->
-    <script src="{{ url_for('static', filename='js/theme-init.js', v=2) }}"></script>
+    <script src="{{ url_for('static', filename='js/theme-init.js', v=2) }}"></script><!-- script for dissaperaing flash messages-->
+    <script>
+    document.addEventListener("DOMContentLoaded", () => {
+        setTimeout(() => {
+            const alerts = document.querySelectorAll('.alert');
+            alerts.forEach(alert => {
+                alert.style.opacity = '0';
+                setTimeout(() => alert.remove(), 300);
+            });
+        }, 4000);
+    });
+</script>
     <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css', v=2) }}">
     <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>✈️</text></svg>">
 </head>
@@ -17,6 +28,20 @@
 
     <!-- Main Page Content -->
     <main class="main-container">
+        <!-- Flash Messages Block -->
+        {% with messages = get_flashed_messages(with_categories=true) %}
+          {% if messages %}
+            <div class="flash-container">
+              {% for category, message in messages %}
+                <div class="alert alert-{{ category }}">
+                  <span>{{ message }}</span>
+                  <button type="button" class="alert-close" onclick="this.parentElement.remove();">&times;</button>
+                </div>
+              {% endfor %}
+            </div>
+          {% endif %}
+        {% endwith %}
+
         {% block content %}
         {% endblock %}
     </main>
