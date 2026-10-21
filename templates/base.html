@@ -7,7 +7,7 @@
 
     <!-- Must be plain (no defer/async): sets the theme before first paint. -->
     <script src="{{ url_for('static', filename='js/theme-init.js', v=2) }}"></script>
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css', v=25) }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css', v=32) }}">
     <link rel="icon" type="image/svg+xml" href="{{ url_for('static', filename='favicon.svg', v=1) }}">
 </head>
 <body class="site-wrapper">
@@ -52,6 +52,7 @@
     <script defer src="{{ url_for('static', filename='js/date-time-picker.js', v=3) }}"></script>
     <script defer src="{{ url_for('static', filename='js/navbar.js', v=13) }}"></script>
     <script defer src="{{ url_for('static', filename='js/table-pagination.js', v=3) }}"></script>
+    {% block page_scripts %}{% endblock %}
 
     <!-- Flash message auto-dismiss logic -->
     <script>

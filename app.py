@@ -59,7 +59,7 @@ def Home():
     for label, tone in (
         ('On Time', 'success'), ('Scheduled', 'info'), ('Boarding', 'boarding'),
         ('Delayed', 'warning'), ('Departed', 'departed'), ('Arrived', 'arrived'),
-        ('Cancelled', 'danger')
+        ('Cancelled', 'danger'), ('Unknown', 'unknown')
     ):
         count = status_counts.get(label, 0)
         if count:

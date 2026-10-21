@@ -16,18 +16,47 @@
     </div>
 </section>
 
+<section class="route-globe-section" aria-labelledby="route-globe-title">
+    <div class="section-heading">
+        <div><span class="section-kicker">FLIGHTS IN MOTION</span><h2 id="route-globe-title">Around the network</h2></div>
+        <span class="globe-hint">Drag to rotate · Tap a plane for its number</span>
+    </div>
+    <div class="route-globe-card">
+        <div class="route-globe" aria-label="Animated globe showing scheduled flights">
+            <div class="globe-orb">
+                <canvas class="globe-canvas" aria-label="Interactive globe with animated flights. Drag to rotate it."></canvas>
+                {% for f in live_flights[:6] %}<button class="globe-flight globe-flight-{{ loop.index }}" type="button" data-flight="{{ loop.index0 }}" aria-label="Show details for flight {{ f.Flight_Number }}" title="Flight {{ f.Flight_Number }}"><svg class="ui-icon" aria-hidden="true"><use href="#icon-plane"></use></svg><span class="globe-flight-number" aria-hidden="true">{{ f.Flight_Number }}</span></button>{% endfor %}
+            </div>
+            <span class="globe-caption">GLOBAL FLIGHT NETWORK <i></i> LIVE</span>
+        </div>
+        <aside class="globe-flight-details" aria-live="polite" aria-atomic="true">
+            {% if live_flights %}
+            {% set first = live_flights[0] %}
+            <span class="globe-detail-kicker">SELECTED FLIGHT</span>
+            <div class="globe-detail-title"><strong data-globe-number>{{ first.Flight_Number }}</strong><span class="flight-state flight-state-{{ first.Instance_Status|lower|replace(' ', '-') }}" data-globe-status>{{ first.Instance_Status }}</span></div>
+            <span class="globe-instance" data-globe-instance>INSTANCE #{{ first.Instance_ID }}</span>
+            <div class="globe-route"><span data-globe-origin>{{ first.Airport }}</span><i></i><span><small>AIRCRAFT</small><b data-globe-aircraft>{{ first.Aircraft_Model }}</b></span></div>
+            <div class="globe-times"><div><small>DEPARTURE</small><b data-globe-departure>{{ first.Scheduled_Departure }}</b></div><div><small>ARRIVAL</small><b data-globe-arrival>{{ first.Scheduled_Arrival }}</b></div></div>
+            <div class="globe-gate"><span data-globe-terminal>Terminal {{ first.Terminal_Number }}</span><span>Gate <b data-globe-gate>{{ first.Gate_Number }}</b></span></div>
+            <a href="{{ url_for('Flight_Instances.Display_Flight_Instance') }}" class="globe-schedule-link">Open flight schedules <span>↗</span></a>
+            {% else %}<div class="globe-no-flights"><span class="globe-detail-kicker">NETWORK STATUS</span><strong>No flights scheduled</strong><p>Flight routes will appear here when schedules are added.</p></div>{% endif %}
+            <script type="application/json" id="globe-flight-data">{{ live_flights[:6]|tojson }}</script>
+        </aside>
+    </div>
+</section>
+
 <section class="overview-section">
     <div class="section-heading">
-        <div><span class="section-kicker">AT A GLANCE</span><h2>Network overview</h2></div>
-        <span class="updated-label"><i></i> {{ live_flights|length }} FLIGHT RECORDS</span>
+        <div><span class="section-kicker">AIRPORT NETWORK</span><h2>Network overview</h2><p class="overview-note">Airports, flight movement, and the people who keep it running.</p></div>
+        <span class="updated-label"><i></i> LIVE NETWORK COUNTS</span>
     </div>
     <div class="stats-grid">
-        <a href="{{ url_for('Airports.Display_Airport') }}" class="stat-card stat-airport"><span class="stat-icon"><svg class="ui-icon" aria-hidden="true"><use href="#icon-airport"></use></svg></span><span class="stat-value">{{ stats.airports }}</span><span class="stat-label">Airports</span><span class="stat-detail">Across the network <b>↗</b></span></a>
-        <a href="{{ url_for('Flights.Display_Flight') }}" class="stat-card"><span class="stat-icon"><svg class="ui-icon" aria-hidden="true"><use href="#icon-route"></use></svg></span><span class="stat-value">{{ stats.flights }}</span><span class="stat-label">Flight routes</span><span class="stat-detail">Routes managed <b>↗</b></span></a>
-        <a href="{{ url_for('Flight_Instances.Display_Flight_Instance') }}" class="stat-card"><span class="stat-icon"><svg class="ui-icon" aria-hidden="true"><use href="#icon-clock"></use></svg></span><span class="stat-value">{{ stats.instances }}</span><span class="stat-label">Scheduled flights</span><span class="stat-detail">Flight instances <b>↗</b></span></a>
-        <a href="{{ url_for('Passengers.Display_Passenger') }}" class="stat-card"><span class="stat-icon"><svg class="ui-icon" aria-hidden="true"><use href="#icon-passenger"></use></svg></span><span class="stat-value">{{ stats.passengers }}</span><span class="stat-label">Passengers</span><span class="stat-detail">Traveler records <b>↗</b></span></a>
-        <a href="{{ url_for('Bookings.Display_Booking') }}" class="stat-card"><span class="stat-icon"><svg class="ui-icon" aria-hidden="true"><use href="#icon-ticket"></use></svg></span><span class="stat-value">{{ stats.bookings }}</span><span class="stat-label">Bookings</span><span class="stat-detail">Confirmed journeys <b>↗</b></span></a>
-        <a href="{{ url_for('Employees.Display_Employee') }}" class="stat-card"><span class="stat-icon"><svg class="ui-icon" aria-hidden="true"><use href="#icon-team"></use></svg></span><span class="stat-value">{{ stats.employees }}</span><span class="stat-label">Team members</span><span class="stat-detail">Airport personnel <b>↗</b></span></a>
+        <a href="{{ url_for('Airports.Display_Airport') }}" class="stat-card stat-airport"><span class="stat-card-top"><span class="stat-category">INFRASTRUCTURE</span><span class="stat-icon"><svg class="ui-icon" aria-hidden="true"><use href="#icon-airport"></use></svg></span></span><span class="stat-value" data-count-up="{{ stats.airports }}">{{ stats.airports }}</span><span class="stat-label">Airports</span><span class="stat-detail">Across the network <b>↗</b></span></a>
+        <a href="{{ url_for('Flights.Display_Flight') }}" class="stat-card"><span class="stat-card-top"><span class="stat-category">FLIGHT PLANNING</span><span class="stat-icon"><svg class="ui-icon" aria-hidden="true"><use href="#icon-route"></use></svg></span></span><span class="stat-value" data-count-up="{{ stats.flights }}">{{ stats.flights }}</span><span class="stat-label">Flight routes</span><span class="stat-detail">Routes managed <b>↗</b></span></a>
+        <a href="{{ url_for('Flight_Instances.Display_Flight_Instance') }}" class="stat-card"><span class="stat-card-top"><span class="stat-category">OPERATIONS</span><span class="stat-icon"><svg class="ui-icon" aria-hidden="true"><use href="#icon-clock"></use></svg></span></span><span class="stat-value" data-count-up="{{ stats.instances }}">{{ stats.instances }}</span><span class="stat-label">Scheduled flights</span><span class="stat-detail">Flight instances <b>↗</b></span></a>
+        <a href="{{ url_for('Passengers.Display_Passenger') }}" class="stat-card"><span class="stat-card-top"><span class="stat-category">TRAVELERS</span><span class="stat-icon"><svg class="ui-icon" aria-hidden="true"><use href="#icon-passenger"></use></svg></span></span><span class="stat-value" data-count-up="{{ stats.passengers }}">{{ stats.passengers }}</span><span class="stat-label">Passengers</span><span class="stat-detail">Traveler records <b>↗</b></span></a>
+        <a href="{{ url_for('Bookings.Display_Booking') }}" class="stat-card"><span class="stat-card-top"><span class="stat-category">JOURNEYS</span><span class="stat-icon"><svg class="ui-icon" aria-hidden="true"><use href="#icon-ticket"></use></svg></span></span><span class="stat-value" data-count-up="{{ stats.bookings }}">{{ stats.bookings }}</span><span class="stat-label">Bookings</span><span class="stat-detail">Confirmed journeys <b>↗</b></span></a>
+        <a href="{{ url_for('Employees.Display_Employee') }}" class="stat-card"><span class="stat-card-top"><span class="stat-category">AIRPORT TEAMS</span><span class="stat-icon"><svg class="ui-icon" aria-hidden="true"><use href="#icon-team"></use></svg></span></span><span class="stat-value" data-count-up="{{ stats.employees }}">{{ stats.employees }}</span><span class="stat-label">Team members</span><span class="stat-detail">Airport personnel <b>↗</b></span></a>
     </div>
 </section>
 
@@ -38,15 +67,26 @@
     </div>
     <div class="flight-dashboard">
         <div class="flight-mix-panel">
-            <div class="flight-mix-heading"><span>FLIGHT STATUS MIX</span><b>{{ live_flights|length }}<small>total</small></b></div>
+            <div class="flight-mix-heading">
+                <div><span>NETWORK SNAPSHOT</span><strong>Flight status mix</strong></div>
+                <span class="flight-mix-live"><i></i>LIVE</span>
+            </div>
             {% if flight_status_summary %}
-            <div class="flight-mix-bar" role="img" aria-label="Flight statuses represented as a proportion of all flights">
-                {% for item in flight_status_summary %}<span class="mix-{{ item.tone }}" style="width:{{ item.percent }}%"></span>{% endfor %}
+            {% set mix_arc = namespace(offset=0) %}
+            <div class="flight-mix-content">
+                <div class="flight-mix-chart" role="img" aria-label="Flight status distribution across {{ live_flights|length }} scheduled flights">
+                    <svg class="flight-mix-ring" viewBox="0 0 100 100" aria-hidden="true">
+                        <circle class="flight-mix-track" cx="50" cy="50" r="41" pathLength="100"></circle>
+                        {% for item in flight_status_summary %}{% set share = item.count * 100 / live_flights|length %}<circle class="mix-stroke-{{ item.tone }}" cx="50" cy="50" r="41" pathLength="100" style="--mix-value:{{ share }};--mix-offset:{{ -mix_arc.offset }};--mix-index:{{ loop.index0 }}" title="{{ item.label }}: {{ item.count }} flights">{% set mix_arc.offset = mix_arc.offset + share %}</circle>{% endfor %}
+                    </svg>
+                    <div class="flight-mix-center"><strong>{{ live_flights|length }}</strong><span>FLIGHTS</span></div>
+                    <span class="flight-mix-orbit" aria-hidden="true"></span>
+                </div>
+                <div class="flight-mix-legend" aria-label="Flight status counts">
+                    {% for item in flight_status_summary %}<div class="mix-row mix-row-{{ item.tone }}" style="--mix-index:{{ loop.index0 }}"><i></i><span>{{ item.label }}</span><b>{{ item.count }}</b><small>{{ (item.count * 100 / live_flights|length)|round(1) }}%</small></div>{% endfor %}
+                </div>
             </div>
-            <div class="flight-mix-legend">
-                {% for item in flight_status_summary %}<span><i class="mix-{{ item.tone }}"></i>{{ item.label }} <b>{{ item.count }}</b></span>{% endfor %}
-            </div>
-            {% else %}<p class="flight-empty-note">Flight status data will appear here when schedules are added.</p>{% endif %}
+            {% else %}<div class="flight-mix-empty"><div class="flight-mix-empty-ring"><strong>0</strong><span>FLIGHTS</span></div><p>Flight status data will appear here when schedules are added.</p></div>{% endif %}
         </div>
         <div class="flight-card-grid">
             {% for f in live_flights[:6] %}
@@ -80,7 +120,7 @@
 <section class="infrastructure-section">
     <div class="section-heading"><div><span class="section-kicker">ON THE GROUND</span><h2>Airport infrastructure</h2></div><a class="text-link" href="{{ url_for('Airports.Display_Airport') }}">Manage network ↗</a></div>
     <div class="infrastructure-metrics">
-        {% for asset in infrastructure_summary %}<div class="infra-metric infra-{{ asset.tone }}"><span>{{ asset.label }}</span><b>{{ asset.count }}</b><small>in network</small></div>{% endfor %}
+        {% for asset in infrastructure_summary %}<div class="infra-metric infra-{{ asset.tone }}"><span>{{ asset.label }}</span><b data-count-up="{{ asset.count }}">{{ asset.count }}</b><small>in network</small></div>{% endfor %}
     </div>
     <div class="ops-table-wrap"><table class="ops-table">
         <thead><tr><th>IATA</th><th>Airport</th><th>City</th><th>Terminal</th><th>Gate</th><th>Runway</th></tr></thead><tbody>
@@ -89,3 +129,4 @@
     </table></div>
 </section>
 {% endblock %}
+{% block page_scripts %}<script defer src="{{ url_for('static', filename='js/flight-globe.js', v=7) }}"></script>{% endblock %}
