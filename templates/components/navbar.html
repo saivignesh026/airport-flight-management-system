@@ -16,7 +16,7 @@
             <div class="dropdown">
                 <button class="dropbtn nav-item" aria-expanded="false">Flight Ops <span class="chevron">▾</span></button>
                 <div class="dropdown-content ops-menu">
-                    <div class="dropdown-heading"><span class="dropdown-heading-mark">✈</span><div><b>Flight operations</b><small>Routes, schedules & airfield</small></div></div>
+                    <div class="dropdown-heading"><span class="dropdown-heading-mark"><svg class="ui-icon" aria-hidden="true"><use href="#icon-plane"></use></svg></span><div><b>Flight operations</b><small>Routes, schedules & airfield</small></div></div>
                     <div class="dropdown-grid">
                         <div class="dropdown-group"><span>FLIGHTS & FLEET</span>
                             <a href="{{ url_for('Flights.Display_Flight') }}">Flight routes</a>
@@ -38,7 +38,7 @@
             <div class="dropdown">
                 <button class="dropbtn nav-item" aria-expanded="false">Travelers <span class="chevron">▾</span></button>
                 <div class="dropdown-content ops-menu compact-menu">
-                    <div class="dropdown-heading"><span class="dropdown-heading-mark">◎</span><div><b>Traveler services</b><small>People, journeys & baggage</small></div></div>
+                    <div class="dropdown-heading"><span class="dropdown-heading-mark"><svg class="ui-icon" aria-hidden="true"><use href="#icon-passenger"></use></svg></span><div><b>Traveler services</b><small>People, journeys & baggage</small></div></div>
                     <div class="dropdown-group"><span>PASSENGERS</span>
                         <a href="{{ url_for('Passengers.Display_Passenger') }}">Passenger records</a>
                         <a href="{{ url_for('Passengers.Flight_Passenger_Manifest') }}">Flight manifest</a>
@@ -53,7 +53,7 @@
             <div class="dropdown">
                 <button class="dropbtn nav-item" aria-expanded="false">People <span class="chevron">▾</span></button>
                 <div class="dropdown-content ops-menu compact-menu">
-                    <div class="dropdown-heading"><span class="dropdown-heading-mark">♧</span><div><b>People & teams</b><small>Staff and organization</small></div></div>
+                    <div class="dropdown-heading"><span class="dropdown-heading-mark"><svg class="ui-icon" aria-hidden="true"><use href="#icon-team"></use></svg></span><div><b>People & teams</b><small>Staff and organization</small></div></div>
                     <div class="dropdown-group"><span>WORKFORCE</span>
                         <a href="{{ url_for('Employees.Display_Employee') }}">Employees</a>
                         <a href="{{ url_for('Departments.Display_Department') }}">Departments</a>

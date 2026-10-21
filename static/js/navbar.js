@@ -246,17 +246,17 @@
 
         const path = window.location.pathname.toLowerCase();
         const identity = path.includes("passenger") || path.includes("booking")
-            ? { label: "PASSENGER SERVICES", icon: "◎", tone: "coral", stamp: "JOURNEYS", index: "04", note: path.includes("manifest") ? "Passenger manifest and flight assignments." : path.includes("booking") ? "Bookings, payment, check-in and baggage." : "Passenger records and traveler details." }
+            ? { label: "PASSENGER SERVICES", icon: "passenger", tone: "coral", stamp: "JOURNEYS", index: "04", note: path.includes("manifest") ? "Passenger manifest and flight assignments." : path.includes("booking") ? "Bookings, payment, check-in and baggage." : "Passenger records and traveler details." }
             : path.includes("employee") || path.includes("role") || path.includes("department")
-                ? { label: "PEOPLE & ADMINISTRATION", icon: "♧", tone: "violet", stamp: "AIRPORT TEAM", index: "05", note: path.includes("employee") ? "Staff records and airport assignments." : path.includes("department") ? "Departments and operational teams." : "Roles and access responsibilities." }
+                ? { label: "PEOPLE & ADMINISTRATION", icon: "team", tone: "violet", stamp: "AIRPORT TEAM", index: "05", note: path.includes("employee") ? "Staff records and airport assignments." : path.includes("department") ? "Departments and operational teams." : "Roles and access responsibilities." }
                 : path.includes("airport") || path.includes("terminal") || path.includes("gate") || path.includes("runway")
-                    ? { label: "AIRPORT INFRASTRUCTURE", icon: "⌖", tone: "cyan", stamp: "AIRFIELD", index: "03", note: path.includes("terminal") ? "Terminal locations and service status." : path.includes("gate") ? "Gate assignments and availability." : path.includes("runway") ? "Runway specifications and operational status." : "Airport locations and network details." }
+                    ? { label: "AIRPORT INFRASTRUCTURE", icon: "airport", tone: "cyan", stamp: "AIRFIELD", index: "03", note: path.includes("terminal") ? "Terminal locations and service status." : path.includes("gate") ? "Gate assignments and availability." : path.includes("runway") ? "Runway specifications and operational status." : "Airport locations and network details." }
                     : path.includes("aircraft") || path.includes("airline")
-                        ? { label: "FLEET & CARRIERS", icon: "✈", tone: "blue", stamp: "FLEET", index: "02", note: path.includes("airline") ? "Carrier records and airline details." : "Aircraft records, capacity and fleet details." }
-                        : { label: "FLIGHT OPERATIONS", icon: "◷", tone: "blue", stamp: "SCHEDULE", index: "01", note: path.includes("instance") ? "Scheduled services, gates and flight status." : "Routes, origins and destinations." };
+                        ? { label: "FLEET & CARRIERS", icon: "plane", tone: "blue", stamp: "FLEET", index: "02", note: path.includes("airline") ? "Carrier records and airline details." : "Aircraft records, capacity and fleet details." }
+                        : { label: "FLIGHT OPERATIONS", icon: "clock", tone: "blue", stamp: "SCHEDULE", index: "01", note: path.includes("instance") ? "Scheduled services, gates and flight status." : "Routes, origins and destinations." };
         const hero = document.createElement("section");
         hero.className = `page-hero page-hero-${identity.tone}`;
-        hero.innerHTML = `<div class="page-hero-copy"><span class="page-hero-kicker"><i></i>${identity.label} <span class="hero-separator">/</span> OPERATIONS DESK</span><div class="page-hero-title"></div><p>${identity.note}</p></div><div class="page-hero-visual" aria-hidden="true"><span class="page-hero-orbit orbit-a"></span><span class="page-hero-orbit orbit-b"></span><span class="page-hero-glyph">${identity.icon}</span><span class="page-hero-code">${identity.stamp}<br><b>${identity.index}</b></span></div>`;
+        hero.innerHTML = `<div class="page-hero-copy"><span class="page-hero-kicker"><i></i>${identity.label} <span class="hero-separator">/</span> OPERATIONS DESK</span><div class="page-hero-title"></div><p>${identity.note}</p></div><div class="page-hero-visual" aria-hidden="true"><span class="page-hero-orbit orbit-a"></span><span class="page-hero-orbit orbit-b"></span><span class="page-hero-glyph"><svg class="ui-icon"><use href="#icon-${identity.icon}"></use></svg></span><span class="page-hero-code">${identity.stamp}<br><b>${identity.index}</b></span></div>`;
         hero.querySelector(".page-hero-title").appendChild(heading);
         if (split) main.insertBefore(hero, split);
         else main.insertBefore(hero, main.firstChild);
@@ -279,6 +279,87 @@
         });
     }
 
+    // Associate the older label/control markup and surface native validation
+    // messages inline, including controls enhanced by searchable-select.js.
+    function initForms() {
+        let controlIndex = 0;
+        document.querySelectorAll("form").forEach((form) => {
+            const labels = Array.from(form.querySelectorAll("label"));
+            labels.forEach((label) => {
+                let control = label.htmlFor ? document.getElementById(label.htmlFor) : null;
+                if (!control) {
+                    let next = label.nextElementSibling;
+                    while (next && next.tagName === "BR") next = next.nextElementSibling;
+                    if (next?.classList.contains("date-time-picker")) control = next.querySelector(".date-time-picker-input");
+                    else if (next?.classList.contains("custom-select-wrapper")) control = next.querySelector("select");
+                    else if (next && /^(INPUT|SELECT|TEXTAREA)$/.test(next.tagName)) control = next;
+                }
+                if (!control || !form.contains(control)) return;
+                if (!control.id) control.id = `form-control-${++controlIndex}`;
+                if (label.htmlFor !== control.id) label.htmlFor = control.id;
+                if (control.required || control.closest(".date-time-picker")?.dataset.required === "true") label.classList.add("is-required");
+            });
+
+            const showError = (control) => {
+                if (control.validity.valid) return;
+                form.classList.add("form-validation-attempted");
+                control.setAttribute("aria-invalid", "true");
+                const errorId = `${control.id}-error`;
+                let error = form.querySelector(`#${CSS.escape(errorId)}`);
+                if (!error) {
+                    error = document.createElement("span");
+                    error.id = errorId;
+                    error.className = "field-error";
+                    const wrapper = control.closest(".custom-select-wrapper");
+                    (wrapper || control).insertAdjacentElement("afterend", error);
+                }
+                error.textContent = control.validationMessage || "Check this field.";
+                const describedBy = new Set((control.getAttribute("aria-describedby") || "").split(/\s+/).filter(Boolean));
+                describedBy.add(errorId);
+                control.setAttribute("aria-describedby", Array.from(describedBy).join(" "));
+            };
+            const clearError = (control) => {
+                if (!control.validity.valid) return;
+                control.removeAttribute("aria-invalid");
+                const errorId = `${control.id}-error`;
+                form.querySelector(`#${CSS.escape(errorId)}`)?.remove();
+                const describedBy = (control.getAttribute("aria-describedby") || "").split(/\s+/).filter((id) => id && id !== errorId);
+                if (describedBy.length) control.setAttribute("aria-describedby", describedBy.join(" "));
+                else control.removeAttribute("aria-describedby");
+            };
+
+            form.addEventListener("invalid", (event) => showError(event.target), true);
+            form.addEventListener("input", (event) => {
+                if (/^(INPUT|SELECT|TEXTAREA)$/.test(event.target.tagName)) clearError(event.target);
+            });
+            form.addEventListener("change", (event) => {
+                if (/^(INPUT|SELECT|TEXTAREA)$/.test(event.target.tagName)) clearError(event.target);
+            });
+            form.addEventListener("reset", () => {
+                form.classList.remove("form-validation-attempted");
+                form.querySelectorAll("[aria-invalid='true']").forEach(clearError);
+            });
+            form.addEventListener("submit", (event) => {
+                if (event.defaultPrevented) return;
+                const button = form.querySelector("button[type='submit'].btn-submit, input[type='submit'].btn-submit");
+                if (!button) return;
+                button.classList.add("is-submitting");
+                button.setAttribute("aria-busy", "true");
+                button.disabled = true;
+            });
+        });
+
+        document.querySelectorAll("[data-operational-date]").forEach((time) => {
+            const raw = time.getAttribute("datetime") || time.textContent.trim();
+            const parsed = new Date(raw.replace(" ", "T"));
+            if (Number.isNaN(parsed.getTime())) return;
+            time.dateTime = parsed.toISOString();
+            time.textContent = new Intl.DateTimeFormat(undefined, {
+                month: "short", day: "numeric", hour: "2-digit", minute: "2-digit"
+            }).format(parsed);
+        });
+    }
+
     function init() {
         initTheme();
         initActiveLinks();
@@ -287,6 +368,7 @@
         initMobileMenu();
         initSplitLayout();
         initPageExperience();
+        initForms();
     }
 
     if (document.readyState === "loading") {

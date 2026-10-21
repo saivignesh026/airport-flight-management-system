@@ -10,7 +10,7 @@
     </div>
     <div class="hero-art" aria-hidden="true">
         <div class="radar radar-one"></div><div class="radar radar-two"></div>
-        <div class="flight-path"></div><span class="plane-mark">✈</span>
+        <div class="flight-path"></div><span class="plane-mark"><svg class="ui-icon" aria-hidden="true"><use href="#icon-plane"></use></svg></span>
         <div class="hero-coordinate">OPS<br><b>01</b></div>
         <div class="hero-caption">CONTROL<br>IN MOTION</div>
     </div>
@@ -22,12 +22,12 @@
         <span class="updated-label"><i></i> {{ live_flights|length }} FLIGHT RECORDS</span>
     </div>
     <div class="stats-grid">
-        <a href="{{ url_for('Airports.Display_Airport') }}" class="stat-card stat-airport"><span class="stat-icon">⌖</span><span class="stat-value">{{ stats.airports }}</span><span class="stat-label">Airports</span><span class="stat-detail">Across the network <b>↗</b></span></a>
-        <a href="{{ url_for('Flights.Display_Flight') }}" class="stat-card"><span class="stat-icon">⌁</span><span class="stat-value">{{ stats.flights }}</span><span class="stat-label">Flight routes</span><span class="stat-detail">Routes managed <b>↗</b></span></a>
-        <a href="{{ url_for('Flight_Instances.Display_Flight_Instance') }}" class="stat-card"><span class="stat-icon">◷</span><span class="stat-value">{{ stats.instances }}</span><span class="stat-label">Scheduled flights</span><span class="stat-detail">Flight instances <b>↗</b></span></a>
-        <a href="{{ url_for('Passengers.Display_Passenger') }}" class="stat-card"><span class="stat-icon">♙</span><span class="stat-value">{{ stats.passengers }}</span><span class="stat-label">Passengers</span><span class="stat-detail">Traveler records <b>↗</b></span></a>
-        <a href="{{ url_for('Bookings.Display_Booking') }}" class="stat-card"><span class="stat-icon">▤</span><span class="stat-value">{{ stats.bookings }}</span><span class="stat-label">Bookings</span><span class="stat-detail">Confirmed journeys <b>↗</b></span></a>
-        <a href="{{ url_for('Employees.Display_Employee') }}" class="stat-card"><span class="stat-icon">♧</span><span class="stat-value">{{ stats.employees }}</span><span class="stat-label">Team members</span><span class="stat-detail">Airport personnel <b>↗</b></span></a>
+        <a href="{{ url_for('Airports.Display_Airport') }}" class="stat-card stat-airport"><span class="stat-icon"><svg class="ui-icon" aria-hidden="true"><use href="#icon-airport"></use></svg></span><span class="stat-value">{{ stats.airports }}</span><span class="stat-label">Airports</span><span class="stat-detail">Across the network <b>↗</b></span></a>
+        <a href="{{ url_for('Flights.Display_Flight') }}" class="stat-card"><span class="stat-icon"><svg class="ui-icon" aria-hidden="true"><use href="#icon-route"></use></svg></span><span class="stat-value">{{ stats.flights }}</span><span class="stat-label">Flight routes</span><span class="stat-detail">Routes managed <b>↗</b></span></a>
+        <a href="{{ url_for('Flight_Instances.Display_Flight_Instance') }}" class="stat-card"><span class="stat-icon"><svg class="ui-icon" aria-hidden="true"><use href="#icon-clock"></use></svg></span><span class="stat-value">{{ stats.instances }}</span><span class="stat-label">Scheduled flights</span><span class="stat-detail">Flight instances <b>↗</b></span></a>
+        <a href="{{ url_for('Passengers.Display_Passenger') }}" class="stat-card"><span class="stat-icon"><svg class="ui-icon" aria-hidden="true"><use href="#icon-passenger"></use></svg></span><span class="stat-value">{{ stats.passengers }}</span><span class="stat-label">Passengers</span><span class="stat-detail">Traveler records <b>↗</b></span></a>
+        <a href="{{ url_for('Bookings.Display_Booking') }}" class="stat-card"><span class="stat-icon"><svg class="ui-icon" aria-hidden="true"><use href="#icon-ticket"></use></svg></span><span class="stat-value">{{ stats.bookings }}</span><span class="stat-label">Bookings</span><span class="stat-detail">Confirmed journeys <b>↗</b></span></a>
+        <a href="{{ url_for('Employees.Display_Employee') }}" class="stat-card"><span class="stat-icon"><svg class="ui-icon" aria-hidden="true"><use href="#icon-team"></use></svg></span><span class="stat-value">{{ stats.employees }}</span><span class="stat-label">Team members</span><span class="stat-detail">Airport personnel <b>↗</b></span></a>
     </div>
 </section>
 
@@ -52,7 +52,7 @@
             {% for f in live_flights[:6] %}
             <article class="flight-card">
                 <div class="flight-card-top"><span class="flight-card-number">{{ f.Flight_Number }}</span><span class="flight-state flight-state-{{ f.Instance_Status|lower|replace(' ', '-') }}">{{ f.Instance_Status }}</span></div>
-                <div class="flight-card-times"><div><small>DEPARTURE</small><b>{{ f.Scheduled_Departure }}</b></div><span class="flight-connector"><i></i></span><div><small>ARRIVAL</small><b>{{ f.Scheduled_Arrival }}</b></div></div>
+                <div class="flight-card-times"><div><small>DEPARTURE</small><time data-operational-date datetime="{{ f.Scheduled_Departure }}">{{ f.Scheduled_Departure }}</time></div><span class="flight-connector"><i></i></span><div><small>ARRIVAL</small><time data-operational-date datetime="{{ f.Scheduled_Arrival }}">{{ f.Scheduled_Arrival }}</time></div></div>
                 <div class="flight-card-footer"><span>{{ f.Airport }} · T{{ f.Terminal_Number }} · Gate {{ f.Gate_Number }}</span><span>{{ f.Aircraft_Model }}</span></div>
             </article>
             {% else %}<div class="flight-empty-card">No scheduled flights to display yet.</div>{% endfor %}
@@ -71,9 +71,9 @@
     </div>
     <aside class="quick-panel">
         <span class="section-kicker">QUICK ACCESS</span><h2>Move things forward.</h2>
-        <a href="{{ url_for('Airports.Display_Airport') }}"><span class="quick-icon">⌖</span><span><b>Airport network</b><small>Airports & infrastructure</small></span><i>↗</i></a>
-        <a href="{{ url_for('Passengers.Flight_Passenger_Manifest') }}"><span class="quick-icon">☷</span><span><b>Passenger manifest</b><small>Review flight passengers</small></span><i>↗</i></a>
-        <a href="{{ url_for('Employees.Display_Employee') }}"><span class="quick-icon">♧</span><span><b>People & teams</b><small>Staff and departments</small></span><i>↗</i></a>
+        <a href="{{ url_for('Airports.Display_Airport') }}"><span class="quick-icon"><svg class="ui-icon" aria-hidden="true"><use href="#icon-airport"></use></svg></span><span><b>Airport network</b><small>Airports & infrastructure</small></span><i>↗</i></a>
+        <a href="{{ url_for('Passengers.Flight_Passenger_Manifest') }}"><span class="quick-icon"><svg class="ui-icon" aria-hidden="true"><use href="#icon-manifest"></use></svg></span><span><b>Passenger manifest</b><small>Review flight passengers</small></span><i>↗</i></a>
+        <a href="{{ url_for('Employees.Display_Employee') }}"><span class="quick-icon"><svg class="ui-icon" aria-hidden="true"><use href="#icon-team"></use></svg></span><span><b>People & teams</b><small>Staff and departments</small></span><i>↗</i></a>
     </aside>
 </section>
 
