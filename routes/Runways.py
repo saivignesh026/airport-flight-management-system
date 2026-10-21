@@ -27,7 +27,7 @@ def Add_Runway():
         Airport_ID = request.form['Airport_ID']
 
         params = (Runway_Code, Runway_Length, Runway_Status, Airport_ID)
-        sql = 'insert into Runway (Runway_Code, Runway_Length, Runway_Status, Airport_ID) values (%s, %s, %s, %s)'
+        sql = 'CALL Add_Runway(%s, %s, %s, %s)'
         execute(sql, params)
         flash(f'Runway "{Runway_Code}" was successfully added.', 'success')
     except Exception as e:
@@ -39,7 +39,7 @@ def Add_Runway():
 @Runways_bp.route('/delete/<int:id>', methods=['POST'])
 def Delete_Runway(id):
     try:
-        sql = 'delete from Runway where Runway_ID = %s'
+        sql = 'CALL Delete_Runway(%s)'
         params = (id,)
         execute(sql, params)
         flash('Runway deleted successfully.', 'success')

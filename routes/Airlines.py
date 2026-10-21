@@ -25,7 +25,7 @@ def Add_Airline():
         Airline_Country=request.form['Airline_Country']
 
         params=(Airline_Name,IATA_Code,ICAO_Code,Airline_Country)
-        sql='insert into Airline (Name,IATA_Code,ICAO_Code,Country) values (%s,%s,%s,%s)'
+        sql='CALL Add_Airline(%s, %s, %s, %s)'
         execute(sql,params)
         flash(f'Airline "{Airline_Name}" was successfully added.', 'success')
     except Exception as e:
@@ -38,7 +38,7 @@ def Add_Airline():
 def Delete_Airline(id):
     try:
         params=(id,)
-        sql='Delete from Airline Where Airline_ID=%s'
+        sql='CALL Delete_Airline(%s)'
         execute(sql,params)
         flash('Airline deleted successfully.', 'success')
     except Exception as e:
@@ -63,7 +63,7 @@ def Update_Airline(id):
             flash(f'Failed to update airline: {str(e)}', 'danger')
             return redirect(url_for('Airlines.Update_Airline', id=id))
     else:
-        sql = 'SELECT * FROM Airline WHERE Airline_ID=%s'
+        sql = 'CALL Airline_To_Edit(%s)'
         params = (id,)
         airline_to_edit = fetch_one(sql, params)
         return render_template('Update/UpdateAirline.html', airline=airline_to_edit)

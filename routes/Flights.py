@@ -34,9 +34,7 @@ def Add_Flight():
         Scheduled_Arrival_Time = request.form['Scheduled_Arrival_Time']
         Status = request.form['Status']
 
-        sql = '''INSERT INTO Flight
-                 (Flight_Number, Airline_ID, Departure_Airport_ID, Arrival_Airport_ID, Scheduled_Departure_Time, Scheduled_Arrival_Time, Status)
-                 VALUES (%s, %s, %s, %s, %s, %s, %s)'''
+        sql = 'CALL Add_Flight(%s, %s, %s, %s, %s, %s, %s)'
         params = (Flight_Number, Airline_ID, Departure_Airport_ID, Arrival_Airport_ID, Scheduled_Departure_Time, Scheduled_Arrival_Time, Status)
         execute(sql, params)
         flash(f'Flight "{Flight_Number}" was successfully added.', 'success')
@@ -47,7 +45,7 @@ def Add_Flight():
 @Flights_bp.route('/delete/<int:id>', methods=['POST'])
 def Delete_Flight(id):
     try:
-        execute('DELETE FROM Flight WHERE Flight_ID = %s', (id,))
+        execute('CALL Delete_Flight(%s)', (id,))
         flash('Flight deleted successfully.', 'success')
     except Exception as e:
         flash(f'Failed to delete flight: {str(e)}', 'danger')
@@ -77,7 +75,7 @@ def Update_Flight(id):
             flash(f'Failed to update flight: {str(e)}', 'danger')
             return redirect(url_for('Flights.Update_Flight', id=id))
     else:
-        Flight_To_Edit = fetch_one('SELECT * FROM Flight WHERE Flight_ID = %s', (id,))
+        Flight_To_Edit = fetch_one('CALL Flight_To_Edit(%s)', (id,))
         Airline_Data = fetch_all('SELECT Airline_ID, Name FROM Airline')
         Airport_Data = fetch_all('SELECT Airport_ID, Airport_Name, IATA_Code FROM Airport')
         return render_template(

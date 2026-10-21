@@ -26,7 +26,7 @@ def Add_Gate():
         Terminal_ID = request.form.get('Terminal_ID') or None
 
         params = (Gate_Number, Gate_Status, Terminal_ID)
-        sql = 'insert into Gate (Gate_Number, Gate_Status, Terminal_ID) values (%s, %s, %s)'
+        sql = 'CALL Add_Gate(%s, %s, %s)'
         execute(sql, params)
         flash(f'Gate "{Gate_Number}" was successfully added.', 'success')
     except Exception as e:
@@ -39,7 +39,7 @@ def Add_Gate():
 def Delete_Gate(id):
     if request.method == 'POST':
         try:
-            sql = 'delete from Gate where Gate_ID = %s'
+            sql = 'CALL Delete_Gate(%s)'
             params = (id,)
             execute(sql, params)
             flash('Gate deleted successfully.', 'success')
@@ -66,10 +66,6 @@ def Update_Gate(id):
             return redirect(url_for('Gates.Update_Gate', id=id))
 
     else:
-        sql = 'select Gate_ID, Gate_Number, Gate_Status, Terminal_ID \
-               from Gate \
-               where Gate_ID = %s'
-        params = (id,)
-        Gate_To_Edit = fetch_one(sql, params)
+        Gate_To_Edit = fetch_one('CALL Gate_To_Edit(%s)', (id,))
         Terminal_Data = fetch_all('select Terminal_ID, Terminal_Name, Terminal_Number from Terminal')
         return render_template('Update/UpdateGate.html', Gate=Gate_To_Edit, Terminal_Data=Terminal_Data, Status_Enum=Status_Enum)

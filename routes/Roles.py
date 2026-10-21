@@ -21,7 +21,7 @@ def Add_Role():
         Department_ID = request.form['Department_ID']
 
         params = (Role_Name, Department_ID)
-        sql = 'INSERT INTO Role (Role_Name, Department_ID) VALUES (%s, %s)'
+        sql = 'CALL Add_Role(%s, %s)'
         execute(sql, params)
         flash(f'Role "{Role_Name}" was successfully added.', 'success')
     except Exception as e:
@@ -33,7 +33,7 @@ def Add_Role():
 def Delete_Role(id):
     if request.method == 'POST':
         try:
-            sql = 'DELETE FROM Role WHERE Role_ID=%s'
+            sql = 'CALL Delete_Role(%s)'
             params = (id,)
             execute(sql, params)
             flash('Role deleted successfully.', 'success')
