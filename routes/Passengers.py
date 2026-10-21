@@ -1,4 +1,4 @@
-from flask import Blueprint, render_template, redirect, request, url_for
+from flask import Blueprint, render_template, redirect, request, url_for, flash
 from db import fetch_all, fetch_one, execute
 
 Passengers_bp = Blueprint(
@@ -14,27 +14,7 @@ def Display_Passenger():
 
 @Passengers_bp.route('/add', methods=['POST'])
 def Add_Passenger():
-    First_Name = request.form['First_Name']
-    Last_Name = request.form['Last_Name']
-    Passport_Number = request.form['Passport_Number'] or None
-    Nationality = request.form['Nationality']
-    Contact_Number = request.form['Contact_Number']
-    Email = request.form['Email']
-
-    sql = '''INSERT INTO Passenger
-             (First_Name, Last_Name, Passport_Number, Nationality, Contact_Number, Email)
-             VALUES (%s, %s, %s, %s, %s, %s)'''
-    execute(sql, (First_Name, Last_Name, Passport_Number, Nationality, Contact_Number, Email))
-    return redirect(url_for('Passengers.Display_Passenger'))
-
-@Passengers_bp.route('/delete/<int:id>', methods=['POST'])
-def Delete_Passenger(id):
-    execute('DELETE FROM Passenger WHERE Passenger_ID = %s', (id,))
-    return redirect(url_for('Passengers.Display_Passenger'))
-
-@Passengers_bp.route('/update/<int:id>', methods=['GET', 'POST'])
-def Update_Passenger(id):
-    if request.method == 'POST':
+    try:
         First_Name = request.form['First_Name']
         Last_Name = request.form['Last_Name']
         Passport_Number = request.form['Passport_Number'] or None
@@ -42,11 +22,44 @@ def Update_Passenger(id):
         Contact_Number = request.form['Contact_Number']
         Email = request.form['Email']
 
-        sql = '''UPDATE Passenger
-                 SET First_Name=%s, Last_Name=%s, Passport_Number=%s, Nationality=%s, Contact_Number=%s, Email=%s
-                 WHERE Passenger_ID=%s'''
-        execute(sql, (First_Name, Last_Name, Passport_Number, Nationality, Contact_Number, Email, id))
-        return redirect(url_for('Passengers.Display_Passenger'))
+        sql = '''INSERT INTO Passenger
+                 (First_Name, Last_Name, Passport_Number, Nationality, Contact_Number, Email)
+                 VALUES (%s, %s, %s, %s, %s, %s)'''
+        execute(sql, (First_Name, Last_Name, Passport_Number, Nationality, Contact_Number, Email))
+        flash(f'Passenger "{First_Name} {Last_Name}" was successfully added.', 'success')
+    except Exception as e:
+        flash(f'Failed to add passenger: {str(e)}', 'danger')
+    return redirect(url_for('Passengers.Display_Passenger'))
+
+@Passengers_bp.route('/delete/<int:id>', methods=['POST'])
+def Delete_Passenger(id):
+    try:
+        execute('DELETE FROM Passenger WHERE Passenger_ID = %s', (id,))
+        flash('Passenger deleted successfully.', 'success')
+    except Exception as e:
+        flash(f'Failed to delete passenger: {str(e)}', 'danger')
+    return redirect(url_for('Passengers.Display_Passenger'))
+
+@Passengers_bp.route('/update/<int:id>', methods=['GET', 'POST'])
+def Update_Passenger(id):
+    if request.method == 'POST':
+        try:
+            First_Name = request.form['First_Name']
+            Last_Name = request.form['Last_Name']
+            Passport_Number = request.form['Passport_Number'] or None
+            Nationality = request.form['Nationality']
+            Contact_Number = request.form['Contact_Number']
+            Email = request.form['Email']
+
+            sql = '''UPDATE Passenger
+                     SET First_Name=%s, Last_Name=%s, Passport_Number=%s, Nationality=%s, Contact_Number=%s, Email=%s
+                     WHERE Passenger_ID=%s'''
+            execute(sql, (First_Name, Last_Name, Passport_Number, Nationality, Contact_Number, Email, id))
+            flash(f'Passenger "{First_Name} {Last_Name}" updated successfully.', 'success')
+            return redirect(url_for('Passengers.Display_Passenger'))
+        except Exception as e:
+            flash(f'Failed to update passenger: {str(e)}', 'danger')
+            return redirect(url_for('Passengers.Update_Passenger', id=id))
     else:
         Passenger = fetch_one('SELECT * FROM Passenger WHERE Passenger_ID = %s', (id,))
         return render_template('Update/UpdatePassenger.html', Passenger=Passenger)

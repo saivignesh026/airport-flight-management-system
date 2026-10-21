@@ -1,4 +1,4 @@
-from flask import Blueprint, render_template, redirect, request, url_for
+from flask import Blueprint, render_template, redirect, request, url_for, flash
 from db import fetch_all, fetch_one, execute
 
 Terminals_bp = Blueprint(
@@ -20,14 +20,18 @@ def Display_Terminal():
 
 @Terminals_bp.route('/add', methods=['POST'])
 def Add_Terminal():
-    Terminal_Number = request.form.get('Terminal_Number')
-    Terminal_Name = request.form['Terminal_Name']
-    Terminal_Status = request.form['Terminal_Status']
-    Airport_ID = request.form['Airport_ID']
+    try:
+        Terminal_Number = request.form.get('Terminal_Number')
+        Terminal_Name = request.form['Terminal_Name']
+        Terminal_Status = request.form['Terminal_Status']
+        Airport_ID = request.form['Airport_ID']
 
-    params = (Terminal_Number, Terminal_Name, Terminal_Status, Airport_ID)
-    sql = 'insert into Terminal (Terminal_Number, Terminal_Name, Terminal_Status, Airport_ID) values (%s, %s, %s, %s)'
-    execute(sql, params)
+        params = (Terminal_Number, Terminal_Name, Terminal_Status, Airport_ID)
+        sql = 'insert into Terminal (Terminal_Number, Terminal_Name, Terminal_Status, Airport_ID) values (%s, %s, %s, %s)'
+        execute(sql, params)
+        flash(f'Terminal "{Terminal_Name}" was successfully added.', 'success')
+    except Exception as e:
+        flash(f'Failed to add terminal: {str(e)}', 'danger')
 
     return redirect(url_for('Terminals.Display_Terminal'))
 
@@ -35,24 +39,33 @@ def Add_Terminal():
 @Terminals_bp.route('/delete/<int:id>', methods=['POST'])
 def Delete_Terminal(id):
     if request.method == 'POST':
-        sql = 'delete from Terminal where Terminal_ID = %s'
-        params = (id,)
-        execute(sql, params)
+        try:
+            sql = 'delete from Terminal where Terminal_ID = %s'
+            params = (id,)
+            execute(sql, params)
+            flash('Terminal deleted successfully.', 'success')
+        except Exception as e:
+            flash(f'Failed to delete terminal: {str(e)}', 'danger')
         return redirect(url_for('Terminals.Display_Terminal'))
 
 
 @Terminals_bp.route('/update/<int:id>', methods=['POST', 'GET'])
 def Update_Terminal(id):
     if request.method == 'POST':
-        Terminal_Number = request.form.get('Terminal_Number')
-        Terminal_Name = request.form['Terminal_Name']
-        Terminal_Status = request.form['Terminal_Status']
-        Airport_ID = request.form['Airport_ID']
+        try:
+            Terminal_Number = request.form.get('Terminal_Number')
+            Terminal_Name = request.form['Terminal_Name']
+            Terminal_Status = request.form['Terminal_Status']
+            Airport_ID = request.form['Airport_ID']
 
-        params = (Terminal_Number, Terminal_Name, Terminal_Status, Airport_ID, id)
-        sql = 'update Terminal set Terminal_Number=%s, Terminal_Name=%s, Terminal_Status=%s, Airport_ID=%s where Terminal_ID=%s'
-        execute(sql, params)
-        return redirect(url_for('Terminals.Display_Terminal'))
+            params = (Terminal_Number, Terminal_Name, Terminal_Status, Airport_ID, id)
+            sql = 'update Terminal set Terminal_Number=%s, Terminal_Name=%s, Terminal_Status=%s, Airport_ID=%s where Terminal_ID=%s'
+            execute(sql, params)
+            flash(f'Terminal "{Terminal_Name}" updated successfully.', 'success')
+            return redirect(url_for('Terminals.Display_Terminal'))
+        except Exception as e:
+            flash(f'Failed to update terminal: {str(e)}', 'danger')
+            return redirect(url_for('Terminals.Update_Terminal', id=id))
 
     else:
         sql = 'CALL Terminal_To_Edit(%s)'
