@@ -56,7 +56,7 @@ def Update_Aircraft(id):
             Airline_ID = request.form['Airline_ID']
 
             params = (Tail_Number, Model, Capacity, Airline_ID, id)
-            sql = 'UPDATE Aircraft SET Tail_Number = %s, Model = %s, Capacity = %s, Airline_ID = %s WHERE Aircraft_ID = %s'
+            sql = 'CALL Update_Aircraft(%s, %s, %s, %s, %s)'
             execute(sql, params)
             flash(f'Aircraft "{Tail_Number}" updated successfully.', 'success')
             return redirect(url_for('Aircrafts.Display_Aircraft'))

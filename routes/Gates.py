@@ -57,7 +57,7 @@ def Update_Gate(id):
             Terminal_ID = request.form.get('Terminal_ID') or None
 
             params = (Gate_Number, Gate_Status, Terminal_ID, id)
-            sql = 'update Gate set Gate_Number=%s, Gate_Status=%s, Terminal_ID=%s where Gate_ID=%s'
+            sql = 'CALL Update_Gate(%s, %s, %s, %s)'
             execute(sql, params)
             flash(f'Gate "{Gate_Number}" updated successfully.', 'success')
             return redirect(url_for('Gates.Display_Gate'))

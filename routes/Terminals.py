@@ -59,7 +59,7 @@ def Update_Terminal(id):
             Airport_ID = request.form['Airport_ID']
 
             params = (Terminal_Number, Terminal_Name, Terminal_Status, Airport_ID, id)
-            sql = 'update Terminal set Terminal_Number=%s, Terminal_Name=%s, Terminal_Status=%s, Airport_ID=%s where Terminal_ID=%s'
+            sql = 'CALL Update_Terminal(%s, %s, %s, %s, %s)'
             execute(sql, params)
             flash(f'Terminal "{Terminal_Name}" updated successfully.', 'success')
             return redirect(url_for('Terminals.Display_Terminal'))

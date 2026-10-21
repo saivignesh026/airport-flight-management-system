@@ -58,7 +58,7 @@ def Update_Runway(id):
             Airport_ID = request.form['Airport_ID']
 
             params = (Runway_Code, Runway_Length, Runway_Status, Airport_ID, id)
-            sql = 'update Runway set Runway_Code=%s, Runway_Length=%s, Runway_Status=%s, Airport_ID=%s where Runway_ID=%s'
+            sql = 'CALL Update_Runway(%s, %s, %s, %s, %s)'
             execute(sql, params)
             flash(f'Runway "{Runway_Code}" updated successfully.', 'success')
             return redirect(url_for('Runways.Display_Runway'))

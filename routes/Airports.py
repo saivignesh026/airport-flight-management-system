@@ -54,7 +54,7 @@ def Update_Airport(id):
             Airport_City=request.form['Airport_City']
             Airport_Country=request.form['Airport_Country']
 
-            sql='update Airport set IATA_Code=%s,Airport_Name=%s,Airport_City=%s,Airport_Country=%s where Airport_ID=%s'
+            sql='CALL Update_Airport(%s, %s, %s, %s, %s)'
             params=(Airport_IATA_Code,Airport_Name,Airport_City,Airport_Country,id)
 
             execute(sql,params)

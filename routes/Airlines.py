@@ -54,7 +54,7 @@ def Update_Airline(id):
             ICAO_Code = request.form['ICAO_Code']
             Airline_Country = request.form['Airline_Country']
 
-            sql = 'UPDATE Airline SET Name=%s, IATA_Code=%s, ICAO_Code=%s, Country=%s WHERE Airline_ID=%s'
+            sql = 'CALL Update_Airline(%s, %s, %s, %s, %s)'
             params = (Airline_Name, IATA_Code, ICAO_Code, Airline_Country, id)
             execute(sql, params)
             flash(f'Airline "{Airline_Name}" updated successfully.', 'success')

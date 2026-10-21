@@ -58,9 +58,7 @@ def Update_Employee(id):
             Employee_Status = request.form['Employee_Status']
 
             params = (Employee_Name, Employee_Email, Contact_Number, Department_ID, Role_ID, Hire_Date, Employee_Status, id)
-            sql = '''UPDATE Employee
-                     SET Employee_Name=%s, Employee_Email=%s, Contact_Number=%s, Department_ID=%s, Role_ID=%s, Hire_Date=%s, Employee_Status=%s
-                     WHERE Employee_ID=%s'''
+            sql = 'CALL Update_Employee(%s, %s, %s, %s, %s, %s, %s, %s)'
             execute(sql, params)
             flash(f'Employee "{Employee_Name}" updated successfully.', 'success')
             return redirect(url_for('Employees.Display_Employee'))

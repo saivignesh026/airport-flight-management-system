@@ -48,7 +48,7 @@ def Update_Department(id):
             Description = request.form['Description']
 
             params = (Department_Name, Description, id)
-            sql = 'UPDATE Department SET Department_Name=%s, Description=%s WHERE Department_ID=%s'
+            sql = 'CALL Update_Department(%s, %s, %s)'
             execute(sql, params)
             flash(f'Department "{Department_Name}" updated successfully.', 'success')
             return redirect(url_for('Departments.Display_Department'))

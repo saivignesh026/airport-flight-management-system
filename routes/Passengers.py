@@ -49,9 +49,7 @@ def Update_Passenger(id):
             Contact_Number = request.form['Contact_Number']
             Email = request.form['Email']
 
-            sql = '''UPDATE Passenger
-                     SET First_Name=%s, Last_Name=%s, Passport_Number=%s, Nationality=%s, Contact_Number=%s, Email=%s
-                     WHERE Passenger_ID=%s'''
+            sql = 'CALL Update_Passenger(%s, %s, %s, %s, %s, %s, %s)'
             execute(sql, (First_Name, Last_Name, Passport_Number, Nationality, Contact_Number, Email, id))
             flash(f'Passenger "{First_Name} {Last_Name}" updated successfully.', 'success')
             return redirect(url_for('Passengers.Display_Passenger'))

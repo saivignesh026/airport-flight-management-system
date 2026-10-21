@@ -63,10 +63,7 @@ def Update_Flight(id):
             Scheduled_Arrival_Time = request.form['Scheduled_Arrival_Time']
             Status = request.form['Status']
 
-            sql = '''UPDATE Flight
-                     SET Flight_Number=%s, Airline_ID=%s, Departure_Airport_ID=%s, Arrival_Airport_ID=%s,
-                         Scheduled_Departure_Time=%s, Scheduled_Arrival_Time=%s, Status=%s
-                     WHERE Flight_ID=%s'''
+            sql = 'CALL Update_Flight(%s, %s, %s, %s, %s, %s, %s, %s)'
             params = (Flight_Number, Airline_ID, Departure_Airport_ID, Arrival_Airport_ID, Scheduled_Departure_Time, Scheduled_Arrival_Time, Status, id)
             execute(sql, params)
             flash(f'Flight "{Flight_Number}" updated successfully.', 'success')

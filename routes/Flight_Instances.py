@@ -73,10 +73,7 @@ def Update_Flight_Instance(id):
             Actual_Arrival = request.form.get('Actual_Arrival') or None
             Flight_Instance_Status = request.form['Flight_Instance_Status']
 
-            sql = '''UPDATE Flight_Instance
-                     SET Scheduled_Departure=%s, Scheduled_Arrival=%s, Actual_Departure=%s, Actual_Arrival=%s,
-                         Flight_Instance_Status=%s, Flight_ID=%s, Aircraft_ID=%s, Gate_ID=%s, Runway_ID=%s
-                     WHERE Instance_ID=%s'''
+            sql = 'CALL Update_Flight_Instance(%s, %s, %s, %s, %s, %s, %s, %s, %s, %s)'
             params = (
                 Scheduled_Departure, Scheduled_Arrival, Actual_Departure, Actual_Arrival,
                 Flight_Instance_Status, Flight_ID, Aircraft_ID, Gate_ID, Runway_ID, id

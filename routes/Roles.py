@@ -49,7 +49,7 @@ def Update_Role(id):
             Department_ID = request.form['Department_ID']
 
             params = (Role_Name, Department_ID, id)
-            sql = 'UPDATE Role SET Role_Name=%s, Department_ID=%s WHERE Role_ID=%s'
+            sql = 'CALL Update_Role(%s, %s, %s)'
             execute(sql, params)
             flash(f'Role "{Role_Name}" updated successfully.', 'success')
             return redirect(url_for('Roles.Display_Role'))

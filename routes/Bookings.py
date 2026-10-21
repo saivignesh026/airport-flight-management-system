@@ -133,30 +133,15 @@ def Update_Booking(id):
             Weight_KG = request.form.get('Weight_KG') or 0.00
             Baggage_Status = request.form['Baggage_Status']
 
-            with transaction() as cur:
-                cur.execute('''
-                    UPDATE Booking
-                    SET Booking_Status=%s, Booking_Price=%s, Seat_Number=%s, Class=%s, Passenger_ID=%s, Instance_ID=%s
-                    WHERE Booking_ID=%s
-                ''', (Booking_Status, Booking_Price, Seat_Number, Class, Passenger_ID, Instance_ID, id))
-
-                cur.execute('''
-                    UPDATE Payment
-                    SET Amount=%s, Payment_Method=%s, Payment_Status=%s, Transaction_Reference=%s
-                    WHERE Booking_ID=%s
-                ''', (Booking_Price, Payment_Method, Payment_Status, Transaction_Reference, id))
-
-                cur.execute('''
-                    UPDATE Check_In
-                    SET CheckIn_Status=%s, Boarding_Status=%s
-                    WHERE Booking_ID=%s
-                ''', (CheckIn_Status, Boarding_Status, id))
-
-                cur.execute('''
-                    UPDATE Baggage
-                    SET Weight_KG=%s, Baggage_Type=%s, Baggage_Status=%s
-                    WHERE Booking_ID=%s
-                ''', (Weight_KG, Baggage_Type, Baggage_Status, id))
+            params = (
+                Passenger_ID, Instance_ID, Seat_Number, Class, Booking_Price, Booking_Status,
+                Payment_Method, Payment_Status, Transaction_Reference, CheckIn_Status,
+                Boarding_Status, Baggage_Type, Weight_KG, Baggage_Status, id
+            )
+            execute(
+                'CALL Update_Booking(%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)',
+                params
+            )
 
             flash('Booking updated successfully.', 'success')
             return redirect(url_for('Bookings.Display_Booking'))
