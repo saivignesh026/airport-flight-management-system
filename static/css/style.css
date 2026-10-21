@@ -1133,3 +1133,61 @@ button:active:not(:disabled) {
         animation-duration: 1ms;
     }
 }
+
+/* Flash Alerts */
+.flash-container {
+    width: 100%;
+    margin-bottom: 1.5rem;
+}
+
+.alert {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0.85rem 1.25rem;
+    border-radius: 6px;
+    margin-bottom: 0.75rem;
+    font-size: 0.95rem;
+    border: 1px solid transparent;
+    transition: opacity 0.3s ease;
+}
+
+.alert-success {
+    background-color: #d1e7dd;
+    color: #0f5132;
+    border-color: #badbcc;
+}
+
+.alert-danger {
+    background-color: #f8d7da;
+    color: #842029;
+    border-color: #f5c2c7;
+}
+
+.alert-warning {
+    background-color: #fff3cd;
+    color: #664d03;
+    border-color: #ffecb5;
+}
+
+.alert-info {
+    background-color: #cff4fc;
+    color: #055160;
+    border-color: #b6effb;
+}
+
+/* Close 'x' button */
+.alert-close {
+    background: none;
+    border: none;
+    font-size: 1.25rem;
+    line-height: 1;
+    cursor: pointer;
+    color: inherit;
+    opacity: 0.6;
+    padding: 0 0 0 1rem;
+}
+
+.alert-close:hover {
+    opacity: 1;
+}
