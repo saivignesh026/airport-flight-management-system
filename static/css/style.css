@@ -2058,3 +2058,34 @@ main.main-container form:not(.table-search-container) .custom-select-wrapper .cu
 .globe-flight { width:36px;height:36px;padding:3px;box-shadow:none; }
 .globe-flight .ui-icon { filter:none; }
 .globe-flight:hover,.globe-flight.is-selected { scale:1;box-shadow:0 0 0 2px rgba(244,189,123,.65); }
+
+/* Reload entrance and navigation feedback; content is never hidden at rest. */
+@keyframes page-content-arrive {
+    from { opacity: .25; transform: translateY(12px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+@keyframes navigation-progress {
+    from { transform: scaleX(.08); }
+    to { transform: scaleX(.9); }
+}
+@media (prefers-reduced-motion: no-preference) {
+    main.main-container { animation: page-content-arrive 420ms ease-out; }
+    html.native-page-transition main.main-container { animation: none; }
+    html::after {
+        content: "";
+        position: fixed;
+        inset: 0 0 auto;
+        height: 3px;
+        z-index: 10000;
+        pointer-events: none;
+        background: var(--accent-blue, #0071e3);
+        transform: scaleX(0);
+        transform-origin: left;
+        opacity: 0;
+    }
+    html.page-navigating::after {
+        opacity: 1;
+        animation: navigation-progress 6s cubic-bezier(.15,.8,.2,1) forwards;
+    }
+    html { scroll-behavior: smooth; }
+}
