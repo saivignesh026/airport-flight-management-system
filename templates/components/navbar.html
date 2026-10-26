@@ -1,73 +1,22 @@
 <header class="navbar">
     <div class="nav-container">
-        <!-- Brand / Logo returns to Home -->
-        <a href="{{ url_for('Home') }}" class="nav-brand-link" style="text-decoration: none;" aria-label="AFMS Portal home" title="AFMS Portal">
-            <div class="nav-brand">
-                <span class="brand-icon"><img src="{{ url_for('static', filename='favicon.svg', v=1) }}" alt=""></span>
-                <span class="brand-title">AFMS Portal</span>
-            </div>
-        </a>
-
-        <!-- Navigation Links -->
-        <nav class="nav-links">
-            <a href="{{ url_for('Home') }}" class="nav-item {{ 'active' if request.endpoint == 'Home' }}">Home</a>
-            
-            <!-- Operations Dropdown -->
-            <div class="dropdown">
-                <button class="dropbtn nav-item" aria-expanded="false">Flight Ops <span class="chevron">▾</span></button>
-                <div class="dropdown-content ops-menu">
-                    <div class="dropdown-heading"><span class="dropdown-heading-mark"><svg class="ui-icon" aria-hidden="true"><use href="#icon-plane"></use></svg></span><div><b>Flight operations</b><small>Routes, schedules & airfield</small></div></div>
-                    <div class="dropdown-grid">
-                        <div class="dropdown-group"><span>FLIGHTS & FLEET</span>
-                            <a href="{{ url_for('Flights.Display_Flight') }}">Flight routes</a>
-                            <a href="{{ url_for('Flight_Instances.Display_Flight_Instance') }}">Flight schedules</a>
-                            <a href="{{ url_for('Airlines.Display_Airline') }}">Airlines</a>
-                            <a href="{{ url_for('Aircrafts.Display_Aircraft') }}">Aircraft</a>
-                        </div>
-                        <div class="dropdown-group"><span>AIRPORT</span>
-                            <a href="{{ url_for('Airports.Display_Airport') }}">Airports</a>
-                            <a href="{{ url_for('Terminals.Display_Terminal') }}">Terminals</a>
-                            <a href="{{ url_for('Gates.Display_Gate') }}">Gates</a>
-                            <a href="{{ url_for('Runways.Display_Runway') }}">Runways</a>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Passenger & Bookings Dropdown -->
-            <div class="dropdown">
-                <button class="dropbtn nav-item" aria-expanded="false">Travelers <span class="chevron">▾</span></button>
-                <div class="dropdown-content ops-menu compact-menu">
-                    <div class="dropdown-heading"><span class="dropdown-heading-mark"><svg class="ui-icon" aria-hidden="true"><use href="#icon-passenger"></use></svg></span><div><b>Traveler services</b><small>People, journeys & baggage</small></div></div>
-                    <div class="dropdown-group"><span>PASSENGERS</span>
-                        <a href="{{ url_for('Passengers.Display_Passenger') }}">Passenger records</a>
-                        <a href="{{ url_for('Passengers.Flight_Passenger_Manifest') }}">Flight manifest</a>
-                    </div>
-                    <div class="dropdown-group"><span>JOURNEYS</span>
-                        <a href="{{ url_for('Bookings.Display_Booking') }}">Bookings & check-in</a>
-                    </div>
-                </div>
-            </div>
-
-            <!-- HR & Admin Dropdown -->
-            <div class="dropdown">
-                <button class="dropbtn nav-item" aria-expanded="false">People <span class="chevron">▾</span></button>
-                <div class="dropdown-content ops-menu compact-menu">
-                    <div class="dropdown-heading"><span class="dropdown-heading-mark"><svg class="ui-icon" aria-hidden="true"><use href="#icon-team"></use></svg></span><div><b>People & teams</b><small>Staff and organization</small></div></div>
-                    <div class="dropdown-group"><span>WORKFORCE</span>
-                        <a href="{{ url_for('Employees.Display_Employee') }}">Employees</a>
-                        <a href="{{ url_for('Departments.Display_Department') }}">Departments</a>
-                        <a href="{{ url_for('Roles.Display_Role') }}">Roles</a>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Dark Mode Toggle Button -->
-            <button id="theme-toggle" class="theme-btn theme-switch-btn" type="button" aria-label="Switch to dark mode" aria-pressed="false">
-                <span class="theme-switch-icon theme-switch-sun" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="3.5"/><path d="M12 2v2m0 16v2M4.93 4.93l1.42 1.42m11.3 11.3 1.42 1.42M2 12h2m16 0h2M4.93 19.07l1.42-1.42m11.3-11.3 1.42-1.42"/></svg></span>
-                <span class="theme-switch-icon theme-switch-moon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none"><path d="M20.2 15.1A8.5 8.5 0 0 1 8.9 3.8 8.5 8.5 0 1 0 20.2 15.1Z"/></svg></span>
-                <span class="theme-switch-thumb" aria-hidden="true"></span>
-            </button>
+        <a class="brand" href="{{ url_for('Home') }}"><img src="{{ url_for('static', filename='skydesk.svg') }}" width="32" height="32" alt=""> SkyDesk <span class="brand-subtitle">Airport administration</span></a>
+        <nav aria-label="Main navigation">
+            <a href="{{ url_for('Home') }}" {% if request.endpoint == 'Home' %}class="active" aria-current="page"{% endif %}>Home</a>
+            <a href="{{ url_for('Flights.Display_Flight') }}" {% if request.blueprint == 'Flights' %}class="active" aria-current="page"{% endif %}>Flights</a>
+            <a href="{{ url_for('Flight_Instances.Display_Flight_Instance') }}" {% if request.blueprint == 'Flight_Instances' %}class="active" aria-current="page"{% endif %}>Schedules</a>
+            <a href="{{ url_for('Airlines.Display_Airline') }}" {% if request.blueprint == 'Airlines' %}class="active" aria-current="page"{% endif %}>Airlines</a>
+            <a href="{{ url_for('Aircrafts.Display_Aircraft') }}" {% if request.blueprint == 'Aircrafts' %}class="active" aria-current="page"{% endif %}>Aircraft</a>
+            <a href="{{ url_for('Airports.Display_Airport') }}" {% if request.blueprint == 'Airports' %}class="active" aria-current="page"{% endif %}>Airports</a>
+            <a href="{{ url_for('Terminals.Display_Terminal') }}" {% if request.blueprint == 'Terminals' %}class="active" aria-current="page"{% endif %}>Terminals</a>
+            <a href="{{ url_for('Gates.Display_Gate') }}" {% if request.blueprint == 'Gates' %}class="active" aria-current="page"{% endif %}>Gates</a>
+            <a href="{{ url_for('Runways.Display_Runway') }}" {% if request.blueprint == 'Runways' %}class="active" aria-current="page"{% endif %}>Runways</a>
+            <a href="{{ url_for('Passengers.Display_Passenger') }}" {% if request.blueprint == 'Passengers' and request.endpoint != 'Passengers.Flight_Passenger_Manifest' %}class="active" aria-current="page"{% endif %}>Passengers</a>
+            <a href="{{ url_for('Passengers.Flight_Passenger_Manifest') }}" {% if request.endpoint == 'Passengers.Flight_Passenger_Manifest' %}class="active" aria-current="page"{% endif %}>Passenger manifest</a>
+            <a href="{{ url_for('Bookings.Display_Booking') }}" {% if request.blueprint == 'Bookings' %}class="active" aria-current="page"{% endif %}>Bookings</a>
+            <a href="{{ url_for('Employees.Display_Employee') }}" {% if request.blueprint == 'Employees' %}class="active" aria-current="page"{% endif %}>Employees</a>
+            <a href="{{ url_for('Departments.Display_Department') }}" {% if request.blueprint == 'Departments' %}class="active" aria-current="page"{% endif %}>Departments</a>
+            <a href="{{ url_for('Roles.Display_Role') }}" {% if request.blueprint == 'Roles' %}class="active" aria-current="page"{% endif %}>Roles</a>
         </nav>
     </div>
 </header>

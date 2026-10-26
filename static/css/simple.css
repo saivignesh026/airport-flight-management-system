@@ -1,0 +1,67 @@
+/* Basic, shared layout for the rishikesh UI. */
+:root { font-family: Arial, sans-serif; color: #263238; background: #f4f5f2; color-scheme: light; }
+* { box-sizing: border-box; }
+body { margin: 0; min-height: 100vh; display: flex; flex-direction: column; font-size: 15px; line-height: 1.5; }
+a { color: #35634b; }
+a:hover { text-decoration: underline; }
+:focus-visible { outline: 3px solid #487a5e; outline-offset: 3px; }
+.navbar { background: white; border-bottom: 1px solid #ccd2d8; }
+.nav-container, .main-container { width: min(1200px, 100%); margin: 0 auto; padding: 24px; }
+.brand { display: inline-block; color: #263238; font-size: 21px; font-weight: bold; text-decoration: none; margin-bottom: 16px; }
+nav { display: flex; flex-wrap: wrap; gap: 6px; }
+nav a { padding: 6px 10px; text-decoration: none; border-radius: 3px; }
+nav a:hover { background: #edf3ee; }
+nav a.active { background: #35634b; color: white; }
+.main-container { flex: 1; min-width: 0; }
+h1 { font-size: 26px; margin: 0 0 18px; }
+h2 { font-size: 20px; margin: 24px 0 14px; }
+p { color: #53616c; }
+section { margin-bottom: 30px; }
+.summary-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; }
+.summary-item { display: flex; flex-direction: column; padding: 18px; border: 1px solid #ccd2d8; border-radius: 4px; background: white; text-decoration: none; }
+.summary-item strong { font-size: 26px; color: #263238; }
+.section-heading { display: flex; justify-content: space-between; align-items: baseline; gap: 16px; flex-wrap: wrap; }
+.table-container { width: 100%; overflow-x: auto; background: white; border: 1px solid #ccd2d8; margin-bottom: 12px; }
+table { border-collapse: collapse; width: 100%; background: white; font-size: 14px; }
+th, td { text-align: left; padding: 11px 12px; border-bottom: 1px solid #dde2e6; vertical-align: top; }
+th { background: #edf0f3; white-space: nowrap; }
+th[data-sortable] { cursor: pointer; }
+th[aria-sort="ascending"]::after { content: ' ↑'; }
+th[aria-sort="descending"]::after { content: ' ↓'; }
+tbody tr:hover { background: #f6f8fa; }
+.main-container > form { max-width: 640px; padding: 22px; margin: 18px 0 28px; border: 1px solid #ccd2d8; border-radius: 4px; background: white; }
+label { display: block; margin-bottom: 5px; font-weight: bold; }
+input, select, textarea, button { font: inherit; }
+input, select, textarea { max-width: 100%; width: 100%; padding: 9px; border: 1px solid #9ba7b2; border-radius: 3px; background: white; color: #263238; margin-bottom: 16px; }
+input[type="checkbox"], input[type="radio"] { width: auto; }
+button, .btn-submit { cursor: pointer; padding: 8px 14px; border: 1px solid #35634b; border-radius: 3px; background: #35634b; color: white; }
+button:hover { background: #264a37; }
+button:disabled { opacity: .5; cursor: default; }
+.btn-delete { background: #b02b2b; border-color: #b02b2b; padding: 5px 10px; }
+.btn-delete:hover { background: #8d2020; }
+td form { margin: 0; padding: 0; border: 0; }
+.table-search-container, .pagination-controls { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 12px; flex-wrap: wrap; }
+.table-search-input { width: 260px; margin: 0; }
+.pagination-controls { padding: 0; margin-bottom: 28px; }
+.pagination-buttons { display: flex; gap: 8px; }
+.page-info { color: #53616c; font-size: 14px; }
+.status-pill { white-space: nowrap; }
+.status-danger { color: #a22020; }
+.status-success { color: #236435; }
+.status-warning { color: #825300; }
+.alert { display: flex; justify-content: space-between; gap: 16px; padding: 12px; margin-bottom: 16px; border: 1px solid #a6bca9; background: #edf4ed; }
+.alert-error, .alert-danger { background: #fff0f0; border-color: #d99a9a; }
+.alert-close { padding: 0 8px; }
+.app-footer { text-align: center; padding: 20px; border-top: 1px solid #ccd2d8; color: #53616c; font-size: 13px; }
+[hidden] { display: none !important; }
+@media (max-width: 600px) {
+    .nav-container, .main-container { padding: 16px; }
+    .summary-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    .brand { font-size: 19px; }
+    nav a { padding: 6px 8px; }
+    .main-container > form { padding: 16px; }
+}
+
+.brand { display: flex; align-items: center; gap: 10px; width: fit-content; }
+.brand-subtitle { font-size: 13px; font-weight: normal; color: #53616c; border-left: 1px solid #ccd2d8; padding-left: 12px; }
+@media (max-width: 420px) { .brand { flex-wrap: wrap; } .brand-subtitle { flex-basis: 100%; border: 0; padding-left: 0; } }
