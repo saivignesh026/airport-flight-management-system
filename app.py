@@ -50,7 +50,6 @@ def Home():
     }
     live_flights = fetch_all('SELECT * FROM Flight_Operational_Details ORDER BY Scheduled_Departure DESC')
     booking_overview = fetch_all('SELECT * FROM Booking_Status_Details ORDER BY Booking_ID DESC')
-    infrastructure = fetch_all('SELECT * FROM Airport_Infrastructure')
 
     # Keep the homepage summary derived from the same operational records shown
     # below, so its status mix cannot drift from the detailed flight list.
@@ -70,31 +69,12 @@ def Home():
                 'tone': tone
             })
 
-    infrastructure_summary = [
-        {
-            'label': 'Terminals',
-            'count': len({(i.get('IATA_Code') or i.get('Airport_Name') or i.get('Airport'), i.get('Terminal_Number')) for i in infrastructure if i.get('Terminal_Number') is not None}),
-            'tone': 'cyan'
-        },
-        {
-            'label': 'Gates',
-            'count': len({(i.get('IATA_Code') or i.get('Airport_Name') or i.get('Airport'), i.get('Terminal_Number'), i.get('Gate_Number')) for i in infrastructure if i.get('Gate_Number') is not None}),
-            'tone': 'amber'
-        },
-        {
-            'label': 'Runways',
-            'count': len({(i.get('IATA_Code') or i.get('Airport_Name') or i.get('Airport'), i.get('Runway_Code')) for i in infrastructure if i.get('Runway_Code') is not None}),
-            'tone': 'violet'
-        }
-    ]
     return render_template(
         'Home.html',
         stats=stats,
         live_flights=live_flights,
         booking_overview=booking_overview,
-        infrastructure=infrastructure,
-        flight_status_summary=flight_status_summary,
-        infrastructure_summary=infrastructure_summary
+        flight_status_summary=flight_status_summary
     )
 
 if __name__ == "__main__":

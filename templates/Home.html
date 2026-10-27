@@ -5,7 +5,7 @@
     <div class="hero-copy">
         <div class="eyebrow"><span class="live-dot"></span> AIRPORT OPERATIONS · LIVE OVERVIEW</div>
         <h1>Every departure,<br><em>in sync.</em></h1>
-        <p>Your command view for flights, people, and the infrastructure that keeps the airport moving.</p>
+        <p>Your command view for flights, passengers, and the teams that keep operations moving.</p>
         <a class="hero-action" href="{{ url_for('Flight_Instances.Display_Flight_Instance') }}">View flight schedules <span>↗</span></a>
     </div>
     <div class="hero-art" aria-hidden="true">
@@ -115,18 +115,6 @@
         <a href="{{ url_for('Passengers.Flight_Passenger_Manifest') }}"><span class="quick-icon"><svg class="ui-icon" aria-hidden="true"><use href="#icon-manifest"></use></svg></span><span><b>Passenger manifest</b><small>Review flight passengers</small></span><i>↗</i></a>
         <a href="{{ url_for('Employees.Display_Employee') }}"><span class="quick-icon"><svg class="ui-icon" aria-hidden="true"><use href="#icon-team"></use></svg></span><span><b>People & teams</b><small>Staff and departments</small></span><i>↗</i></a>
     </aside>
-</section>
-
-<section class="infrastructure-section">
-    <div class="section-heading"><div><span class="section-kicker">ON THE GROUND</span><h2>Airport infrastructure</h2></div><a class="text-link" href="{{ url_for('Airports.Display_Airport') }}">Manage network ↗</a></div>
-    <div class="infrastructure-metrics">
-        {% for asset in infrastructure_summary %}<div class="infra-metric infra-{{ asset.tone }}"><span>{{ asset.label }}</span><b data-count-up="{{ asset.count }}">{{ asset.count }}</b><small>in network</small></div>{% endfor %}
-    </div>
-    <div class="ops-table-wrap"><table class="ops-table">
-        <thead><tr><th>IATA</th><th>Airport</th><th>City</th><th>Terminal</th><th>Gate</th><th>Runway</th></tr></thead><tbody>
-        {% for inf in infrastructure[:6] %}<tr><td><span class="iata-tag">{{ inf.IATA_Code }}</span></td><td><span class="cell-primary">{{ inf.Airport_Name }}</span></td><td>{{ inf.Airport_City }}</td><td>{{ inf.Terminal_Name }} <small>{{ inf.Terminal_Number }} · {{ inf.Terminal_Status }}</small></td><td>{{ inf.Gate_Number }} <small>{{ inf.Gate_Status }}</small></td><td>{{ inf.Runway_Code }} <small>{{ inf.Runway_Length }}m · {{ inf.Runway_Status }}</small></td></tr>
-        {% else %}<tr><td colspan="6" class="table-empty">No infrastructure records to display yet.</td></tr>{% endfor %}</tbody>
-    </table></div>
 </section>
 {% endblock %}
 {% block page_scripts %}<script defer src="{{ url_for('static', filename='js/flight-globe.js', v=7) }}"></script>{% endblock %}

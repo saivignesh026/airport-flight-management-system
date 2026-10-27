@@ -262,7 +262,7 @@
         else main.insertBefore(hero, main.firstChild);
 
         const revealItems = main.querySelectorAll(
-            ".stat-card, .ops-table-wrap, .table-container, .dashboard-wrapper, .form-container, main > form, main > table, .infrastructure-section, .infrastructure-metrics, .flight-dashboard, .detail-panel"
+            ".stat-card, .ops-table-wrap, .table-container, .dashboard-wrapper, .form-container, main > form, main > table, .flight-dashboard, .detail-panel"
         );
         if (reduceMotion.matches || !("IntersectionObserver" in window)) return;
         const observer = new IntersectionObserver((entries, io) => {

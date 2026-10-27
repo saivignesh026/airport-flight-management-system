@@ -53,12 +53,11 @@ document.addEventListener('DOMContentLoaded', () => {
     function initHomeMotion() {
         const home = document.querySelector('.main-container');
         if (!home) return;
-        const sections = home.querySelectorAll('.overview-section, .board-section, .detail-grid, .infrastructure-section');
+        const sections = home.querySelectorAll('.overview-section, .board-section, .detail-grid');
         const itemSelectors = {
             '.overview-section': '.section-heading, .stat-card',
             '.board-section': '.section-heading, .flight-mix-panel, .flight-card',
-            '.detail-grid': '.detail-panel, .quick-panel',
-            '.infrastructure-section': '.section-heading, .infrastructure-metrics, .ops-table-wrap'
+            '.detail-grid': '.detail-panel, .quick-panel'
         };
         sections.forEach(block => {
             block.classList.add('home-motion');
