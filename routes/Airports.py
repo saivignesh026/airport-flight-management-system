@@ -1,5 +1,5 @@
 from flask import Flask,render_template,redirect,url_for,request,Blueprint,flash
-from db import get_db_connection,fetch_all,fetch_one,execute
+from db import get_db_connection,fetch_all,fetch_one,execute,is_restricted_delete_error
 
 
 Airports_bp=Blueprint(
@@ -42,7 +42,10 @@ def Delete_Airport(id):
             execute(sql,params)
             flash('Airport deleted successfully.', 'success')
         except Exception as e:
-            flash(f'Failed to delete airport: {str(e)}', 'danger')
+            if is_restricted_delete_error(e):
+                flash('Cannot delete this airport because related records exist. Delete or reassign them first.', 'danger')
+            else:
+                flash(f'Failed to delete airport: {str(e)}', 'danger')
         return redirect(url_for('Airports.Display_Airport'))
 
 @Airports_bp.route('/Update/<int:id>',methods=['POST','GET'])

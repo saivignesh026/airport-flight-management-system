@@ -1,5 +1,5 @@
 from flask import Blueprint, render_template, redirect, request, url_for, flash
-from db import fetch_all, fetch_one, transaction
+from db import fetch_all, fetch_one, transaction, is_restricted_delete_error
 from datetime import datetime
 
 Bookings_bp = Blueprint(
@@ -108,7 +108,10 @@ def Delete_Booking(id):
                 result.fetchall()
         flash('Booking deleted successfully.', 'success')
     except Exception as e:
-        flash(f'Failed to delete booking: {str(e)}', 'danger')
+        if is_restricted_delete_error(e):
+            flash('Cannot delete this booking because related payment, check-in, or baggage records exist. Delete them first.', 'danger')
+        else:
+            flash(f'Failed to delete booking: {str(e)}', 'danger')
     return redirect(url_for('Bookings.Display_Booking'))
 
 @Bookings_bp.route('/update/<int:id>', methods=['GET', 'POST'])

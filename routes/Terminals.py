@@ -1,5 +1,5 @@
 from flask import Blueprint, render_template, redirect, request, url_for, flash
-from db import fetch_all, fetch_one, execute
+from db import fetch_all, fetch_one, execute, is_restricted_delete_error
 
 Terminals_bp = Blueprint(
     'Terminals',
@@ -45,7 +45,10 @@ def Delete_Terminal(id):
             execute(sql, params)
             flash('Terminal deleted successfully.', 'success')
         except Exception as e:
-            flash(f'Failed to delete terminal: {str(e)}', 'danger')
+            if is_restricted_delete_error(e):
+                flash('Cannot delete this terminal because related gates exist. Delete or reassign them first.', 'danger')
+            else:
+                flash(f'Failed to delete terminal: {str(e)}', 'danger')
         return redirect(url_for('Terminals.Display_Terminal'))
 
 

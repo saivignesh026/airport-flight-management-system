@@ -1,5 +1,5 @@
 from flask import Blueprint, request, render_template, redirect, url_for, flash
-from db import fetch_one, fetch_all, execute
+from db import fetch_one, fetch_all, execute, is_restricted_delete_error
 
 Runways_bp = Blueprint(
     'Runways',
@@ -44,7 +44,10 @@ def Delete_Runway(id):
         execute(sql, params)
         flash('Runway deleted successfully.', 'success')
     except Exception as e:
-        flash(f'Failed to delete runway: {str(e)}', 'danger')
+        if is_restricted_delete_error(e):
+            flash('Cannot delete this runway because related flight instances exist. Delete or reassign them first.', 'danger')
+        else:
+            flash(f'Failed to delete runway: {str(e)}', 'danger')
     return redirect(url_for('Runways.Display_Runway'))
 
 

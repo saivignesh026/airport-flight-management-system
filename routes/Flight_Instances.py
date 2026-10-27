@@ -1,5 +1,5 @@
 from flask import Blueprint, render_template, redirect, request, url_for, flash
-from db import fetch_all, fetch_one, execute
+from db import fetch_all, fetch_one, execute, is_restricted_delete_error
 
 Flight_Instances_bp = Blueprint(
     'Flight_Instances',
@@ -56,7 +56,10 @@ def Delete_Flight_Instance(id):
         execute('CALL Delete_Flight_Instance(%s)', (id,))
         flash('Flight instance deleted successfully.', 'success')
     except Exception as e:
-        flash(f'Failed to delete flight instance: {str(e)}', 'danger')
+        if is_restricted_delete_error(e):
+            flash('Cannot delete this flight instance because related bookings exist. Delete or reassign them first.', 'danger')
+        else:
+            flash(f'Failed to delete flight instance: {str(e)}', 'danger')
     return redirect(url_for('Flight_Instances.Display_Flight_Instance'))
 
 @Flight_Instances_bp.route('/update/<int:id>', methods=['GET', 'POST'])

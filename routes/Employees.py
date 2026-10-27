@@ -1,5 +1,5 @@
 from flask import Blueprint, render_template, redirect, request, url_for, flash
-from db import fetch_all, fetch_one, execute
+from db import fetch_all, fetch_one, execute, is_restricted_delete_error
 
 Employees_bp = Blueprint(
     'Employees',
@@ -42,7 +42,10 @@ def Delete_Employee(id):
             execute(sql, (id,))
             flash('Employee deleted successfully.', 'success')
         except Exception as e:
-            flash(f'Failed to delete employee: {str(e)}', 'danger')
+            if is_restricted_delete_error(e):
+                flash('Cannot delete this employee because related records exist. Delete or reassign them first.', 'danger')
+            else:
+                flash(f'Failed to delete employee: {str(e)}', 'danger')
         return redirect(url_for('Employees.Display_Employee'))
 
 @Employees_bp.route('/update/<int:id>', methods=['POST', 'GET'])

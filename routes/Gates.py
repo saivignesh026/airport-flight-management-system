@@ -1,5 +1,5 @@
 from flask import Blueprint, render_template, redirect, request, url_for, flash
-from db import fetch_all, fetch_one, execute
+from db import fetch_all, fetch_one, execute, is_restricted_delete_error
 
 Gates_bp = Blueprint(
     'Gates',
@@ -44,7 +44,10 @@ def Delete_Gate(id):
             execute(sql, params)
             flash('Gate deleted successfully.', 'success')
         except Exception as e:
-            flash(f'Failed to delete gate: {str(e)}', 'danger')
+            if is_restricted_delete_error(e):
+                flash('Cannot delete this gate because related flight instances exist. Delete or reassign them first.', 'danger')
+            else:
+                flash(f'Failed to delete gate: {str(e)}', 'danger')
         return redirect(url_for('Gates.Display_Gate'))
 
 

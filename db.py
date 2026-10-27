@@ -5,6 +5,14 @@ from contextlib import contextmanager
 
 load_dotenv()
 
+
+def is_restricted_delete_error(error):
+        """Return True when MySQL blocks a delete because child rows exist."""
+        return (
+                getattr(error, 'errno', None) == 1451
+                or getattr(error, 'sqlstate', None) == '23000'
+        )
+
 def get_db_connection():
         return mysql.connector.connect(
                 user=os.getenv("DB_USER"),
