@@ -245,15 +245,33 @@
         if (!heading) return;
 
         const path = window.location.pathname.toLowerCase();
-        const identity = path.includes("passenger") || path.includes("booking")
-            ? { label: "PASSENGER SERVICES", icon: "passenger", tone: "coral", stamp: "JOURNEYS", index: "04", note: path.includes("manifest") ? "Passenger manifest and flight assignments." : path.includes("booking") ? "Bookings, payment, check-in and baggage." : "Passenger records and traveler details." }
-            : path.includes("employee") || path.includes("role") || path.includes("department")
-                ? { label: "PEOPLE & ADMINISTRATION", icon: "team", tone: "violet", stamp: "AIRPORT TEAM", index: "05", note: path.includes("employee") ? "Staff records and airport assignments." : path.includes("department") ? "Departments and operational teams." : "Roles and access responsibilities." }
-                : path.includes("airport") || path.includes("terminal") || path.includes("gate") || path.includes("runway")
-                    ? { label: "AIRPORT INFRASTRUCTURE", icon: "airport", tone: "cyan", stamp: "AIRFIELD", index: "03", note: path.includes("terminal") ? "Terminal locations and service status." : path.includes("gate") ? "Gate assignments and availability." : path.includes("runway") ? "Runway specifications and operational status." : "Airport locations and network details." }
-                    : path.includes("aircraft") || path.includes("airline")
-                        ? { label: "FLEET & CARRIERS", icon: "plane", tone: "blue", stamp: "FLEET", index: "02", note: path.includes("airline") ? "Carrier records and airline details." : "Aircraft records, capacity and fleet details." }
-                        : { label: "FLIGHT OPERATIONS", icon: "clock", tone: "blue", stamp: "SCHEDULE", index: "01", note: path.includes("instance") ? "Scheduled services, gates and flight status." : "Routes, origins and destinations." };
+        const identity = path.includes("manifest")
+            ? { label: "PASSENGER SERVICES", icon: "manifest", tone: "coral", stamp: "JOURNEYS", index: "04", note: "Passenger manifest and flight assignments." }
+            : path.includes("booking")
+                ? { label: "PASSENGER SERVICES", icon: "ticket", tone: "coral", stamp: "JOURNEYS", index: "04", note: "Bookings, payment, check-in and baggage." }
+                : path.includes("passenger")
+                    ? { label: "PASSENGER SERVICES", icon: "passenger", tone: "coral", stamp: "JOURNEYS", index: "04", note: "Passenger records and traveler details." }
+                    : path.includes("employee")
+                        ? { label: "PEOPLE & ADMINISTRATION", icon: "staff", tone: "violet", stamp: "AIRPORT TEAM", index: "05", note: "Staff records and airport assignments." }
+                        : path.includes("department")
+                            ? { label: "PEOPLE & ADMINISTRATION", icon: "department", tone: "violet", stamp: "AIRPORT TEAM", index: "05", note: "Departments and operational teams." }
+                            : path.includes("role")
+                                ? { label: "PEOPLE & ADMINISTRATION", icon: "role", tone: "violet", stamp: "AIRPORT TEAM", index: "05", note: "Roles and access responsibilities." }
+                                : path.includes("terminal")
+                                    ? { label: "AIRPORT INFRASTRUCTURE", icon: "terminal", tone: "cyan", stamp: "AIRFIELD", index: "03", note: "Terminal locations and service status." }
+                                    : path.includes("gate")
+                                        ? { label: "AIRPORT INFRASTRUCTURE", icon: "gate", tone: "cyan", stamp: "AIRFIELD", index: "03", note: "Gate assignments and availability." }
+                                        : path.includes("runway")
+                                            ? { label: "AIRPORT INFRASTRUCTURE", icon: "runway", tone: "cyan", stamp: "AIRFIELD", index: "03", note: "Runway specifications and operational status." }
+                                            : path.includes("airport")
+                                                ? { label: "AIRPORT INFRASTRUCTURE", icon: "airport", tone: "cyan", stamp: "AIRFIELD", index: "03", note: "Airport locations and network details." }
+                                                : path.includes("airline")
+                                                    ? { label: "FLEET & CARRIERS", icon: "globe", tone: "blue", stamp: "FLEET", index: "02", note: "Carrier records and airline details." }
+                                                    : path.includes("aircraft")
+                                                        ? { label: "FLEET & CARRIERS", icon: "plane", tone: "blue", stamp: "FLEET", index: "02", note: "Aircraft records, capacity and fleet details." }
+                                                        : path.includes("instance")
+                                                            ? { label: "FLIGHT OPERATIONS", icon: "calendar", tone: "blue", stamp: "SCHEDULE", index: "01", note: "Scheduled services, gates and flight status." }
+                                                            : { label: "FLIGHT OPERATIONS", icon: "route", tone: "blue", stamp: "SCHEDULE", index: "01", note: "Routes, origins and destinations." };
         const hero = document.createElement("section");
         hero.className = `page-hero page-hero-${identity.tone}`;
         hero.innerHTML = `<div class="page-hero-copy"><span class="page-hero-kicker"><i></i>${identity.label} <span class="hero-separator">/</span> OPERATIONS DESK</span><div class="page-hero-title"></div><p>${identity.note}</p></div><div class="page-hero-visual" aria-hidden="true"><span class="page-hero-orbit orbit-a"></span><span class="page-hero-orbit orbit-b"></span><span class="page-hero-glyph"><svg class="ui-icon"><use href="#icon-${identity.icon}"></use></svg></span><span class="page-hero-code">${identity.stamp}<br><b>${identity.index}</b></span></div>`;

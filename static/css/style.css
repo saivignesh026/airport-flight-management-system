@@ -1450,8 +1450,13 @@ form:not(td form),.form-container { background:var(--bg-surface);border-color:va
 .page-hero-orbit { display:none; }
 .page-hero-visual:before { content:"";position:absolute;inset:12px 0;border:1px solid rgba(49,78,78,.3);border-radius:4px;background:repeating-linear-gradient(90deg,transparent 0 21px,rgba(49,78,78,.1) 21px 22px),linear-gradient(90deg,rgba(34,78,81,.08),rgba(34,78,81,.02));transform:skewY(-8deg); }
 .page-hero-visual:after { content:"";position:absolute;left:14px;right:14px;top:50%;border-top:1px dashed rgba(179,125,61,.65); }
-.page-hero-glyph { width:42px;height:42px;border-radius:50%;background:#d6bc91;border:3px solid #f0e7d4;color:#243d45!important;font-size:1.25rem;box-shadow:0 2px 7px rgba(26,52,52,.18); }
+.page-hero-glyph { position:relative;width:42px;height:42px;border-radius:50%;background:#d6bc91;border:3px solid #f0e7d4;color:#243d45!important;font-size:1.25rem;box-shadow:0 2px 7px rgba(26,52,52,.18);animation:banner-glyph-bob 3.2s ease-in-out infinite; }
 .dark-mode .page-hero-glyph { background:#b18a54;border-color:#d1bd99;color:#172a34!important; }
+.page-hero-glyph:after { content:"";position:absolute;inset:-10px;border:1px solid currentColor;border-radius:inherit;opacity:0;pointer-events:none;animation:banner-glyph-ripple 3.2s ease-out infinite; }
+.page-hero-glyph .ui-icon { position:relative;z-index:1;animation:banner-icon-float 3.2s ease-in-out infinite;transform-origin:center; }
+@keyframes banner-glyph-bob { 0%,100% { transform:translateY(0);box-shadow:0 2px 7px rgba(26,52,52,.18); } 45% { transform:translateY(-5px);box-shadow:0 10px 15px rgba(26,52,52,.26); } 70% { transform:translateY(-2px);box-shadow:0 6px 11px rgba(26,52,52,.21); } }
+@keyframes banner-icon-float { 0%,100% { transform:rotate(0deg) scale(1); } 42% { transform:rotate(-9deg) scale(1.12); } 64% { transform:rotate(7deg) scale(1.06); } }
+@keyframes banner-glyph-ripple { 0%,55% { transform:scale(.72);opacity:0; } 66% { opacity:.44; } 100% { transform:scale(1.38);opacity:0; } }
 .page-hero-code { z-index:1;right:6px;top:4px;padding:.3rem .45rem;background:#c0cac2;color:#53665d;font-size:.5rem; }
 .page-hero-code b { color:#193b4a; }
 .page-hero-kicker { color:#46675f;font-size:.62rem; }
@@ -1523,7 +1528,7 @@ form:not(td form),.form-container { background:var(--bg-surface);border-color:va
     .scroll-cinema-rail { box-shadow:none; }
     .ops-hero:before,.ops-hero .hero-copy .eyebrow,.ops-hero .hero-copy h1,
     .ops-hero .hero-copy p,.ops-hero .hero-action,.hero-art,
-    .page-hero:after,.page-hero-copy,.page-hero-visual,.page-hero-visual:after { animation:none; }
+    .page-hero:after,.page-hero-copy,.page-hero-visual,.page-hero-visual:after,.page-hero-glyph,.page-hero-glyph:after,.page-hero-glyph .ui-icon { animation:none; }
     .reveal-on-scroll { filter:none;transform:none;transition:none; }
 }
 
@@ -2049,7 +2054,7 @@ main.main-container form:not(.table-search-container) .custom-select-wrapper .cu
 .globe-flight .ui-icon { filter:none; }
 .globe-flight:hover,.globe-flight.is-selected { scale:1;box-shadow:0 0 0 2px rgba(244,189,123,.65); }
 
-/* Reload entrance and navigation feedback; content is never hidden at rest. */
+/* Navigation feedback; content is never hidden at rest. */
 @keyframes page-content-arrive {
     from { opacity: .25; transform: translateY(12px); }
     to { opacity: 1; transform: translateY(0); }
