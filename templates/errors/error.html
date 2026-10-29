@@ -1,0 +1,32 @@
+{% extends 'base.html' %}
+{% block title %}{{ code }} · {{ title }} — AFMS{% endblock %}
+{% block head %}<link rel="stylesheet" href="{{ url_for('static', filename='css/errors.css', v=1) }}"><meta name="robots" content="noindex">{% endblock %}
+{% block content %}
+<section class="error-page" aria-labelledby="error-title">
+    <div class="error-copy">
+        <span class="error-eyebrow"><span></span> AFMS · OPERATIONS DESK</span>
+        <p class="error-number" aria-hidden="true">{{ code }}</p>
+        <h1 id="error-title">{{ title }}</h1>
+        <p class="error-description">{{ message }}</p>
+        <div class="error-actions">
+            <a class="error-primary" href="{{ url_for('Home') }}">Back to dashboard <span aria-hidden="true">↗</span></a>
+            <a class="error-secondary" href="{{ url_for('Bookings.Display_Booking') }}">View bookings <span aria-hidden="true">→</span></a>
+        </div>
+        <p class="error-footnote">{{ note }}</p>
+    </div>
+    <div class="error-art" aria-hidden="true">
+        <div class="error-art-top"><span>FLIGHT PATH</span><span>AF / {{ code }}</span></div>
+        <svg viewBox="0 0 420 350" fill="none">
+            <circle cx="210" cy="170" r="135"/><circle cx="210" cy="170" r="95"/><circle cx="210" cy="170" r="55"/>
+            <path class="error-crosshair" d="M210 20v300M60 170h300"/>
+            <path class="error-route" d="M60 260C90 290 155 270 170 220S185 100 240 105S290 170 350 65"/>
+            <circle class="error-origin" cx="60" cy="260" r="6"/>
+            <circle class="error-destination" cx="350" cy="65" r="10"/>
+            <g transform="translate(182 142) rotate(25 28 28)"><path class="error-aircraft" d="M28 2 32 21 53 34v5L32 32l-1 15 8 6v3l-11-3-11 3v-3l8-6-1-15-21 7v-5l21-13z"/></g>
+            <path class="error-pause" d="M325 234h6v25h-6zm14 0h6v25h-6z"/>
+        </svg>
+        <div class="error-art-bottom"><span class="error-status-dot"></span>{{ label }}<span class="error-frequency">AFMS PORTAL</span></div>
+    </div>
+</section>
+<div class="error-support"><span>LET’S GET YOU BACK ON COURSE</span><p>Your next destination is one click away.</p></div>
+{% endblock %}

@@ -236,7 +236,7 @@
     // --- 6. Page identity and scroll reveals ---------------------------------
     function initPageExperience() {
         const main = document.querySelector("main.main-container");
-        if (!main || main.querySelector(".ops-hero") || main.querySelector(".page-hero")) return;
+        if (!main || main.querySelector(".error-page") || main.querySelector(".ops-hero") || main.querySelector(".page-hero")) return;
 
         const split = main.querySelector(".dashboard-wrapper");
         const heading = split

@@ -5,6 +5,8 @@ import os
 import secrets
 from datetime import timedelta
 from db import fetch_all, fetch_one
+from werkzeug.exceptions import HTTPException
+from mysql.connector import Error as MySQLError
 
 load_dotenv()
 
@@ -43,6 +45,44 @@ app.register_blueprint(CheckIns_bp)
 app.register_blueprint(Baggage_bp)
 
 app.secret_key = os.getenv('SECRET_KEY') or secrets.token_hex(32)
+
+ERROR_PAGES = {
+    400: ('Something is missing', 'We couldn’t understand that request. Return to the page and check the information you entered.', 'REQUEST NEEDS ATTENTION'),
+    403: ('This gate is restricted', 'You don’t have permission to open this page. You can return to the dashboard to continue.', 'ACCESS RESTRICTED'),
+    404: ('A little off course', 'This page or record couldn’t be found. It may have moved, or the link may no longer be available.', 'DESTINATION NOT FOUND'),
+    405: ('A different route is needed', 'This action isn’t available at this address. Open the page from the dashboard and try again.', 'ROUTE UNAVAILABLE'),
+    409: ('A change is already in progress', 'This request conflicts with the current record. Reload the relevant page and check its latest details.', 'RECORD CONFLICT'),
+    413: ('A little too much on board', 'The information you sent is too large. Reduce its size and try again.', 'REQUEST TOO LARGE'),
+    429: ('Let’s take a short pause', 'There have been too many requests. Please wait a moment before trying again.', 'PLEASE STAND BY'),
+    500: ('An unexpected stop', 'Something went wrong while preparing this page. Please try again in a moment.', 'SERVICE INTERRUPTION'),
+    503: ('A short operational pause', 'We can’t access the data needed for this page right now. Please try again shortly.', 'TEMPORARILY UNAVAILABLE'),
+}
+
+
+def render_error(code):
+    title, message, label = ERROR_PAGES.get(code, (
+        'We couldn’t complete that request',
+        'Please return to the dashboard and try again.', 'REQUEST INTERRUPTED'))
+    note = ('If this continues, contact your airport system administrator.'
+            if code >= 500 else 'Use the navigation above to find your destination.')
+    return render_template('errors/error.html', code=code, title=title,
+                           message=message, label=label, note=note)
+
+
+@app.errorhandler(HTTPException)
+def handle_http_error(error):
+    # Preserve HTTP metadata such as Allow and Retry-After.
+    response = error.get_response()
+    response.set_data(render_error(error.code))
+    response.content_type = 'text/html; charset=utf-8'
+    return response
+
+
+@app.errorhandler(MySQLError)
+def handle_database_error(error):
+    app.logger.error('Database request failed', exc_info=True)
+    return render_error(503), 503
+
 
 @app.template_filter('html_time')
 def html_time(value):
