@@ -1,0 +1,22 @@
+{% for name, label, options in [
+    ('Instance_ID', 'Flight schedule', Instance_Data),
+    ('Class', 'Cabin class', Class_Enum),
+    ('Booking_Status', 'Booking status', Booking_Status_Enum),
+    ('Payment_Method', 'Payment method', Payment_Method_Enum),
+    ('Payment_Status', 'Payment status', Payment_Status_Enum)] %}
+<label for="{{ name }}">{{ label }}</label>
+<select id="{{ name }}" name="{{ name }}" required>
+    {% if name == 'Instance_ID' %}<option value="">Select a flight schedule</option>{% endif %}
+    {% for option in options %}
+        {% set value = option.Instance_ID if name == 'Instance_ID' else option %}
+        {% set selected = Booking[name] if Booking else ('Confirmed' if name == 'Booking_Status' else 'Payment Received' if name == 'Payment_Status' else '') %}
+        <option value="{{ value }}" {{ 'selected' if value == selected }}>{{ option.Flight_Number ~ ' — ' ~ option.Scheduled_Departure if name == 'Instance_ID' else option }}</option>
+    {% endfor %}
+</select><br>
+{% endfor %}
+<label for="Seat_Number">Seat number</label>
+<input type="text" id="Seat_Number" name="Seat_Number" maxlength="3" placeholder="12A" value="{{ Booking.Seat_Number if Booking else '' }}" required><br>
+<label for="Booking_Price">Ticket fare (₹)</label>
+<input id="Booking_Price" type="number" name="Booking_Price" min="0" max="99999999.99" step="0.01" value="{{ Booking.Booking_Price if Booking else '' }}" required><br>
+<label for="Transaction_Reference">Transaction reference (optional)</label>
+<input type="text" id="Transaction_Reference" name="Transaction_Reference" maxlength="100" value="{{ Booking.Transaction_Reference or '' if Booking else '' }}"><br>

@@ -211,8 +211,8 @@
             else { sortColumn = column; sortDirection = 1; }
             sortableHeaders.forEach((header) => header.setAttribute("aria-sort", header === th ? (sortDirection === 1 ? "ascending" : "descending") : "none"));
             entries = entries.slice().sort((a, b) => {
-                const left = a.row.cells[column]?.innerText.trim() || "";
-                const right = b.row.cells[column]?.innerText.trim() || "";
+                const left = a.row.cells[column]?.textContent.trim() || "";
+                const right = b.row.cells[column]?.textContent.trim() || "";
                 if (!left && right) return 1;
                 if (left && !right) return -1;
                 return collator.compare(left, right) * sortDirection || a.originalIndex - b.originalIndex;

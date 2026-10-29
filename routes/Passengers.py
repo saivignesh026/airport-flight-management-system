@@ -1,4 +1,4 @@
-from flask import Blueprint, render_template, redirect, request, url_for, flash
+from flask import abort, Blueprint, render_template, redirect, request, url_for, flash
 from db import fetch_all, fetch_one, execute, is_restricted_delete_error
 
 Passengers_bp = Blueprint(
@@ -61,6 +61,8 @@ def Update_Passenger(id):
             return redirect(url_for('Passengers.Update_Passenger', id=id))
     else:
         Passenger = fetch_one('CALL Passenger_To_Edit(%s)', (id,))
+        if Passenger is None:
+            abort(404)
         return render_template('Update/UpdatePassenger.html', Passenger=Passenger)
 
 
@@ -83,7 +85,7 @@ def Flight_Passenger_Manifest():
         sql += ' AND  To_Airport_ID = %s'
         params.append(to_airport_id)
 
-    sql += ' ORDER BY fi.Scheduled_Departure DESC, f.Flight_Number, b.Seat_Number'
+    sql += ' ORDER BY Scheduled_Departure DESC, Flight_Number, Seat_Number'
 
     Manifest_Data = fetch_all(sql, tuple(params))
     Flight_List = fetch_all('SELECT Flight_ID, Flight_Number FROM Flight ORDER BY Flight_Number')

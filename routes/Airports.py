@@ -1,5 +1,5 @@
-from flask import Flask,render_template,redirect,url_for,request,Blueprint,flash
-from db import get_db_connection,fetch_all,fetch_one,execute,is_restricted_delete_error
+from flask import abort, render_template, redirect, url_for, request, Blueprint, flash
+from db import fetch_all, fetch_one, execute, is_restricted_delete_error
 
 
 Airports_bp=Blueprint(
@@ -14,8 +14,6 @@ def Display_Airport():
     sql='Select *from Airport'
     Airport_Data=fetch_all(sql)
     return render_template('Airport.html',Airport_Data=Airport_Data)
-
-
 
 
 @Airports_bp.route('/Add',methods=['POST'])
@@ -69,6 +67,7 @@ def Update_Airport(id):
     else:
         sql='CALL Airport_To_Edit(%s)'
         params=(id,)
-        Airport_To_Edit=fetch_one(sql,params)
+        Airport_To_Edit = fetch_one(sql,params)
+        if Airport_To_Edit is None:
+            abort(404)
         return render_template('Update/UpdateAirport.html',Airport=Airport_To_Edit)
-        

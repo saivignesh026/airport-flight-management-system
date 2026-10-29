@@ -1,0 +1,14 @@
+{% extends 'base.html' %}
+{% block title %}AFMS - Update Baggage{% endblock %}
+{% block content %}
+<h1>Update Baggage Details</h1>
+<div><form action="{{ url_for('Baggage.Update_Baggage', id=Bag.Booking_ID, bag_id=Bag.Baggage_ID) }}" method="POST">
+<p>Bag #{{ Bag.Baggage_ID }} · Booking #{{ Bag.Booking_ID }}</p>
+<label for="Weight_KG">Weight (kg)</label><input id="Weight_KG" type="number" name="Weight_KG" min="0" max="99999999.99" step="0.01" value="{{ Bag.Weight_KG }}" required><br>
+{% for name, label, options in [('Baggage_Type', 'Baggage type', Baggage_Type_Enum), ('Baggage_Status', 'Baggage status', Baggage_Status_Enum)] %}
+<label for="{{ name }}">{{ label }}</label><select id="{{ name }}" name="{{ name }}" required>{% for value in options %}<option value="{{ value }}" {{ 'selected' if value == Bag[name] }}>{{ value }}</option>{% endfor %}</select><br>
+{% endfor %}
+<button class="btn-submit" type="submit">Save Changes</button>
+<a href="{{ url_for('Baggage.Display_Baggage') }}" style="color:red">Cancel</a>
+</form></div>
+{% endblock %}

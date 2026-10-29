@@ -1,0 +1,37 @@
+{% extends 'base.html' %}
+{% block title %}AFMS - Check-in{% endblock %}
+{% block content %}
+<h1 id="checkin-workspace">Check-in records</h1>
+<p>Create, view, edit, and delete check-in records here. Check-in requires a confirmed booking and received payment.</p>
+
+<div class="dashboard-wrapper operations-crud">
+<div class="split-table-pane">
+<h2>Records</h2>
+<table>
+<thead><tr><th>Booking / passenger</th><th>Flight / seat</th><th>Check-in time</th><th>Check-in status</th><th>Boarding status</th><th>Edit</th><th>Delete</th></tr></thead>
+<tbody>{% for b in CheckIn_Data %}
+<tr>
+<td>#{{ b.Booking_ID }} · {{ b.Passenger_Name }}<br><small>{{ b.Booking_Status }} · {{ b.Payment_Status or 'Pending payment' }}</small></td>
+<td>{{ b.Flight_Number }} · {{ b.Seat_Number }}<br><small>{{ b.Scheduled_Departure }}</small></td>
+<td>{{ b.CheckIn_Time or 'Not checked in' }}</td><td>{{ b.CheckIn_Status }}</td><td>{{ b.Boarding_Status }}</td>
+<td><a href="{{ url_for('CheckIns.Update_CheckIn', id=b.Booking_ID) }}">Edit</a></td>
+<td>{% if b.CheckIn_ID %}<form action="{{ url_for('CheckIns.Delete_CheckIn', id=b.Booking_ID) }}" method="POST"><button class="btn-delete" type="submit">Delete check-in</button></form>{% else %}No record yet{% endif %}</td>
+</tr>{% endfor %}</tbody>
+</table>
+<p>Delete a booking’s baggage records on the <a href="{{ url_for('Baggage.Display_Baggage') }}">baggage page</a> before deleting its check-in. The ticket and payment are retained.</p>
+
+</div>
+<div class="split-form-pane">
+<h2>Add check-in</h2>
+<form action="{{ url_for('CheckIns.Create_CheckIn') }}" method="POST">
+<label for="checkin-booking">Booking</label>
+<select id="checkin-booking" name="Booking_ID" required>
+<option value="">Select a confirmed booking</option>
+{% for b in Booking_Data %}<option value="{{ b.Booking_ID }}">#{{ b.Booking_ID }} · {{ b.Passenger_Name }} · {{ b.Flight_Number }} · {{ b.Seat_Number }}</option>{% endfor %}
+</select><br>
+{% set Booking = none %}{% include 'components/checkin-fields.html' %}
+<button class="btn-submit" type="submit">Add</button>
+</form>
+</div>
+</div>
+{% endblock %}

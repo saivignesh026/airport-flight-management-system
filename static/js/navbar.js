@@ -240,15 +240,19 @@
 
         const split = main.querySelector(".dashboard-wrapper");
         const heading = split
-            ? split.querySelector(".split-table-pane h1")
+            ? (split.querySelector(".split-table-pane h1") || main.querySelector(":scope > h1"))
             : main.querySelector(":scope > h1");
         if (!heading) return;
 
         const path = window.location.pathname.toLowerCase();
-        const identity = path.includes("manifest")
+        const identity = path.includes("baggage")
+            ? { label: "PASSENGER SERVICES", icon: "ticket", tone: "coral", stamp: "BAGGAGE", index: "04", note: "Baggage registration, weight and tracking status." }
+            : path.includes("checkin")
+            ? { label: "PASSENGER SERVICES", icon: "ticket", tone: "coral", stamp: "JOURNEYS", index: "04", note: "Passenger check-in and boarding." }
+            : path.includes("manifest")
             ? { label: "PASSENGER SERVICES", icon: "manifest", tone: "coral", stamp: "JOURNEYS", index: "04", note: "Passenger manifest and flight assignments." }
             : path.includes("booking")
-                ? { label: "PASSENGER SERVICES", icon: "ticket", tone: "coral", stamp: "JOURNEYS", index: "04", note: "Bookings, payment, check-in and baggage." }
+                ? { label: "PASSENGER SERVICES", icon: "ticket", tone: "coral", stamp: "JOURNEYS", index: "04", note: "Passenger reservations, tickets and payments." }
                 : path.includes("passenger")
                     ? { label: "PASSENGER SERVICES", icon: "passenger", tone: "coral", stamp: "JOURNEYS", index: "04", note: "Passenger records and traveler details." }
                     : path.includes("employee")

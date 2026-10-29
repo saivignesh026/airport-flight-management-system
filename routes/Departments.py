@@ -1,4 +1,4 @@
-from flask import Blueprint, render_template, redirect, request, url_for, flash
+from flask import abort, Blueprint, render_template, redirect, request, url_for, flash
 from db import fetch_all, fetch_one, execute, is_restricted_delete_error
 
 Departments_bp = Blueprint(
@@ -61,5 +61,7 @@ def Update_Department(id):
     else:
         sql = 'CALL Department_To_Edit(%s)'
         params = (id,)
-        Department_To_Edit = fetch_one(sql, params)    
+        Department_To_Edit = fetch_one(sql, params)
+        if Department_To_Edit is None:
+            abort(404)
         return render_template('Update/UpdateDepartment.html', Department=Department_To_Edit)

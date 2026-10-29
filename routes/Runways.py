@@ -1,4 +1,4 @@
-from flask import Blueprint, request, render_template, redirect, url_for, flash
+from flask import abort, Blueprint, request, render_template, redirect, url_for, flash
 from db import fetch_one, fetch_all, execute, is_restricted_delete_error
 
 Runways_bp = Blueprint(
@@ -73,5 +73,7 @@ def Update_Runway(id):
         sql = 'CALL Runway_To_Edit(%s)'
         params = (id,)
         Runway_To_Edit = fetch_one(sql, params)
+        if Runway_To_Edit is None:
+            abort(404)
         Airport_Data = fetch_all('select Airport_Name, Airport_ID from Airport')
         return render_template('Update/UpdateRunway.html', Runway=Runway_To_Edit, Airport_Data=Airport_Data, Status_Enum=Status_Enum)

@@ -1,5 +1,5 @@
-from flask import Blueprint, render_template, redirect, request, url_for, flash
-from db import get_db_connection, fetch_all, fetch_one, execute, is_restricted_delete_error
+from flask import abort, Blueprint, render_template, redirect, request, url_for, flash
+from db import fetch_all, fetch_one, execute, is_restricted_delete_error
 
 Aircrafts_bp = Blueprint(
     'Aircrafts',
@@ -71,5 +71,7 @@ def Update_Aircraft(id):
         sql = 'CALL Aircraft_To_Edit(%s)'
         params = (id,)
         Aircraft_To_Edit = fetch_one(sql, params)
+        if Aircraft_To_Edit is None:
+            abort(404)
         Airline_Data = fetch_all('select Name, Airline_ID from Airline')
         return render_template('Update/UpdateAircraft.html', Airline_Data=Airline_Data, Aircraft=Aircraft_To_Edit)

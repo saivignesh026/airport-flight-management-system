@@ -1,4 +1,4 @@
-from flask import Blueprint, render_template, redirect, request, url_for, flash
+from flask import abort, Blueprint, render_template, redirect, request, url_for, flash
 from db import fetch_all, fetch_one, execute, is_restricted_delete_error
 
 Flights_bp = Blueprint(
@@ -76,6 +76,8 @@ def Update_Flight(id):
             return redirect(url_for('Flights.Update_Flight', id=id))
     else:
         Flight_To_Edit = fetch_one('CALL Flight_To_Edit(%s)', (id,))
+        if Flight_To_Edit is None:
+            abort(404)
         Airline_Data = fetch_all('SELECT Airline_ID, Name FROM Airline')
         Airport_Data = fetch_all('SELECT Airport_ID, Airport_Name, IATA_Code FROM Airport')
         return render_template(

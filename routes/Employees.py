@@ -1,4 +1,4 @@
-from flask import Blueprint, render_template, redirect, request, url_for, flash
+from flask import abort, Blueprint, render_template, redirect, request, url_for, flash
 from db import fetch_all, fetch_one, execute, is_restricted_delete_error
 
 Employees_bp = Blueprint(
@@ -70,6 +70,8 @@ def Update_Employee(id):
             return redirect(url_for('Employees.Update_Employee', id=id))
     else:
         Employee_To_Edit = fetch_one('CALL Employee_To_Edit(%s)', (id,))
+        if Employee_To_Edit is None:
+            abort(404)
         Department_Data = fetch_all('SELECT Department_ID, Department_Name FROM Department')
         Role_Data = fetch_all('SELECT Role_ID, Role_Name FROM Role')
         return render_template('Update/UpdateEmployee.html', Department_Data=Department_Data, Role_Data=Role_Data, Employee=Employee_To_Edit)

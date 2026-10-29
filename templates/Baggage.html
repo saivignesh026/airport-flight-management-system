@@ -1,0 +1,37 @@
+{% extends 'base.html' %}
+{% block title %}AFMS - Baggage{% endblock %}
+{% block content %}
+<h1 id="baggage-workspace">Baggage records</h1>
+<p>Register bags for checked-in passengers, update their weight, type and status, or delete baggage records.</p>
+<p><a href="{{ url_for('CheckIns.Display_CheckIn') }}">Go to passenger check-in</a></p>
+
+<div class="dashboard-wrapper operations-crud">
+<div class="split-table-pane">
+<h2>Records</h2>
+<table>
+<thead><tr><th>Bag</th><th>Booking / passenger</th><th>Type / weight / status</th><th>Edit</th><th>Delete</th></tr></thead>
+<tbody>{% for bag in Baggage_Data %}<tr>
+<td>#{{ bag.Baggage_ID }}</td><td>#{{ bag.Booking_ID }} · {{ bag.Passenger_Name }}<br><small>{{ bag.Flight_Number }}</small></td>
+<td>{{ bag.Baggage_Type }} · {{ bag.Weight_KG }} kg<br>{{ bag.Baggage_Status }}</td>
+<td><a href="{{ url_for('Baggage.Update_Baggage', id=bag.Booking_ID, bag_id=bag.Baggage_ID) }}">Edit</a></td>
+<td><form action="{{ url_for('Baggage.Delete_Baggage', id=bag.Booking_ID, bag_id=bag.Baggage_ID) }}" method="POST"><button class="btn-delete" type="submit">Delete bag</button></form></td>
+</tr>{% endfor %}</tbody>
+</table>
+</div>
+<div class="split-form-pane">
+<h2>Add baggage</h2>
+<form action="{{ url_for('Baggage.Create_Baggage') }}" method="POST">
+<label for="baggage-booking">Checked-in booking</label>
+<select id="baggage-booking" name="Booking_ID" required>
+<option value="">Select a checked-in passenger</option>
+{% for b in CheckIn_Data if b.CheckIn_Status == 'Checked-In' and b.Booking_Status == 'Confirmed' %}<option value="{{ b.Booking_ID }}">#{{ b.Booking_ID }} · {{ b.Passenger_Name }} · {{ b.Flight_Number }} · {{ b.Seat_Number }}</option>{% endfor %}
+</select><br>
+<label for="new-bag-type">Baggage type</label><select id="new-bag-type" name="Baggage_Type" required>{% for value in Baggage_Type_Enum %}<option>{{ value }}</option>{% endfor %}</select><br>
+<label for="new-bag-weight">Weight (kg)</label><input id="new-bag-weight" type="number" name="Weight_KG" min="0" max="99999999.99" step="0.01" required><br>
+<button class="btn-submit" type="submit">Add bag</button>
+<p>Complete check-in on the check-in page to make a booking available in this list.</p>
+</form>
+
+</div>
+</div>
+{% endblock %}

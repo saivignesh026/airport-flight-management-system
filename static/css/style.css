@@ -2084,3 +2084,38 @@ main.main-container form:not(.table-search-container) .custom-select-wrapper .cu
     }
     html { scroll-behavior: smooth; }
 }
+
+/* Passenger details are grouped within the reservation form. */
+#new-passenger-fields {
+    min-width: 0;
+    margin: 1rem 0 1.5rem;
+    padding: 1rem;
+    border: 1px solid var(--hairline-border);
+    border-radius: 10px;
+}
+#new-passenger-fields legend {
+    padding: 0 .4rem;
+    color: var(--text-secondary);
+    font-size: .85rem;
+    font-weight: 600;
+}
+
+/* Keep operational CRUD panel headings and cards on a shared baseline. */
+.operations-crud > div > h2 { margin: 0 0 1rem; }
+.operations-crud .split-form-pane > form { margin-top: 0; width: 100%; max-width: none; box-sizing: border-box; }
+.operations-crud .table-container { margin-top: 0; }
+main.main-container .operations-crud .split-form-pane > form {
+    display: grid; grid-template-columns: minmax(0, 36%) minmax(0, 1fr);
+    gap: .85rem 1rem; align-items: center;
+}
+main.main-container .operations-crud .split-form-pane form > label,
+main.main-container .operations-crud .split-form-pane form > input,
+main.main-container .operations-crud .split-form-pane form > select,
+main.main-container .operations-crud .split-form-pane form > .custom-select-wrapper { width: 100%; margin: 0; min-width: 0; box-sizing: border-box; }
+.operations-crud .split-form-pane form > br { display: none; }
+.operations-crud .split-form-pane form > button,
+.operations-crud .split-form-pane form > p { grid-column: 1 / -1; }
+.operations-crud .split-form-pane form > button { justify-self: start; }
+@media (max-width: 640px) {
+    main.main-container .operations-crud .split-form-pane > form { grid-template-columns: minmax(0, 1fr); }
+}

@@ -1,0 +1,4 @@
+{% for name, label, options, fallback in [('CheckIn_Status', 'Check-in status', CheckIn_Status_Enum, 'Checked-In'), ('Boarding_Status', 'Boarding status', Boarding_Status_Enum, 'Not Boarded')] %}
+<label for="{{ name }}">{{ label }}</label><select id="{{ name }}" name="{{ name }}" required>
+{% for value in options %}<option value="{{ value }}" {{ 'selected' if value == (Booking[name] if Booking else fallback) }}>{{ value }}</option>{% endfor %}
+</select><br>{% endfor %}

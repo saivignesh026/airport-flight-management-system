@@ -35,10 +35,10 @@
             </select><br>
 
             <label>Departure Time</label>
-            <input type="time" name="Scheduled_Departure_Time" step="1" value="{{ Flight.Scheduled_Departure_Time }}" required><br>
+            <input type="time" name="Scheduled_Departure_Time" step="1" value="{{ Flight.Scheduled_Departure_Time|html_time }}" required><br>
 
             <label>Arrival Time</label>
-            <input type="time" name="Scheduled_Arrival_Time" step="1" value="{{ Flight.Scheduled_Arrival_Time }}" required><br>
+            <input type="time" name="Scheduled_Arrival_Time" step="1" value="{{ Flight.Scheduled_Arrival_Time|html_time }}" required><br>
 
             <label>Status</label>
             <select name="Status" required>

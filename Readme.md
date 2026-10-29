@@ -22,7 +22,7 @@ A web-based database management system designed to streamline and centralize air
 - **Live Operations Dashboard:** High-level operational metrics (active staff, scheduled flights, confirmed bookings, passenger counts) and real-time flight operation boards.
 - **Flight Operations & Scheduling:** Manage recurring flight routes and schedule specific flight instances linked to aircraft, runways, and gates.
 - **Infrastructure Management:** Complete tracking of airports, terminals, gates, and runway specifications with operational status indicators.
-- **Full Passenger Lifecycle:** Comprehensive management of passengers, booking transactions, automated multi-table check-in records, baggage tracking, and payments wrapped inside transactional rollbacks.
+- **Full Passenger Lifecycle:** Comprehensive management of passengers, booking transactions with new passenger details and payments, plus separate airport check-in, boarding, and baggage pages. Related writes use transactions.
 - **Passenger Manifests:** Searchable, filterable flight manifests sortable by flight number, origin, and destination airport.
 - **HR & Staff Administration:** Department hierarchical breakdowns, role allocations, and employee status tracking.
 - **Refined Frontend Experience:**
@@ -39,7 +39,7 @@ The application is structured into modular **Flask Blueprints**:
 
 | Module | Route Prefix | Description |
 | :--- | :--- | :--- |
-| **Home** | `/` | Operational dashboard with live flight boards, baggage overviews, and infrastructure stats. |
+| **Home** | `/` | Operational dashboard with live flight boards and booking/baggage overviews. |
 | **Airports** | `/Airport` | Manage airport entries, IATA codes, cities, and countries. |
 | **Airlines** | `/Airline` | Manage airlines with IATA and ICAO designation codes. |
 | **Aircraft** | `/Aircraft` | Fleet management, capacity tracking, and carrier assignments. |
@@ -49,7 +49,9 @@ The application is structured into modular **Flask Blueprints**:
 | **Flights** | `/Flight` | Recurring route definitions and origin/destination schedules. |
 | **Flight Instances** | `/FlightInstance` | Specific scheduled instances mapping flights to aircraft, gates, and runways. |
 | **Passengers** | `/Passenger` | Passenger demographic and passport data, plus flight manifest lookups. |
-| **Bookings** | `/Booking` | Orchestrates atomic inserts across `Booking`, `Payment`, `Check_In`, and `Baggage`. |
+| **Bookings** | `/Booking` | Creates passenger, ticket, and payment together. |
+| **Check-in** | `/CheckIn` | Passenger check-in and boarding CRUD. |
+| **Baggage** | `/Baggage` | Individual baggage registration, editing, and deletion. |
 | **Departments** | `/Department` | Administrative organizational units. |
 | **Roles** | `/Role` | Job titles and duties mapped to departments. |
 | **Employees** | `/Employee` | Active/resigned staff details, contacts, and roles. |
@@ -70,8 +72,8 @@ The application is structured into modular **Flask Blueprints**:
 
 ```text
 airport-flight-management-system/
-├── app.py                      # Flask application factory and core dashboard route
-├── db.py                       # Database connection pooling, helper queries, and transaction contexts
+├── app.py                      # Flask application and core dashboard route
+├── db.py                       # Database connections, helper queries, and transaction contexts
 ├── requirements.txt            # Python dependencies
 ├── .env                        # Environment configuration (git-ignored)
 ├── .gitignore                  # Git ignore rules
@@ -80,6 +82,8 @@ airport-flight-management-system/
 │   ├── Aircrafts.py
 │   ├── Airlines.py
 │   ├── Airports.py
+│   ├── Baggage.py
+│   ├── CheckIns.py
 │   ├── Bookings.py
 │   ├── Departments.py
 │   ├── Employees.py
@@ -108,77 +112,77 @@ airport-flight-management-system/
         ├── table-pagination.js # Client-side pagination, instant filter, and status pills
         └── theme-init.js       # Fast early head script preventing dark-mode flash
 
+```
 
-Database Configuration
+## Database Setup & Views
 
-The application expects a running MySQL database (default name: AF_DB). Ensure your database is initialized with the required tables, relational constraints, and the following views and stored procedures:
+Create the MySQL database and install the tables, views, and stored procedures used
+in `routes/` before running the application. Import your MySQL initialization dump first; an empty database alone is insufficient. For an existing database, execute the SQL provided in the project conversation
+before using check-in and baggage. SQL scripts are intentionally kept outside
+this repository. These routes use `Booking_Check_In_Details`, `Check_In_Details`,
+`Baggage_Details`, and the `Add_*`, `Update_*`, `Delete_*`, and `*_To_Edit` stored procedures. Flask commits or rolls back
+each operation; the procedures do not commit independently.
 
-    Views:
+Required views include `Flight_Operational_Details`, `Booking_Status_Details`,
+`Booking_Details`, `Airport_Infrastructure`, `Aircraft_Details`, `Flight_Details`,
+`Runway_Details`, `Terminal_Details`, `Gate_Details`, `Employee_Details`, and
+`Passenger_Manifest`. CRUD routes also depend on their `Add_*`, `Update_*`,
+`Delete_*`, and `*_To_Edit` stored procedures.
 
-        Flight_Operational_Details
+## Installation & Local Setup
 
-        Booking_Status_Details / Booking_Details
+From the project directory, create a virtual environment and install dependencies:
 
-        Airport_Infrastructure
-
-        Aircraft_Details
-
-        Employee_Details
-
-        Passenger_Manifest
-
-    Stored Procedures:
-
-        Aircraft_To_Edit(id)
-
-        Runway_To_Edit(id)
-
-        Terminal_To_Edit(id)
-
-        Role_To_Edit(id)
-
-        Employee_To_Edit(id)
-
-        Booking_To_Edit(id)
-
-Installation & Setup
-1. Clone the Repository
-Bash
-
-git clone [https://github.com/your-username/airport-flight-management-system.git](https://github.com/your-username/airport-flight-management-system.git)
-cd airport-flight-management-system
-
-2. Set Up a Virtual Environment
-Bash
-
-# Linux / macOS
+```bash
 python3 -m venv .venv
 source .venv/bin/activate
-
-# Windows
-python -m venv .venv
-.venv\Scripts\activate
-
-3. Install Dependencies
-Bash
-
 pip install -r requirements.txt
+```
 
-4. Configure Environment Variables
+On Windows, activate with `.venv\Scripts\activate` instead.
 
-Create a .env file in the root directory:
-Code snippet
+## Environment Configuration
 
+Create a git-ignored `.env` file in the project directory:
+
+```dotenv
 DB_USER=root
 DB_HOST=localhost
 DB_PASSWORD=your_mysql_password
 DB_PORT=3306
 DB_NAME=AF_DB
-SECRET_KEY=your_secret_key
+SECRET_KEY=replace_with_a_random_persistent_secret
+```
 
-5. Run the Application
-Bash
+Set a persistent `SECRET_KEY` to preserve sessions across application restarts
+and workers. Without one, the application generates a temporary key at startup.
 
+## Running the Application
+
+```bash
 python app.py
+```
 
-The application will be accessible at http://127.0.0.1:5000/.
+Open http://127.0.0.1:5000/. For local debugging, set `FLASK_DEBUG=1` explicitly.
+
+## Verification
+
+```bash
+python -m unittest discover -s tests -v
+```
+
+The regression suite mocks database access. It checks route rendering, missing
+records, booking updates, manifest queries, time formatting, and database cleanup
+and rollback. It does not replace integration testing against the configured
+MySQL schema and stored procedures.
+
+To run the optional integration check against an isolated MySQL instance, supply
+your dump, an initialized temporary data directory, and the SQL update saved
+outside the repository:
+
+```bash
+python tests/mysql_workflow.py /path/to/AFMS.sql /tmp/afms-test-db /path/to/update.sql
+```
+
+This test uses only the temporary database and does not read database credentials
+from `.env`.

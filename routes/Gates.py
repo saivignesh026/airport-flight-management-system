@@ -1,4 +1,4 @@
-from flask import Blueprint, render_template, redirect, request, url_for, flash
+from flask import abort, Blueprint, render_template, redirect, request, url_for, flash
 from db import fetch_all, fetch_one, execute, is_restricted_delete_error
 
 Gates_bp = Blueprint(
@@ -70,5 +70,7 @@ def Update_Gate(id):
 
     else:
         Gate_To_Edit = fetch_one('CALL Gate_To_Edit(%s)', (id,))
+        if Gate_To_Edit is None:
+            abort(404)
         Terminal_Data = fetch_all('select Terminal_ID, Terminal_Name, Terminal_Number from Terminal')
         return render_template('Update/UpdateGate.html', Gate=Gate_To_Edit, Terminal_Data=Terminal_Data, Status_Enum=Status_Enum)

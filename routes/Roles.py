@@ -1,4 +1,4 @@
-from flask import Blueprint, render_template, redirect, request, url_for, flash
+from flask import abort, Blueprint, render_template, redirect, request, url_for, flash
 from db import fetch_all, fetch_one, execute, is_restricted_delete_error
 
 Roles_bp = Blueprint(
@@ -62,6 +62,8 @@ def Update_Role(id):
     else:
         sql = 'call Role_To_Edit(%s)'
         params = (id,)
-        Role_To_Edit = fetch_one(sql, params)    
+        Role_To_Edit = fetch_one(sql, params)
+        if Role_To_Edit is None:
+            abort(404)
         Department_Data = fetch_all('SELECT Department_ID, Department_Name FROM Department')
         return render_template('Update/UpdateRole.html', Department_Data=Department_Data, Role=Role_To_Edit)

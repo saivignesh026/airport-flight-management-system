@@ -1,7 +1,9 @@
-from flask import Flask, render_template, redirect, url_for, request
+from flask import Flask, render_template
 from collections import Counter
 from dotenv import load_dotenv
 import os
+import secrets
+from datetime import timedelta
 from db import fetch_all, fetch_one
 
 load_dotenv()
@@ -19,6 +21,8 @@ from routes.Flights import Flights_bp
 from routes.Flight_Instances import Flight_Instances_bp
 from routes.Passengers import Passengers_bp
 from routes.Bookings import Bookings_bp
+from routes.CheckIns import CheckIns_bp
+from routes.Baggage import Baggage_bp
 
 app = Flask(__name__)
 
@@ -35,8 +39,25 @@ app.register_blueprint(Flights_bp)
 app.register_blueprint(Flight_Instances_bp)
 app.register_blueprint(Passengers_bp)
 app.register_blueprint(Bookings_bp)
+app.register_blueprint(CheckIns_bp)
+app.register_blueprint(Baggage_bp)
 
-app.secret_key = os.getenv('SECRET_KEY', 'fallback_secret_for_testing')
+app.secret_key = os.getenv('SECRET_KEY') or secrets.token_hex(32)
+
+@app.template_filter('html_time')
+def html_time(value):
+    """MySQL TIME columns are returned as timedeltas, not HTML time strings."""
+    if value is None:
+        return ''
+    if isinstance(value, timedelta):
+        seconds = int(value.total_seconds())
+        if not 0 <= seconds < 86400:
+            return ''
+        hours, remainder = divmod(seconds, 3600)
+        minutes, seconds = divmod(remainder, 60)
+        return f'{hours:02}:{minutes:02}:{seconds:02}'
+    return value.strftime('%H:%M:%S') if hasattr(value, 'strftime') else str(value)
+
 
 @app.route('/')
 def Home():
@@ -78,4 +99,4 @@ def Home():
     )
 
 if __name__ == "__main__":
-    app.run(debug=True)
+    app.run(debug=os.getenv('FLASK_DEBUG', '').lower() in ('1', 'true'))
